@@ -1,0 +1,36 @@
+From "1.mainScreens.png" clicking on "SIGN IN" button on the left screen will direct
+you to the screen on the right which will be called the "main screen" for the rest
+of this document. Clicking the "SIGN OUT" button on the main screen will return the
+user to the sign in screen.
+
+From the main screen, clicking "ADD MOOD EVENT" button will create the prompt shown
+in "2.addMoodEvent.png". From this prompt clicking on any of the predefined moods will
+irect you to the middle screen. The right-most screen shows what the social situation 
+dropdown should look like. Clicking submit on either the middle or right screens returns 
+you to the main screen, as does clicking off of the "ADD MOOD EVENT" pop-up.
+
+From the main screen, clicking on "MOOD HISTORY" directs you to the screens shown in
+"3.moodHistory.png". The left screen is what first appears after clicking "MOOD HISTORY"
+the right screen shows the dropdown menu that appears if "FILTER BY" is selected. 
+
+When viewing the user's mood history, if any of the previous mood events is clicked on
+it will direct you to "4.editMoodEvent.png". The left-most screen is what first appears
+after selecting a mood event. The middle screen is displayed when "Edit Mood Event" 
+button is clicked. The right-most screen is displayed if the user selects the red "X"
+button in the left-most screen.
+
+From "3.moodHistory.png" if the "View on Map" button is clicked the left-most screen in
+"5.moodHistoryMap.png" will be displayed. Clicking on one of the emoticons on the map 
+will cause the detailed description shown on the right-most screen to be displayed.
+
+From the main screen, clicking on the "Following" button will direct you to the left
+screen shown in "6.followers_following". From the main screen, clicking on the 
+"Followers" button will direct you to the right screen shown in "6.followers_following".
+
+Clicking on a specific user on the "following" screen will direct you to the left-most
+screen in "7.followingHistory". Clicking "View on Map" button will cause the middle
+screen to be displayed. Clicking on a specific emoticon that appears on the map will
+cause the detailed description shown on the right-most screen to be displayed.
+
+NOTE: The "home" button at the top-right corner of screens will bring the user back
+      to the main screen when clicked.
