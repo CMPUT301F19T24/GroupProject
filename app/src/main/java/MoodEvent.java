@@ -16,15 +16,15 @@ public class MoodEvent {
     private Date timeStamp;
     private SocialSituation socialSituation;
     private String reasonText;
-    private Image reasonPhoto;
+    private Image reasonImage;
     private Location location;
-    private Integer moodEventId;
+    private User owner;
 
     MoodEvent(Mood currentMood,
               Date timeStamp,
               SocialSituation socialSituation,
               String reasonText,
-              Image reasonPhoto,
+              Image reasonImage,
               Location location,
               Integer moodId)
     {
@@ -32,9 +32,8 @@ public class MoodEvent {
         this.timeStamp = timeStamp;
         this.socialSituation = socialSituation; // Optional
         this.reasonText = reasonText; // Optional
-        this.reasonPhoto = reasonPhoto; // Optional
+        this.reasonImage = reasonImage; // Optional
         this.location = location; // Optional
-        this.moodEventId = moodId;
     }
 
     public Mood getMood()
@@ -59,7 +58,7 @@ public class MoodEvent {
 
     public Image getReasonImage()
     {
-        return this.reasonPhoto;
+        return this.reasonImage;
     }
 
     public Location getLocation()
@@ -67,9 +66,9 @@ public class MoodEvent {
         return this.location;
     }
 
-    public Integer getMoodEventId()
+    public User getOwner()
     {
-        return this.moodEventId;
+        return this.owner;
     }
 
     public void setMood(Mood mood)
@@ -92,13 +91,18 @@ public class MoodEvent {
         this.reasonText = reasonText;
     }
 
-    public void setReasonPhoto(Image reasonPhoto)
+    public void setReasonImage(Image reasonImage)
     {
-        this.reasonPhoto = reasonPhoto;
+        this.reasonImage = reasonImage;
     }
 
     public void setLocation(Location location)
     {
         this.location = location;
+    }
+
+    public void setOwner(User owner)
+    {
+        this.owner = owner;
     }
 }
