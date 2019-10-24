@@ -1,3 +1,5 @@
+package com.example.groupproject;
+
 import java.util.ArrayList;
 
 public class User {

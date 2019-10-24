@@ -1,20 +1,22 @@
+package com.example.groupproject;
+
 import android.graphics.Color;
 import android.media.Image;
 
 public abstract class Mood {
     protected String name;
-    protected Image image;
-    protected Color color;
+    protected int image; // Use following format: R.drawable.emot_sad, place PNGs in res/drawable
+    protected int color; // Use hexadecimal in format :0x<alpha><red><green><blue>
 
     public String getName()
     {
         return this.name;
     }
-    public Image getImage()
+    public int getImage()
     {
         return this.image;
     }
-    public Color getColor()
+    public int getColor()
     {
         return this.color;
     }
