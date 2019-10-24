@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="socialSituation">
+    <item>N/A</item>
+    <item>Alone</item>
+    <item>With Someone</item>
+    <item>With Group</item>
+    <item>With Crowd</item>
+</string-array>
+</resources>
+

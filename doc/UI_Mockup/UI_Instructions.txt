@@ -15,7 +15,7 @@ the right screen shows the dropdown menu that appears if "FILTER BY" is selected
 
 When viewing the user's mood history, if any of the previous mood events is clicked on
 it will direct you to "4.editMoodEvent.png". The left-most screen is what first appears
-after selecting a mood event. The middle screen is displayed when "Edit Mood Event" 
+after selecting a mood event. The middle screen is displayed when "Edit com.example.groupproject.Mood Event"
 button is clicked. The right-most screen is displayed if the user selects the red "X"
 button in the left-most screen.
 
