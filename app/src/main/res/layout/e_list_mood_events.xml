@@ -17,20 +17,22 @@
         android:layout_margin="2dp"
         android:layout_weight="0.2"
         android:contentDescription="tmp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/e_tv_mood_name"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="0.4"
-        android:gravity="center"
+        android:gravity="center|center_vertical"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/e_tv_timestamp"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="0.4"
         android:gravity="center"
         android:textSize="18sp" />

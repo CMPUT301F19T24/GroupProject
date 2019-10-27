@@ -5,6 +5,6 @@ public class Disgusted extends Mood {
     {
         this.name = "Disgusted";
         this.image = R.drawable.emot_disgusted;
-        this.color = 0x1f00ff00;
+        this.color = 0x5b00ff00;
     }
 }
