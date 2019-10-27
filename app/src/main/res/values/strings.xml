@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">GroupProject</string>
+    <string name="add_mood">
+        <font size="20"> "ADD MOOD EVENT"</font>
+        <font size="13">\n"Add a new mood event to your history</font>
+    </string>
+    <string name="mood_history">
+        <font size="20"> "MOOD HISTORY"</font>
+        <font size="13">\n"View or edit previous moods"</font>
+    </string>
+    <string name="following">
+        <font size="20"> "FOLLOWING"</font>
+        <font size="13">\n"Request to follow other users"\n"View the moods of people you follow"</font>
+    </string>
+    <string name="followers">
+        <font size="20"> "MY FOLLOWERS"</font>
+        <font size="13">\n"Manage which users are able to see your moods"</font>
+    </string>
 </resources>
