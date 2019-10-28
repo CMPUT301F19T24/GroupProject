@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.v_list_mood_events_details);
-        //setContentView(R.layout.main_screen);
+        setContentView(R.layout.main_screen);
 
-        initializeListMoodEventsView();
+        //initializeListMoodEventsView();
     }
 
     protected void initializeListMoodEventsView() {
