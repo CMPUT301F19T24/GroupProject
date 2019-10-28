@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="${MOOD_NAME}" />
+                android:text="@string/DetailedMoodName" />
 
             <TextView
                 android:layout_width="0dp"
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:gravity="center"
-                android:text="${TIMESTAMP}" />
+                android:text="@string/detailTimestamp" />
 
         </LinearLayout>
 
