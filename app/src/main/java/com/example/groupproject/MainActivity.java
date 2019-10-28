@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         /* For testing from main screen */
-//        setContentView(R.layout.main_screen);
+        setContentView(R.layout.main_screen);
 
         /* For Testing the Login Screen and Account Creation Dialog */
 //        setContentView(R.layout.login_screen);
