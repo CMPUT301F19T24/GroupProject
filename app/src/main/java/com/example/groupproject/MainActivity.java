@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.maps.MapView;
 
@@ -30,11 +31,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        /* For testing the mood history list */
 //        setContentView(R.layout.v_list_mood_events_details);
-        setContentView(R.layout.main_screen);
+//        initializeListMoodEventsView();
 
-        //initializeListMoodEventsView();
+        /* For Testing the Login Screen */
+//        setContentView(R.layout.login_screen);
+
     }
+
 
     protected void initializeListMoodEventsView() {
         setContentView(R.layout.v_list_mood_events);
