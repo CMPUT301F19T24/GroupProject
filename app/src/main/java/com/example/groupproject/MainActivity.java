@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.maps.MapView;
 
@@ -30,10 +31,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /* For testing the mood history list */
 //        setContentView(R.layout.v_list_mood_events_details);
-        //setContentView(R.layout.main_screen);
+//        initializeListMoodEventsView();
 
-        initializeListMoodEventsView();
+        /* For Testing the Login Screen and Account Creation Dialog */
+//        setContentView(R.layout.login_screen);
+//        TextView createAccount = findViewById(R.id.create_Account);
+//        createAccount.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                createNewAccount();
+//            }
+//        });
+    }
+
+    private void createNewAccount() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        CreateAccountDialog createAccountDialog = new CreateAccountDialog();
+        createAccountDialog.show(fragmentManager, "Dialog Pop-up");
     }
 
     protected void initializeListMoodEventsView() {
