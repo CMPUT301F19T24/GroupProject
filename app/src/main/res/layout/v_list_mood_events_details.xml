@@ -68,7 +68,6 @@
             android:id="@+id/s_details_social_situation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/socialSituation"
             android:gravity="center" />
 
         <LinearLayout

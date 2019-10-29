@@ -3,16 +3,11 @@ package com.example.groupproject;
 import android.location.Location;
 import android.media.Image;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
-enum SocialSituation
-{
-    NONE,
-    ALONE,
-    WITH_SOMEONE,
-    WITH_SEVERAL,
-    CROWD
-}
+import static com.example.groupproject.SortingMethod.*;
+
 public class MoodEvent implements Comparable {
     private Mood mood;
     private Calendar timeStamp;
@@ -110,8 +105,20 @@ public class MoodEvent implements Comparable {
 
 
     @Override
-    public int compareTo(Object o) {
-        return this.timeStamp.compareTo(((MoodEvent) o).getTimeStamp());
+    public int compareTo(Object o) { // By default, sort by date
+        return compareTo(o, DATE);
+    }
 
+    public int compareTo(Object o, SortingMethod sm)
+    {
+        switch(sm)
+        {
+            case NAME:
+                return this.mood.compareTo(((MoodEvent) o).getMood());
+            case DATE:
+                return this.timeStamp.compareTo(((MoodEvent) o).getTimeStamp());
+            default:
+                throw new IllegalStateException("Unexpected value: " + sm);
+        }
     }
 }
