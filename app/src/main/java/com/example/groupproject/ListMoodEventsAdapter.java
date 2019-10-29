@@ -22,11 +22,13 @@ import java.util.Comparator;
 public class ListMoodEventsAdapter extends ArrayAdapter {
     private Context context;
     private ArrayList<MoodEvent> moodEventArrayList;
+    SortingMethod sm;
 
     public ListMoodEventsAdapter(@NonNull Context context, ArrayList<MoodEvent> moodEventArrayList) {
         super(context, 0, moodEventArrayList);
         this.context = context;
         this.moodEventArrayList = moodEventArrayList;
+        this.sm = SortingMethod.DATE; // Default
     }
 
     @NonNull
@@ -63,22 +65,34 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
 
         this.notifyDataSetChanged();
 
-
-
         return listItem;
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-        this.setNotifyOnChange(false);
+//    @Override
+//    public void notifyDataSetChanged() {
+//        this.setNotifyOnChange(false);
+//
+//        this.sort(new Comparator<MoodEvent>() {
+//            @Override
+//            public int compare(MoodEvent a, MoodEvent b) {
+//                return a.compareTo(b, sm);
+//            }
+//        });
+//
+//        this.setNotifyOnChange(true);
+//    }
 
+    public void setSortingMethod(final SortingMethod sm)
+    {
+        this.sm = sm;
         this.sort(new Comparator<MoodEvent>() {
             @Override
             public int compare(MoodEvent a, MoodEvent b) {
-                return a.compareTo(b);
+                return a.compareTo(b, sm);
             }
         });
-
-        this.setNotifyOnChange(true);
+//        this.clear();
+//        this.addAll(this.moodEventArrayList);
+        this.notifyDataSetChanged();
     }
 }
