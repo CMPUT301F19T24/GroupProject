@@ -5,14 +5,6 @@ import android.media.Image;
 
 import java.util.Calendar;
 
-enum SocialSituation
-{
-    NONE,
-    ALONE,
-    WITH_SOMEONE,
-    WITH_SEVERAL,
-    CROWD
-}
 public class MoodEvent implements Comparable {
     private Mood mood;
     private Calendar timeStamp;

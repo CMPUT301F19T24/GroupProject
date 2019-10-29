@@ -20,8 +20,13 @@ import android.widget.TextView;
 import com.google.android.gms.maps.MapView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import static android.R.layout.simple_spinner_item;
+import static com.example.groupproject.SocialSituation.*;
+import static com.example.groupproject.SocialSituation.values;
 
 public class MoodEventListActivity extends AppCompatActivity {
 
@@ -75,17 +80,20 @@ public class MoodEventListActivity extends AppCompatActivity {
                         curMoodEvent.getTimeStamp().get(Calendar.MONTH),
                         curMoodEvent.getTimeStamp().get(Calendar.YEAR)));
 
+                s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, getNames()));
+                s_socialSituation.setSelection(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
 
+                et_desc.setText(curMoodEvent.getReasonText());
             }
 
         });
 
         if (true) {
-            moodEventDataList.add(new MoodEvent(new Happy(), new GregorianCalendar(2019,10,10), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), SocialSituation.NONE, "ABC", null, null, 0));
+            moodEventDataList.add(new MoodEvent(new Happy(), new GregorianCalendar(2019,10,10), NONE, "Reason 1", null, null, 0));
+            moodEventDataList.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), CROWD, "Reason 2", null, null, 0));
+            moodEventDataList.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), ALONE, "Reason 3", null, null, 0));
+            moodEventDataList.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), WITH_SEVERAL, "Reason 4", null, null, 0));
+            moodEventDataList.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), WITH_SOMEONE, "Reason 5", null, null, 0));
         }
 
     }

@@ -20,4 +20,5 @@
     <string name="detailedMoodName">DetailedMoodName</string>
     <string name="detailTimestamp">DetailedTimeStamp</string>
     <string name="DetailedMoodName">DetailedMoodName</string>
+    <string name="socialSituation">N/A</string>
 </resources>
