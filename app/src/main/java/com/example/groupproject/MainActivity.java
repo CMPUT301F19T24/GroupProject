@@ -13,9 +13,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         /* For testing from main screen */
-        setContentView(R.layout.main_screen);
 
-        /* For Testing the Login Screen and Account Creation Dialog */
+        setContentView(R.layout.main_screen);
+      
+/* For Testing the Login Screen and Account Creation Dialog */
 //        setContentView(R.layout.login_screen);
 //        TextView createAccount = findViewById(R.id.create_Account);
 //        createAccount.setOnClickListener(new View.OnClickListener() {
@@ -28,12 +29,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickAddMoodEvent(View view)
     {
-
+        Intent intent = new Intent(this, com.example.groupproject.AddMoodEventActivity.class);
+        startActivity(intent);
     }
     public void clickMoodHistory(View view)
     {
-        Intent intent = new Intent(this, com.example.groupproject.MoodEventListActivity.class);
-        startActivity(intent);
+        Intent intent2 = new Intent(this, com.example.groupproject.MoodEventListActivity.class);
+        startActivity(intent2);
     }
 
     public void clickFollowing(View view)
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
   
-      private void createNewAccount() {
+    private void createNewAccount() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         CreateAccountDialog createAccountDialog = new CreateAccountDialog();
         createAccountDialog.show(fragmentManager, "Dialog Pop-up");
