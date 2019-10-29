@@ -26,7 +26,7 @@ import java.util.GregorianCalendar;
 public class AddMoodEventActivity extends AppCompatActivity {
 
     ListView moodEventList;
-    ArrayAdapter<MoodEvent> moodEventAdapter;
+    ListMoodEventsAdapter moodEventAdapter;
     ArrayList<MoodEvent> moodEventDataList;
 
     @Override
@@ -40,7 +40,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
     {
         moodEventList = findViewById(R.id.moodEventList);
         moodEventDataList = new ArrayList<>();
-        moodEventAdapter = new ListMoodEventsAdapter(this, moodEventDataList);
+        moodEventAdapter = new ListMoodEventsAdapter(this, moodEventDataList, SortingMethod.DATE);
         moodEventList.setAdapter(moodEventAdapter);
 
         moodEventList.setOnItemClickListener(new AdapterView.OnItemClickListener()
