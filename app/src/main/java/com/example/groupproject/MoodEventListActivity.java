@@ -3,6 +3,8 @@ package com.example.groupproject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 
 import static android.R.layout.simple_spinner_item;
 import static com.example.groupproject.SocialSituation.*;
@@ -33,6 +37,7 @@ public class MoodEventListActivity extends AppCompatActivity {
     private ListView moodEventList;
     private ListMoodEventsAdapter moodEventAdapter;
     private ArrayList<MoodEvent> moodEventDataList;
+
 
     // Defines
     private static final SortingMethod DEFAULT_SORTING_METHOD = SortingMethod.DATE;
@@ -53,21 +58,10 @@ public class MoodEventListActivity extends AppCompatActivity {
 
         setupPopUpMenu();
         setupSorting();
+        setupSearching();
 
+        moodEventAdapter.addAll(populateFromRemote());
 
-        if (true) {
-            moodEventDataList.add(new MoodEvent(new Happy(), new GregorianCalendar(2019,10,10), NONE, "Reason 1", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), CROWD, "Reason 2", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), ALONE, "Reason 3", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), WITH_SEVERAL, "Reason 4", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), WITH_SOMEONE, "Reason 5", null, null, 0));
-        }
-
-    }
-
-    private ArrayAdapter<MoodEvent> getMoodEventAdapter()
-    {
-        return this.moodEventAdapter;
     }
 
     private void setupSorting()
@@ -89,6 +83,49 @@ public class MoodEventListActivity extends AppCompatActivity {
                 // Do nothing
             }
         });
+    }
+
+    private void setupSearching()
+    {
+        final Spinner s_sortBy = findViewById(R.id.s_sortby);
+        EditText ed_searchFor = findViewById(R.id.et_searchFor);
+
+        ed_searchFor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String query = charSequence.toString();
+
+                moodEventAdapter.clear();
+                if (query.isEmpty())
+                {
+                    moodEventAdapter.addAll(populateFromRemote());
+                    moodEventAdapter.setSortingMethod(SortingMethod.values()[s_sortBy.getSelectedItemPosition()]);
+
+                }
+                else
+                {
+                    for(MoodEvent me : populateFromRemote())
+                    {
+                        if(me.contains((query)))
+                        {
+                            moodEventAdapter.add(me);
+                        }
+                    }
+                }
+                moodEventAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
     }
 
     private void setupPopUpMenu()
@@ -132,5 +169,16 @@ public class MoodEventListActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    private ArrayList<MoodEvent> populateFromRemote()
+    {
+        ArrayList<MoodEvent> al = new ArrayList<>();
+        al.add(new MoodEvent(new Happy(), new GregorianCalendar(2019,10,10), new User("Happy Person"), NONE, "Reason 1", null, null));
+        al.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), new User("Sad Person"), CROWD, "Reason 2", null, null));
+        al.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), new User("Angry Person"), ALONE, "Reason 3", null, null));
+        al.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), new User("Anxious Person"), WITH_SEVERAL, "Reason 4", null, null));
+        al.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), new User("Disgusted Person"), WITH_SOMEONE, "Reason 5", null, null));
+        return al;
     }
 }

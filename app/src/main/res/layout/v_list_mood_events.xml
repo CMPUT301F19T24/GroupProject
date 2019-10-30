@@ -51,7 +51,6 @@
                 android:layout_weight="0.2" />
 
             <TextView
-                android:id="@+id/tv_mood_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -63,7 +62,6 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/tv_timestamp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -71,6 +69,16 @@
                 android:layout_weight="0.40"
                 android:gravity="center"
                 android:text="Date"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="0.40"
+                android:gravity="center"
+                android:text="Owner"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -89,35 +97,67 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.1"
-        android:orientation="horizontal">
+        android:layout_weight="0.2"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.3"
-                android:gravity="center"
-                android:text="Sort By:" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/s_sortby"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.7" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Sort By:" />
+
+                <Spinner
+                    android:id="@+id/s_sortby"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.6" />
+            </LinearLayout>
+
+
+            <LinearLayout
+
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Filter For:" />
+
+                <EditText
+                    android:id="@+id/et_searchFor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="Search Criteria"
+                    android:inputType="textPersonName" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <Button
             android:id="@+id/b_add_mood_event"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_alignParentBottom="true"
-            android:layout_weight="0.5"
+            android:layout_weight="0.3"
             android:text="+" />
     </LinearLayout>
 

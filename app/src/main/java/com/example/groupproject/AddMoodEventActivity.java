@@ -81,11 +81,11 @@ public class AddMoodEventActivity extends AppCompatActivity {
         });
 
         if (true) {
-            moodEventDataList.add(new MoodEvent(new Happy(), new GregorianCalendar(1, 2, 3), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), SocialSituation.NONE, "ABC", null, null, 0));
-            moodEventDataList.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), SocialSituation.NONE, "ABC", null, null, 0));
+//            moodEventDataList.add(new MoodEvent(new Happy(), new GregorianCalendar(1, 2, 3), SocialSituation.NONE, "ABC", null, null, 0));
+//            moodEventDataList.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), SocialSituation.NONE, "ABC", null, null, 0));
+//            moodEventDataList.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), SocialSituation.NONE, "ABC", null, null, 0));
+//            moodEventDataList.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), SocialSituation.NONE, "ABC", null, null, 0));
+//            moodEventDataList.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), SocialSituation.NONE, "ABC", null, null, 0));
         }
 
     }

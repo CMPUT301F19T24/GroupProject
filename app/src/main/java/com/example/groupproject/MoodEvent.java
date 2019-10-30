@@ -3,6 +3,7 @@ package com.example.groupproject;
 import android.location.Location;
 import android.media.Image;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -19,14 +20,15 @@ public class MoodEvent implements Comparable {
 
               MoodEvent(Mood currentMood,
               Calendar timeStamp,
+              User owner,
               SocialSituation socialSituation,
               String reasonText,
               Image reasonImage,
-              Location location,
-              Integer moodId)
+              Location location)
     {
         this.mood = currentMood;
         this.timeStamp = timeStamp;
+        this.owner = owner;
         this.socialSituation = socialSituation; // Optional
         this.reasonText = reasonText; // Optional
         this.reasonImage = reasonImage; // Optional
@@ -120,5 +122,32 @@ public class MoodEvent implements Comparable {
             default:
                 throw new IllegalStateException("Unexpected value: " + sm);
         }
+    }
+
+    public boolean contains(String query)
+    {
+        String[] parsedQuery = query.split(" ");
+
+        Boolean rc = false;
+        ArrayList<String> checkList = new ArrayList<>();
+        checkList.add(mood.getName());
+        checkList.add(String.valueOf(timeStamp.get(Calendar.YEAR)));
+        checkList.add(String.valueOf(timeStamp.get(Calendar.MONTH)));
+        checkList.add(String.valueOf(timeStamp.get(Calendar.DATE)));
+        checkList.add(owner.getUserName());
+
+        for(String i : parsedQuery)
+        {
+            for(String j : checkList)
+            {
+                if(j.toLowerCase().contains(i.toLowerCase()))
+                {
+                    rc = true;
+                    break;
+                }
+            }
+        }
+
+        return rc;
     }
 }
