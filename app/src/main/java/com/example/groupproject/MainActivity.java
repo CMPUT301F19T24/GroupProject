@@ -9,6 +9,14 @@ import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static FSHConstructor fshInstance;
+
+    public MainActivity()
+    {
+        super();
+        fshInstance.getInstance();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     }
     public void clickMoodHistory(View view)
     {
-        Intent intent2 = new Intent(this, com.example.groupproject.MoodEventListActivity.class);
-        startActivity(intent2);
+        Intent intent = new Intent(this, com.example.groupproject.MoodEventListActivity.class);
+        startActivity(intent);
     }
 
     public void clickFollowing(View view)

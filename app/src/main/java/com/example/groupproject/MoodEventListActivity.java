@@ -29,6 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import static android.R.layout.simple_spinner_item;
+import static com.example.groupproject.MainActivity.fshInstance;
 import static com.example.groupproject.SocialSituation.*;
 
 
@@ -173,12 +174,16 @@ public class MoodEventListActivity extends AppCompatActivity {
 
     private ArrayList<MoodEvent> populateFromRemote()
     {
-        ArrayList<MoodEvent> al = new ArrayList<>();
-        al.add(new MoodEvent(new Happy(), new GregorianCalendar(2019,10,10), new User("Happy Person"), NONE, "Reason 1", null, null));
-        al.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), new User("Sad Person"), CROWD, "Reason 2", null, null));
-        al.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), new User("Angry Person"), ALONE, "Reason 3", null, null));
-        al.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), new User("Anxious Person"), WITH_SEVERAL, "Reason 4", null, null));
-        al.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), new User("Disgusted Person"), WITH_SOMEONE, "Reason 5", null, null));
-        return al;
+
+        return fshInstance.getInstance().fsh.getVisibleMoodEvents("Luke Skywalker");
+
+
+//        ArrayList<MoodEvent> al = new ArrayList<>();
+//        al.add(new MoodEvent(new Happy(), new GregorianCalendar(2019,10,10), new User("Happy Person"), NONE, "Reason 1", null, null));
+//        al.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), new User("Sad Person"), CROWD, "Reason 2", null, null));
+//        al.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), new User("Angry Person"), ALONE, "Reason 3", null, null));
+//        al.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), new User("Anxious Person"), WITH_SEVERAL, "Reason 4", null, null));
+//        al.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), new User("Disgusted Person"), WITH_SOMEONE, "Reason 5", null, null));
+//        return al;
     }
 }

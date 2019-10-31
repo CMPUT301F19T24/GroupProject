@@ -119,6 +119,8 @@ public class MoodEvent implements Comparable {
                 return this.mood.compareTo(((MoodEvent) o).getMood());
             case DATE:
                 return this.timeStamp.compareTo(((MoodEvent) o).getTimeStamp());
+            case OWNER:
+                return this.owner.getUserName().compareTo(((MoodEvent) o).getOwner().getUserName());
             default:
                 throw new IllegalStateException("Unexpected value: " + sm);
         }

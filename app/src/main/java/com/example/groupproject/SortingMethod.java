@@ -4,8 +4,9 @@ import java.util.Arrays;
 
 public enum SortingMethod
 {
-    NAME("Name"),
-    DATE("Date");
+    NAME("Mood Type"),
+    DATE("Date"),
+    OWNER("Owner");
 
     private String str;
 
