@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
  */
 
 public class FireStoreHandlerTest {
-    public FireStoreHandler fsh;
+    public FireStoreHandlerTester fsh;
 
     // Test case 1 defs
     private static final int NUM_OF_LUKE_ME = 4;
@@ -58,13 +58,28 @@ public class FireStoreHandlerTest {
     private static final int NUM_MR_NO_ONE_CAN_SEE_ME_ME = 1;
     private static final int NUM_MR_NO_SEEING_OTHERS_ME = 2;
 
+    public class FireStoreHandlerTester extends FireStoreHandler
+    {
+        FireStoreHandlerTester()
+        {
+            super();
+        }
+
+        public void injectTestData(ArrayList<MoodEvent> arr_me, ArrayList<User> arr_u, ArrayList<Relationship> arr_rs)
+        {
+            this.cachedMoodEvents = arr_me;
+            this.cachedUsers = arr_u;
+            this.cachedRelationship = arr_rs;
+        }
+    }
+
     private void initializeTestCase1()
     {
         java.util.ArrayList<MoodEvent> arr_me = new ArrayList<>();
         ArrayList<User> arr_u = new ArrayList<>();
         ArrayList<Relationship> arr_rs = new ArrayList<>();
 
-        fsh = new FireStoreHandler();
+        fsh = new FireStoreHandlerTester();
 
         // Population
         arr_me.add(new MoodEvent(new Happy(), new GregorianCalendar(2001,01,01), new User(UN_LUKE), NONE, "Womp-rats", null, null));
@@ -129,7 +144,7 @@ public class FireStoreHandlerTest {
         ArrayList<User> arr_u = new ArrayList<>();
         ArrayList<Relationship> arr_rs = new ArrayList<>();
 
-        fsh = new FireStoreHandler();
+        fsh = new FireStoreHandlerTester();
 
         // Population
         arr_me.add(new MoodEvent(new Happy(), new GregorianCalendar(2001,01,01), new User(UN_MR_NO_ONE_CAN_SEE_ME), NONE, " ", null, null));

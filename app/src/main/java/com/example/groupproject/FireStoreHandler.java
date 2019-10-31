@@ -5,42 +5,54 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class FireStoreHandler {
-    private ArrayList<MoodEvent> cachedMoodEvents;
-    private ArrayList<User> cachedUsers;
-    private ArrayList<Relationship> cachedRelationship;
+    protected ArrayList<MoodEvent> cachedMoodEvents;
+    protected ArrayList<User> cachedUsers;
+    protected ArrayList<Relationship> cachedRelationship;
     public FireStoreHandler()
     {
-
+        cachedMoodEvents = new ArrayList<>();
+        cachedUsers = new ArrayList<>();
+        cachedRelationship = new ArrayList<>();
+        updateAllCachedLists();
     }
 
     // Communicates with Remote
-    private void requestMoodEventListFromRemote()
+    protected void pullMoodEventListFromRemote()
     {
         // TBD
     }
 
-    private void requestUserListFromRemote()
+    protected void pullUserListFromRemote()
     {
         // TBD
     }
 
-    private void requestRelationshipsFromRemotes()
+    protected void pullRelationshipsFromRemotes()
+    {
+        // TBD
+    }
+
+    // Communicates with Remote
+    private void pushMoodEventListToRemote()
+    {
+        // TBD
+    }
+
+    private void pushUserListToRemote()
+    {
+        // TBD
+    }
+
+    private void pushRelationshipsToRemotes()
     {
         // TBD
     }
 
     private void updateAllCachedLists()
     {
-        requestMoodEventListFromRemote();
-        requestUserListFromRemote();
-        requestRelationshipsFromRemotes();
-    }
-
-    public void injectTestData(ArrayList<MoodEvent> arr_me, ArrayList<User> arr_u, ArrayList<Relationship> arr_rs)
-    {
-        this.cachedMoodEvents = arr_me;
-        this.cachedUsers = arr_u;
-        this.cachedRelationship = arr_rs;
+        pullMoodEventListFromRemote();
+        pullUserListFromRemote();
+        pullRelationshipsFromRemotes();
     }
 
     public ArrayList<MoodEvent> getMoodEventsByUsername(String username)
