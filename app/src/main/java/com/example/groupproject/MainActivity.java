@@ -9,12 +9,15 @@ import androidx.fragment.app.FragmentManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static FSHConstructor fshInstance;
+    // Global Accessor
+    public static FSHConstructor FSH_INSTANCE;
+    public static User USER_INSTANCE;
 
     public MainActivity()
     {
         super();
-        fshInstance.getInstance();
+        FSH_INSTANCE.getInstance();
+        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Darth Vader");
     }
 
     @Override

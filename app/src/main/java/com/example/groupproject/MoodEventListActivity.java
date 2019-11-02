@@ -29,7 +29,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import static android.R.layout.simple_spinner_item;
-import static com.example.groupproject.MainActivity.fshInstance;
+import static com.example.groupproject.MainActivity.FSH_INSTANCE;
+import static com.example.groupproject.MainActivity.USER_INSTANCE;
 import static com.example.groupproject.SocialSituation.*;
 
 
@@ -60,6 +61,9 @@ public class MoodEventListActivity extends AppCompatActivity {
         setupPopUpMenu();
         setupSorting();
         setupSearching();
+
+        TextView tv_currentUserName = findViewById(R.id.tv_user_name);
+        tv_currentUserName.setText(USER_INSTANCE.getUserName());
 
         moodEventAdapter.addAll(populateFromRemote());
 
@@ -94,7 +98,8 @@ public class MoodEventListActivity extends AppCompatActivity {
         ed_searchFor.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                LinearLayout ll = findViewById(R.id.ll_header);
+                ll.setVisibility(View.GONE);
             }
 
             @Override
@@ -123,7 +128,8 @@ public class MoodEventListActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                LinearLayout ll = findViewById(R.id.ll_header);
+                ll.setVisibility(View.VISIBLE);
             }
         });
 
@@ -144,29 +150,52 @@ public class MoodEventListActivity extends AppCompatActivity {
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
                 popupWindow.setOutsideTouchable(true);
 
-                LinearLayout ll = popupView.findViewById(R.id.ll_detail_header);
+                LinearLayout ll_header = popupView.findViewById(R.id.ll_detail_header);
                 TextView tv_moodName = popupView.findViewById(R.id.tv_mood_name_details);
                 TextView tv_timeStamp = popupView.findViewById(R.id.tv_time_stamp_details);
                 Spinner s_socialSituation = popupView.findViewById(R.id.s_details_social_situation);
                 EditText et_desc = popupView.findViewById(R.id.tv_desc);
                 ImageView iv_desc = popupView.findViewById(R.id.iv_img_desc);
+                LinearLayout ll_detailedMap = popupView.findViewById(R.id.ll_detailed_map);
                 MapView mv_map = popupView.findViewById(R.id.mv_detail_map_view);
 
                 Button b_apply = popupView.findViewById(R.id.b_apply);
-                Button b_delete = popupView.findViewById(R.id.b_apply);
+                Button b_delete = popupView.findViewById(R.id.b_delete);
                 Button b_uploadImage = popupView.findViewById(R.id.b_upload_img);
 
-                ll.setBackgroundColor(curMoodEvent.getMood().getColor());
+                // Setup Display
+                ll_header.setBackgroundColor(curMoodEvent.getMood().getColor());
                 tv_moodName.setText(curMoodEvent.getMood().getName());
                 tv_timeStamp.setText(String.format("%d-%d-%d",
                         curMoodEvent.getTimeStamp().get(Calendar.DATE),
                         curMoodEvent.getTimeStamp().get(Calendar.MONTH),
                         curMoodEvent.getTimeStamp().get(Calendar.YEAR)));
 
+                if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName()) {
+                    // Disable clicking
+                    s_socialSituation.setEnabled(false);
+                }
+
                 s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, SocialSituation.getNames()));
                 s_socialSituation.setSelection(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
+                System.out.println(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
+
+                if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName())
+                {
+                    // Disable buttons
+                    b_apply.setVisibility(View.GONE);
+                    b_delete.setVisibility(View.GONE);
+                    b_uploadImage.setVisibility(View.GONE);
+                }
+
+                if(curMoodEvent.getLocation() == null)
+                {
+                    // Hide if no cords are provided
+                    ll_detailedMap.setVisibility(View.GONE);
+                }
 
                 et_desc.setText(curMoodEvent.getReasonText());
+
             }
 
         });
@@ -174,16 +203,6 @@ public class MoodEventListActivity extends AppCompatActivity {
 
     private ArrayList<MoodEvent> populateFromRemote()
     {
-
-        return fshInstance.getInstance().fsh.getVisibleMoodEvents("Luke Skywalker");
-
-
-//        ArrayList<MoodEvent> al = new ArrayList<>();
-//        al.add(new MoodEvent(new Happy(), new GregorianCalendar(2019,10,10), new User("Happy Person"), NONE, "Reason 1", null, null));
-//        al.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), new User("Sad Person"), CROWD, "Reason 2", null, null));
-//        al.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), new User("Angry Person"), ALONE, "Reason 3", null, null));
-//        al.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), new User("Anxious Person"), WITH_SEVERAL, "Reason 4", null, null));
-//        al.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), new User("Disgusted Person"), WITH_SOMEONE, "Reason 5", null, null));
-//        return al;
+        return FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
     }
 }
