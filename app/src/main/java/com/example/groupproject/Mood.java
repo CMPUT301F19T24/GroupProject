@@ -3,7 +3,7 @@ package com.example.groupproject;
 import android.graphics.Color;
 import android.media.Image;
 
-public abstract class Mood {
+public abstract class Mood implements Comparable{
     protected String name;
     protected int image; // Use following format: R.drawable.emot_sad, place PNGs in res/drawable
     protected int color; // Use hexadecimal in format :0x<alpha><red><green><blue>
@@ -20,4 +20,10 @@ public abstract class Mood {
     {
         return this.color;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.name.compareTo(((Mood) o).getName());
+    }
+
 }
