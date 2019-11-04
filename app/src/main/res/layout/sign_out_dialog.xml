@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/sign_out_title"
+        android:id="@+id/login_title"
         android:layout_width="327dp"
         android:layout_height="55dp"
         android:gravity="center_horizontal"
@@ -67,8 +67,8 @@
         android:text="Are you sure that you want to sign out?"
         android:textSize="18dp"
         app:fontFamily="@font/roboto"
-        app:layout_constraintEnd_toEndOf="@+id/sign_out_title"
-        app:layout_constraintStart_toStartOf="@+id/sign_out_title"
-        app:layout_constraintTop_toBottomOf="@+id/sign_out_title" />
+        app:layout_constraintEnd_toEndOf="@+id/login_title"
+        app:layout_constraintStart_toStartOf="@+id/login_title"
+        app:layout_constraintTop_toBottomOf="@+id/login_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

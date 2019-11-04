@@ -26,16 +26,6 @@ public class MainActivity extends AppCompatActivity {
         /* For testing from main screen */
 
         setContentView(R.layout.main_screen);
-      
-/* For Testing the Login Screen and Account Creation Dialog */
-//        setContentView(R.layout.login_screen);
-//        TextView createAccount = findViewById(R.id.create_Account);
-//        createAccount.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createNewAccount();
-//            }
-//        });
     }
 
     public void clickAddMoodEvent(View view)
@@ -64,11 +54,5 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         SignOut signOutDialog = new SignOut();
         signOutDialog.show(fragmentManager, "Confirm sign out");
-    }
-  
-    private void createNewAccount() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        CreateAccountDialog createAccountDialog = new CreateAccountDialog();
-        createAccountDialog.show(fragmentManager, "Dialog Pop-up");
     }
 }

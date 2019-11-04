@@ -23,4 +23,12 @@
     <string name="detailTimestamp">DetailedTimeStamp</string>
     <string name="DetailedMoodName">DetailedMoodName</string>
     <string name="socialSituation">N/A</string>
+
+    <string name="login_title">MOOD TRACKER</string>
+    <string name="subtitle">Tell me how you really feel</string>
+    <string name="username_field">username</string>
+    <string name="password_field">password</string>
+    <string name="sign_in_button">sign in</string>
+    <string name="create_Account">Create one</string>
+
 </resources>

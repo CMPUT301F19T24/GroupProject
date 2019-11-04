@@ -8,14 +8,14 @@
     android:background="@drawable/login_background">
 
     <TextView
-        android:id="@+id/sign_out_title"
+        android:id="@+id/login_title"
         android:layout_width="318dp"
         android:layout_height="56dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:text="MOOD TRACKER"
+        android:text="@string/login_title"
         android:textColor="#E7F8FF"
-        android:textSize="38dp"
+        android:textSize="38sp"
         app:fontFamily="@font/quicksand"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -29,21 +29,21 @@
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:text="Tell me how you really feel"
+        android:text="@string/subtitle"
         android:textColor="#E7F8FF"
         android:textSize="18sp"
         app:fontFamily="@font/quicksand"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_out_title" />
+        app:layout_constraintTop_toBottomOf="@+id/login_title" />
 
     <EditText
         android:id="@+id/username_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="username"
+        android:hint="@string/username_field"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="301dp" />
+        app:layout_constraintGuide_percent="0.51185495" />
 
     <Button
         android:id="@+id/sign_in_button"
@@ -75,7 +75,7 @@
         android:layout_height="35dp"
         android:layout_marginTop="3dp"
         android:background="@color/colorPrimary"
-        android:text="Sign In"
+        android:text="@string/sign_in_button"
         android:textColor="#E7F8FF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -88,7 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="Don't have an account?"
-        android:textSize="16dp"
+        android:textSize="16sp"
         app:fontFamily="@font/roboto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/create_Account"
@@ -99,9 +99,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:text="Create one"
+        android:onClick="createNewAccount"
+        android:text="@string/create_Account"
         android:textIsSelectable="false"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:fontFamily="@font/roboto"
         app:layout_constraintBottom_toBottomOf="@+id/no_account"

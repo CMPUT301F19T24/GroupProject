@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/sign_out_title"
+        android:id="@+id/login_title"
         android:layout_width="331dp"
         android:layout_height="83dp"
         android:background="@drawable/account_create"
@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_out_title"
+        app:layout_constraintTop_toBottomOf="@+id/login_title"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText

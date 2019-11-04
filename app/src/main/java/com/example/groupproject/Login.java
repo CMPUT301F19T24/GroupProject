@@ -13,6 +13,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 
@@ -79,4 +80,13 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             }
         }
+
+    public void createNewAccount(View view)
+    {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        CreateAccountDialog createAccountDialog = new CreateAccountDialog();
+        createAccountDialog.show(fragmentManager, "Create Account");
+
+
+    }
 }
