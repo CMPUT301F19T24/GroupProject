@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/sign_out_title"
         android:layout_width="331dp"
         android:layout_height="83dp"
         android:background="@drawable/account_create"
@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/sign_out_title"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
@@ -73,7 +73,7 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/register_button"
+        app:layout_constraintBottom_toTopOf="@+id/register_confirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +81,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/register_button"
+        android:id="@+id/register_confirm"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
