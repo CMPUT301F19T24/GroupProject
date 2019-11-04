@@ -16,10 +16,8 @@ import androidx.fragment.app.DialogFragment;
 
 public class CreateAccountDialog extends DialogFragment {
 
-    String newUsername;
-    String newPassword;
-    boolean validUsername;
-    boolean validPassword;
+    String newUsername, newPassword;
+    boolean validUsername, validPassword, passwordsMatch;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,9 +38,12 @@ public class CreateAccountDialog extends DialogFragment {
             public void onClick(View view) {
                 String username = getUsername();
                 String password = getPassword();
+                String verifyPassword = getConfirmPassword();
 
                 validUsername = checkUsername(username);
                 validPassword = checkPassword(password);
+                passwordsMatch = checkPasswordMatch(password, verifyPassword);
+
 
                 if (!validPassword && !validUsername) {
                     Toast toast = Toast.makeText(getContext(), "Invalid Username and Password", Toast.LENGTH_SHORT);
@@ -53,9 +54,12 @@ public class CreateAccountDialog extends DialogFragment {
                 } else if (!validUsername) {
                     Toast toast = Toast.makeText(getContext(), "Invalid Username", Toast.LENGTH_SHORT);
                     toast.show();
-                } else  {
-                    // Save the username and password as a key-value pair to
-                    getDialog().dismiss();
+                } else if (!passwordsMatch) {
+                    Toast toast = Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                        // Save the username and password as a key-value pair to
+                        getDialog().dismiss();
                 }
             }
         });
@@ -75,6 +79,13 @@ public class CreateAccountDialog extends DialogFragment {
         return password;
     }
 
+    String getConfirmPassword() {
+        View view = getView();
+        EditText editPassword = view.findViewById(R.id.confirm_password);
+        String password = editPassword.getText().toString();
+        return password;
+    }
+
     // Still needs to check if the username is available.
     boolean checkUsername(String username) {
         boolean valid = true;
@@ -87,6 +98,14 @@ public class CreateAccountDialog extends DialogFragment {
     boolean checkPassword(String password) {
         boolean valid = true;
         if (password.isEmpty()){
+            valid = false;
+        }
+        return valid;
+    }
+
+    boolean checkPasswordMatch(String password, String verifyPassword) {
+        boolean valid = true;
+        if (password != verifyPassword) {
             valid = false;
         }
         return valid;
