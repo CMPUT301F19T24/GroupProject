@@ -4,7 +4,8 @@
     android:id="@+id/linearLayout2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#EFF5FF">
+    android:background="#EFF5FF"
+    android:clipToPadding="false">
 
 
     <TextView
@@ -29,7 +30,6 @@
         android:id="@+id/new_username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="61dp"
         android:ems="10"
         android:hint="username"
         android:inputType="textPersonName"
@@ -37,16 +37,17 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_password"
+        app:layout_constraintBottom_toTopOf="@+id/new_password"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/new_password"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="48dp"
+        android:layout_height="wrap_content"
         android:ems="10"
         android:hint="password"
         android:inputType="textPassword"
@@ -54,21 +55,40 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/confirm_password"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.46"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_username" />
+
+    <EditText
+        android:id="@+id/confirm_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:ems="10"
+        android:hint="confirm password"
+        android:inputType="textPassword"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/register_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_password"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/register_button"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="7dp"
-        android:layout_marginLeft="7dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginRight="7dp"
-        android:layout_marginBottom="5dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/colorPrimary"
         android:text="Register"
         android:textAllCaps="true"
@@ -76,9 +96,7 @@
         android:textColor="#E7F8FF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/new_password"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="@+id/new_password"
-        app:layout_constraintTop_toBottomOf="@+id/new_password"
-        app:layout_constraintVertical_bias="0.45" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/new_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

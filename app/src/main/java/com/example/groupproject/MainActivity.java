@@ -3,6 +3,7 @@ package com.example.groupproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -25,17 +26,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         /* For testing from main screen */
 
-        setContentView(R.layout.main_screen);
+        //setContentView(R.layout.main_screen);
       
 /* For Testing the Login Screen and Account Creation Dialog */
-//        setContentView(R.layout.login_screen);
-//        TextView createAccount = findViewById(R.id.create_Account);
-//        createAccount.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                createNewAccount();
-//            }
-//        });
+        setContentView(R.layout.login_screen);
+        TextView createAccount = findViewById(R.id.create_Account);
+        createAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createNewAccount();
+            }
+        });
     }
 
     public void clickAddMoodEvent(View view)
