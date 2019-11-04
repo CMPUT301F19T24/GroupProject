@@ -42,7 +42,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
         moodEventDataList = new ArrayList<>();
         moodEventAdapter = new ListMoodEventsAdapter(this, moodEventDataList, SortingMethod.DATE);
         moodEventList.setAdapter(moodEventAdapter);
-
         moodEventList.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
