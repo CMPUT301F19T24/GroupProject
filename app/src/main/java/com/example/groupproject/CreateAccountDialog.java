@@ -44,22 +44,9 @@ public class CreateAccountDialog extends DialogFragment {
                 validPassword = checkPassword(password);
                 passwordsMatch = checkPasswordMatch(password, verifyPassword);
 
-
-                if (!validPassword && !validUsername) {
-                    Toast toast = Toast.makeText(getContext(), "Invalid Username and Password", Toast.LENGTH_SHORT);
-                    toast.show();
-                } else if (!validPassword) {
-                    Toast toast = Toast.makeText(getContext(), "Invalid Password", Toast.LENGTH_SHORT);
-                    toast.show();
-                } else if (!validUsername) {
-                    Toast toast = Toast.makeText(getContext(), "Invalid Username", Toast.LENGTH_SHORT);
-                    toast.show();
-                } else if (!passwordsMatch) {
-                    Toast toast = Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT);
-                    toast.show();
-                } else {
-                        // Save the username and password as a key-value pair to
-                        getDialog().dismiss();
+                if (validUsername && validPassword && passwordsMatch) {
+                    // Save the username and password as a key-value pair to
+                    getDialog().dismiss();
                 }
             }
         });
@@ -90,6 +77,8 @@ public class CreateAccountDialog extends DialogFragment {
     boolean checkUsername(String username) {
         boolean valid = true;
         if (username.isEmpty()){
+            Toast toast = Toast.makeText(getContext(), "Invalid Username", Toast.LENGTH_SHORT);
+            toast.show();
             valid = false;
         }
         return valid;
@@ -98,6 +87,8 @@ public class CreateAccountDialog extends DialogFragment {
     boolean checkPassword(String password) {
         boolean valid = true;
         if (password.isEmpty()){
+            Toast toast = Toast.makeText(getContext(), "Invalid Password", Toast.LENGTH_SHORT);
+            toast.show();
             valid = false;
         }
         return valid;
@@ -105,7 +96,9 @@ public class CreateAccountDialog extends DialogFragment {
 
     boolean checkPasswordMatch(String password, String verifyPassword) {
         boolean valid = true;
-        if (password != verifyPassword) {
+        if (!password.equals(verifyPassword)) {
+            Toast toast = Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT);
+            toast.show();
             valid = false;
         }
         return valid;
