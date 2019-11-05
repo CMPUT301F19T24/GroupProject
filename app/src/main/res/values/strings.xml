@@ -24,11 +24,18 @@
     <string name="DetailedMoodName">DetailedMoodName</string>
     <string name="socialSituation">N/A</string>
 
-    <string name="login_title">MOOD TRACKER</string>
-    <string name="subtitle">Tell me how you really feel</string>
-    <string name="username_field">username</string>
-    <string name="password_field">password</string>
-    <string name="sign_in_button">sign in</string>
-    <string name="create_Account">Create one</string>
+    <string name="app_title">   MOOD TRACKER</string>
+    <string name="subtitle">    Tell me how you really feel</string>
+    <string name="username_field_hint"> Username</string>
+    <string name="password_field_hint"> Password</string>
+    <string name="sign_in_btn"> SIGN IN</string>
+    <string name="no_account_lbl">Don\'t have an account</string>
+    <string name="create_new_account_btn">Create one</string>
+
+    <!--    layout: v_user_list_layout.xml-->
+    <string name="placeholder_follower">John Wick</string>
+    <!--    layout: v_user_requests-->
+    <string name="follow_requests_lbl">Follow Requests</string>
+    <string name="current_followers_lbl">Current Followers</string>
 
 </resources>
