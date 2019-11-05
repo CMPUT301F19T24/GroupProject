@@ -3,7 +3,11 @@ package com.example.groupproject;
 import android.location.Location;
 import android.media.Image;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+
+import static com.example.groupproject.SortingMethod.*;
 
 public class MoodEvent implements Comparable {
     private Mood mood;
@@ -16,14 +20,15 @@ public class MoodEvent implements Comparable {
 
               MoodEvent(Mood currentMood,
               Calendar timeStamp,
+              User owner,
               SocialSituation socialSituation,
               String reasonText,
               Image reasonImage,
-              Location location,
-              Integer moodId)
+              Location location)
     {
         this.mood = currentMood;
         this.timeStamp = timeStamp;
+        this.owner = owner;
         this.socialSituation = socialSituation; // Optional
         this.reasonText = reasonText; // Optional
         this.reasonImage = reasonImage; // Optional
@@ -102,8 +107,49 @@ public class MoodEvent implements Comparable {
 
 
     @Override
-    public int compareTo(Object o) {
-        return this.timeStamp.compareTo(((MoodEvent) o).getTimeStamp());
+    public int compareTo(Object o) { // By default, sort by date
+        return compareTo(o, DATE);
+    }
 
+    public int compareTo(Object o, SortingMethod sm)
+    {
+        switch(sm)
+        {
+            case NAME:
+                return this.mood.compareTo(((MoodEvent) o).getMood());
+            case DATE:
+                return this.timeStamp.compareTo(((MoodEvent) o).getTimeStamp());
+            case OWNER:
+                return this.owner.getUserName().compareTo(((MoodEvent) o).getOwner().getUserName());
+            default:
+                throw new IllegalStateException("Unexpected value: " + sm);
+        }
+    }
+
+    public boolean contains(String query)
+    {
+        String[] parsedQuery = query.split(" ");
+
+        Boolean rc = false;
+        ArrayList<String> checkList = new ArrayList<>();
+        checkList.add(mood.getName());
+        checkList.add(String.valueOf(timeStamp.get(Calendar.YEAR)));
+        checkList.add(String.valueOf(timeStamp.get(Calendar.MONTH)));
+        checkList.add(String.valueOf(timeStamp.get(Calendar.DATE)));
+        checkList.add(owner.getUserName());
+
+        for(String i : parsedQuery)
+        {
+            for(String j : checkList)
+            {
+                if(j.toLowerCase().contains(i.toLowerCase()))
+                {
+                    rc = true;
+                    break;
+                }
+            }
+        }
+
+        return rc;
     }
 }

@@ -22,11 +22,13 @@ import java.util.Comparator;
 public class ListMoodEventsAdapter extends ArrayAdapter {
     private Context context;
     private ArrayList<MoodEvent> moodEventArrayList;
+    SortingMethod sm;
 
-    public ListMoodEventsAdapter(@NonNull Context context, ArrayList<MoodEvent> moodEventArrayList) {
+    public ListMoodEventsAdapter(@NonNull Context context, ArrayList<MoodEvent> moodEventArrayList, SortingMethod defaultSM) {
         super(context, 0, moodEventArrayList);
         this.context = context;
         this.moodEventArrayList = moodEventArrayList;
+        this.sm = defaultSM;
     }
 
     @NonNull
@@ -40,21 +42,27 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
 
         Mood curMood = curMoodEvent.getMood();
         Calendar curTimeStamp = curMoodEvent.getTimeStamp();
+        User curOwner = curMoodEvent.getOwner();
+
         LinearLayout linearLayout = listItem.findViewById(R.id.ll_list_mood_events);
 
         TextView tvMoodName = listItem.findViewById(R.id.e_tv_mood_name);
         TextView tvTimeStamp = listItem.findViewById(R.id.e_tv_timestamp);
+        TextView tvUsername = listItem.findViewById(R.id.e_tv_username);
+
         ImageView emoticon = listItem.findViewById(R.id.e_img_emoticon);
 
         String moodNameStr = curMood.getName();
         String curTimeStampStr = String.format("%d-%d-%d", curTimeStamp.get(Calendar.DATE), curTimeStamp.get(Calendar.MONTH), curTimeStamp.get(Calendar.YEAR));
+        String usernameStr = curOwner.getUserName();
 
         try
         {
             tvMoodName.setText(moodNameStr);
             tvTimeStamp.setText(curTimeStampStr);
-            linearLayout.setBackgroundColor(curMood.getColor());
+            tvUsername.setText(usernameStr);
 
+            linearLayout.setBackgroundColor(curMood.getColor());
             emoticon.setImageResource(curMood.getImage());
 
         } catch (Exception e) {
@@ -63,22 +71,20 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
 
         this.notifyDataSetChanged();
 
-
-
         return listItem;
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-        this.setNotifyOnChange(false);
+    public void setSortingMethod(final SortingMethod sm)
+    {
+        this.sm = sm;
 
         this.sort(new Comparator<MoodEvent>() {
             @Override
             public int compare(MoodEvent a, MoodEvent b) {
-                return a.compareTo(b);
+                return a.compareTo(b, sm);
             }
         });
 
-        this.setNotifyOnChange(true);
+        this.notifyDataSetChanged();
     }
 }
