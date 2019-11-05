@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickFollowing(View view)
     {
-
+        Intent intent = new Intent(this, com.example.groupproject.relations.class);
+        startActivity(intent);
     }
 
     public void clickMyFollowers(View view)
