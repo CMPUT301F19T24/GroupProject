@@ -19,15 +19,17 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.MapView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class AddMoodEventActivity extends AppCompatActivity {
 
-    ListView moodEventList;
-    ListMoodEventsAdapter moodEventAdapter;
-    ArrayList<MoodEvent> moodEventDataList;
+    ListView chooseMoodList;
+    ChooseMoodAdapter moodEventAdapter;
+    ArrayList<ChooseMoodEvent> moodEventDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +40,35 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     private void initalize()
     {
-        moodEventList = findViewById(R.id.moodEventList);
+        chooseMoodList = findViewById(R.id.chooseMoodList);
         moodEventDataList = new ArrayList<>();
-        moodEventAdapter = new ListMoodEventsAdapter(this, moodEventDataList, SortingMethod.DATE);
-        moodEventList.setAdapter(moodEventAdapter);
+        moodEventAdapter = new ChooseMoodAdapter(this, moodEventDataList);
+        chooseMoodList.setAdapter(moodEventAdapter);
 
-        moodEventList.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        chooseMoodList.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 View popupView = inflater.inflate(R.layout.info_about_mood, null);
                 final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
-                MoodEvent curMoodEvent = (MoodEvent) moodEventList.getItemAtPosition(i);
+                ChooseMoodEvent curMoodEvent = (ChooseMoodEvent) chooseMoodList.getItemAtPosition(i);
 
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
                 popupWindow.setOutsideTouchable(true);
+
+                Button b_submit = popupView.findViewById(R.id.b_submit);
+
+                EditText autoTime = popupView.findViewById(R.id.autoTime);
+                SimpleDateFormat timeF = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                String time = timeF.format(Calendar.getInstance().getTime());
+
+                SimpleDateFormat dateF = new SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault());
+                String date = dateF.format(Calendar.getInstance().getTime());
+
+
+                autoTime.setText(time + " " + date);
+
 //
 //                LinearLayout ll = popupView.findViewById(R.id.ll_detail_header);
 //                TextView tv_moodName = popupView.findViewById(R.id.tv_mood_name_details);
@@ -81,11 +96,11 @@ public class AddMoodEventActivity extends AppCompatActivity {
         });
 
         if (true) {
-//            moodEventDataList.add(new MoodEvent(new Happy(), new GregorianCalendar(1, 2, 3), SocialSituation.NONE, "ABC", null, null, 0));
-//            moodEventDataList.add(new MoodEvent(new Sad(), new GregorianCalendar(2017,06,03), SocialSituation.NONE, "ABC", null, null, 0));
-//            moodEventDataList.add(new MoodEvent(new Angry(), new GregorianCalendar(2017,06,04), SocialSituation.NONE, "ABC", null, null, 0));
-//            moodEventDataList.add(new MoodEvent(new Anxious(), new GregorianCalendar(2019,11,10), SocialSituation.NONE, "ABC", null, null, 0));
-//            moodEventDataList.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2015,01,02), SocialSituation.NONE, "ABC", null, null, 0));
+            moodEventDataList.add(new ChooseMoodEvent(new Happy()));
+            moodEventDataList.add(new ChooseMoodEvent(new Sad()));
+            moodEventDataList.add(new ChooseMoodEvent(new Angry()));
+            moodEventDataList.add(new ChooseMoodEvent(new Anxious()));
+            moodEventDataList.add(new ChooseMoodEvent(new Disgusted()));
         }
 
     }
