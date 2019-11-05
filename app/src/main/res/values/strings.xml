@@ -35,7 +35,7 @@
     <string name="create_new_account_btn">Create one</string>
 
     <!--    layout: v_user_list_layout.xml-->
-    <string name="placeholder_follower">John Wick</string>
+    <string name="placeholder_follower">Luke Skywalker</string>
     <!--    layout: v_user_requests-->
     <string name="follow_requests_lbl">Follow Requests</string>
     <string name="current_followers_lbl">Current Followers</string>
