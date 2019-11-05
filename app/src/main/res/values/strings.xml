@@ -24,6 +24,8 @@
     <string name="DetailedMoodName">DetailedMoodName</string>
     <string name="socialSituation">N/A</string>
 
+<!--    Adding all hardcoded string values here.-->
+<!--    layout: login_screen.xml-->
     <string name="app_title">   MOOD TRACKER</string>
     <string name="subtitle">    Tell me how you really feel</string>
     <string name="username_field_hint"> Username</string>
@@ -37,5 +39,4 @@
     <!--    layout: v_user_requests-->
     <string name="follow_requests_lbl">Follow Requests</string>
     <string name="current_followers_lbl">Current Followers</string>
-
 </resources>
