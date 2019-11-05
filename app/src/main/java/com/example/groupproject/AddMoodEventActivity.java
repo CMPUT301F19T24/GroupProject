@@ -19,9 +19,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.MapView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class AddMoodEventActivity extends AppCompatActivity {
 
@@ -54,6 +56,19 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
                 popupWindow.setOutsideTouchable(true);
+
+                Button b_submit = popupView.findViewById(R.id.b_submit);
+
+                EditText autoTime = popupView.findViewById(R.id.autoTime);
+                SimpleDateFormat timeF = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                String time = timeF.format(Calendar.getInstance().getTime());
+
+                SimpleDateFormat dateF = new SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault());
+                String date = dateF.format(Calendar.getInstance().getTime());
+
+
+                autoTime.setText(time + " " + date);
+
 //
 //                LinearLayout ll = popupView.findViewById(R.id.ll_detail_header);
 //                TextView tv_moodName = popupView.findViewById(R.id.tv_mood_name_details);
