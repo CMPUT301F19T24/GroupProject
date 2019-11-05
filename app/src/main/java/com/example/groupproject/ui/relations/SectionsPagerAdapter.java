@@ -37,6 +37,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 //            case 2:
 //                RequestsFragment.newInstance();
 //        }
+//        switch  (position){
+//            case 0:
+//                FollowingFragment.newInstance();
+//        }
         return PlaceholderFragment.newInstance(position + 1);
     }
 
