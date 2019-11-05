@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/person_name"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:background="@color/colorLight"
+        android:gravity="left|center_vertical"
+        android:text="@string/placeholder_follower"
+        android:textAlignment="gravity"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/arrow_lbl"
+        android:layout_width="18dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right|center_vertical"
+        android:layout_weight="1"
+        android:background="@color/colorLight"
+        android:text=">"
+        android:textAlignment="gravity"
+        android:textColor="@color/colorPrimaryDark" />
+
+</LinearLayout>
