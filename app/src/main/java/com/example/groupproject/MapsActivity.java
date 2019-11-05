@@ -133,9 +133,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return myLocation[0];
     }
-
-
-
-
-
 }

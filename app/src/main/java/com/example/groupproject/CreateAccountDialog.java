@@ -23,7 +23,7 @@ public class CreateAccountDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        System.out.println("CreateAccountDialog");
         final View view = inflater.inflate(R.layout.create_account_dialog, container);
         getDialog().requestWindowFeature(STYLE_NORMAL);
         return view;
