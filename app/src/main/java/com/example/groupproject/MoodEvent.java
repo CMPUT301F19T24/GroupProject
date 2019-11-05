@@ -4,6 +4,13 @@ import android.location.Location;
 import android.media.Image;
 
 import java.util.ArrayList;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.Arrays;
 import java.util.Calendar;
 
@@ -17,6 +24,8 @@ public class MoodEvent implements Comparable {
     private Image reasonImage;
     private Location location;
     private User owner;
+
+    private FusedLocationProviderClient fusedLocationClient;
 
               MoodEvent(Mood currentMood,
               Calendar timeStamp,
@@ -62,6 +71,25 @@ public class MoodEvent implements Comparable {
 
     public Location getLocation()
     {
+
+
+//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+//        fusedLocationClient.getLastLocation()
+//                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+//                    @Override
+//                    public void onSuccess(Location location) {
+//                        // Got last known location. In some rare situations this can be null.
+//                        if (location != null) {
+////                            System.out.println("LOCATION");
+////                            // Logic to handle location object
+//                            LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+////                            return location;
+//////                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,10.0f));
+//////                            mMap.addMarker(new MarkerOptions().position(myLatLng).title("My Current Position"));
+//////                            location.getAltitude()
+//                        }
+//                    }
+//                });
         return this.location;
     }
 

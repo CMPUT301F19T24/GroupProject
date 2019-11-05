@@ -33,6 +33,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_current_mood);
+        System.out.println("AddMoodEventActivity");
         initalize();
     }
 
@@ -42,7 +43,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
         moodEventDataList = new ArrayList<>();
         moodEventAdapter = new ListMoodEventsAdapter(this, moodEventDataList, SortingMethod.DATE);
         moodEventList.setAdapter(moodEventAdapter);
-
         moodEventList.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override

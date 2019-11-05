@@ -47,6 +47,7 @@ public class MoodEventListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("MoodEventListActivity");
         setContentView(R.layout.v_list_mood_events);
         initialize();
     }
