@@ -13,7 +13,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
+/*
+Some general information:
+        1. Firebase min password length is 6 characters
+        2. Format for username: [username]@cmput301-c6741.web.app ----> "@cmput301-c6741.web.app" needs to be appended
+        3.
+*/
 public class CreateAccountDialog extends DialogFragment {
 
     String newUsername;
