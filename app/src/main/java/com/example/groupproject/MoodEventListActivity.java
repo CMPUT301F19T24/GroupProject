@@ -144,9 +144,9 @@ public class MoodEventListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 // Initialize Accessors
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                View popupView = inflater.inflate(R.layout.v_list_mood_events_details, null);
+                final View popupView = inflater.inflate(R.layout.v_list_mood_events_details, null);
                 final PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
-                MoodEvent curMoodEvent = (MoodEvent) moodEventList.getItemAtPosition(i);
+                final MoodEvent curMoodEvent = (MoodEvent) moodEventList.getItemAtPosition(i);
 
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
                 popupWindow.setOutsideTouchable(true);
@@ -154,11 +154,11 @@ public class MoodEventListActivity extends AppCompatActivity {
                 LinearLayout ll_header = popupView.findViewById(R.id.ll_detail_header);
                 TextView tv_moodName = popupView.findViewById(R.id.tv_mood_name_details);
                 TextView tv_timeStamp = popupView.findViewById(R.id.tv_time_stamp_details);
-                Spinner s_socialSituation = popupView.findViewById(R.id.s_details_social_situation);
-                EditText et_desc = popupView.findViewById(R.id.tv_desc);
+                final Spinner s_socialSituation = popupView.findViewById(R.id.s_details_social_situation);
+                final EditText et_desc = popupView.findViewById(R.id.tv_desc);
                 ImageView iv_desc = popupView.findViewById(R.id.iv_img_desc);
-                LinearLayout ll_detailedMap = popupView.findViewById(R.id.ll_detailed_map);
-                MapView mv_map = popupView.findViewById(R.id.mv_detail_map_view);
+//                LinearLayout ll_detailedMap = popupView.findViewById(R.id.ll_detailed_map);
+//                MapView mv_map = popupView.findViewById(R.id.mv_detail_map_view);
 
                 Button b_apply = popupView.findViewById(R.id.b_apply);
                 Button b_delete = popupView.findViewById(R.id.b_delete);
@@ -192,10 +192,38 @@ public class MoodEventListActivity extends AppCompatActivity {
                 if(curMoodEvent.getLocation() == null)
                 {
                     // Hide if no cords are provided
-                    ll_detailedMap.setVisibility(View.GONE);
+//                    ll_detailedMap.setVisibility(View.GONE);
                 }
 
                 et_desc.setText(curMoodEvent.getReasonText());
+
+                b_apply.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        curMoodEvent.setReasonText(et_desc.getText().toString());
+
+                        // TODO
+//                        curMoodEvent.setReasonImage();
+//                        curMoodEvent.setLocation();
+                        curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
+
+                        FSH_INSTANCE.getInstance().fsh.editMoodEvent(curMoodEvent);
+                        popupWindow.dismiss();
+                        moodEventAdapter.notifyDataSetChanged();
+
+                    }
+                });
+
+                b_delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        moodEventAdapter.remove(curMoodEvent);
+                        FSH_INSTANCE.getInstance().fsh.deleteMoodEvent(curMoodEvent);
+                        moodEventAdapter.notifyDataSetChanged();
+                        popupWindow.dismiss();
+
+                    }
+                });
 
             }
 
@@ -206,4 +234,5 @@ public class MoodEventListActivity extends AppCompatActivity {
     {
         return FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
     }
+
 }
