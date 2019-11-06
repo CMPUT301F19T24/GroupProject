@@ -132,25 +132,25 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_detailed_map"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:orientation="vertical">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/ll_detailed_map"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="0.5"-->
+<!--            android:orientation="vertical">-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:gravity="center"
-                android:text="Map:" />
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="5dp"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Map:" />-->
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mv_detail_map_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+<!--            <com.google.android.gms.maps.MapView-->
+<!--                android:id="@+id/mv_detail_map_view"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+<!--        </LinearLayout>-->
 
         <LinearLayout
             android:layout_width="match_parent"

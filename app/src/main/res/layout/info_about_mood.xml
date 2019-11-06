@@ -37,19 +37,20 @@
             android:orientation="vertical">
 
             <EditText
+                android:id="@+id/autoTime"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:hint="Time and Date" />
+                android:gravity="left"
+                android:inputType="textAutoComplete" />
 
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:hint="Reason for mood" />
 
             <EditText
@@ -58,9 +59,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:hint="Social Situation"/>
 
+
+            <ToggleButton
+                android:id="@+id/toggleButton2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textOff="Location Off"
+                android:textOn="Location On"/>
+            
         </LinearLayout>
 
 
