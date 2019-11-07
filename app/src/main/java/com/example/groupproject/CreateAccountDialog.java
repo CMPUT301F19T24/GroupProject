@@ -123,9 +123,10 @@ public class CreateAccountDialog extends DialogFragment {
      */
     private boolean checkUsername(String username) {
         boolean valid = true;
+        EditText editUsername = getView().findViewById(R.id.new_username);
+
         if (username.isEmpty()){
-            Toast toast = Toast.makeText(getContext(), "Invalid Username", Toast.LENGTH_SHORT);
-            toast.show();
+            editUsername.setError("Username cannot be empty");
             valid = false;
         }
         return valid;
@@ -142,9 +143,9 @@ public class CreateAccountDialog extends DialogFragment {
      */
     private boolean checkPassword(String password) {
         boolean valid = true;
-        if (password.isEmpty()){
-            Toast toast = Toast.makeText(getContext(), "Invalid Password", Toast.LENGTH_SHORT);
-            toast.show();
+        EditText editPassword = getView().findViewById(R.id.new_password);
+        if (password.length() < 6){
+            editPassword.setError("Password must be at least 6 characters");
             valid = false;
         }
         return valid;
@@ -159,9 +160,9 @@ public class CreateAccountDialog extends DialogFragment {
      */
     private boolean checkPasswordMatch(String password, String verifyPassword) {
         boolean valid = true;
+        EditText editPassword = getView().findViewById(R.id.confirm_password);
         if (!password.equals(verifyPassword)) {
-            Toast toast = Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT);
-            toast.show();
+            editPassword.setError("Passwords must match");
             valid = false;
         }
         return valid;
