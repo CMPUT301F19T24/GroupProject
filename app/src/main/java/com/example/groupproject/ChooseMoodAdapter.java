@@ -32,12 +32,18 @@ public class ChooseMoodAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        /**
+         * Construct the elements
+         *
+         * @param - See base method for details
+         * @return - See base method for details
+         */
         View listItem = convertView;
         if(listItem == null)
             listItem = LayoutInflater.from(this.context).inflate(R.layout.e_list_mood_events,parent,false);
 
         ChooseMoodEvent curMoodEvent = this.moodEventArrayList.get(position);
-
+        // Initialize the fields
         Mood curMood = curMoodEvent.getMood();
 
         LinearLayout linearLayout = listItem.findViewById(R.id.ll_list_mood_events);
@@ -47,6 +53,7 @@ public class ChooseMoodAdapter extends ArrayAdapter {
 
         String moodNameStr = curMood.getName();
 
+        // Populate the fields
         try
         {
             tvMoodName.setText(moodNameStr);
