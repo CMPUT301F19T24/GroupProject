@@ -73,6 +73,9 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     private void initalize()
     {
+        /**
+         * Initializes the private variables of this class & View elements
+         */
         chooseMoodList = findViewById(R.id.chooseMoodList);
         moodEventDataList = new ArrayList<>();
 

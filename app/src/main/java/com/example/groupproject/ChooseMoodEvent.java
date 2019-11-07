@@ -41,6 +41,16 @@ public class ChooseMoodEvent implements Comparable {
 
     public boolean contains(String query)
     {
+        /**
+         * Determines whether or not the choosemoodevent contains the query in anyway, shape or form.
+         *
+         * Checks the following:
+         * - MoodName
+         * - Timestamp
+         * - Owner name
+         *
+         * @param query - String to search by
+         */
         String[] parsedQuery = query.split(" ");
 
         Boolean rc = false;
