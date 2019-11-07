@@ -22,7 +22,7 @@ public class MoodEvent implements Comparable {
     private SocialSituation socialSituation;
     private String reasonText;
     private Image reasonImage;
-    private Location location;
+//    private Location location;
     private LatLng latlng;
     private User owner;
 
@@ -33,7 +33,10 @@ public class MoodEvent implements Comparable {
               SocialSituation socialSituation,
               String reasonText,
               Image reasonImage,
-              Location location)
+//              Location location
+              LatLng latlng
+              )
+
     {
         this.mood = currentMood;
         this.timeStamp = timeStamp;
@@ -41,7 +44,8 @@ public class MoodEvent implements Comparable {
         this.socialSituation = socialSituation; // Optional
         this.reasonText = reasonText; // Optional
         this.reasonImage = reasonImage; // Optional
-        this.setLocation(location); // Optional
+//        this.setLocation(location); // Optional
+        this.setLatLng(latlng);
 
     }
 
@@ -74,10 +78,10 @@ public class MoodEvent implements Comparable {
         return this.reasonImage;
     }
 
-    public Location getLocation()
-    {
-        return this.location;
-    }
+//    public Location getLocation()
+//    {
+//        return this.location;
+//    }
 
     public LatLng getLatLng() {return this.latlng;}
 
@@ -111,16 +115,16 @@ public class MoodEvent implements Comparable {
         this.reasonImage = reasonImage;
     }
 
-    public void setLocation(Location location)
-    {
-        if(location != null) {
-            this.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-        }
-        this.location = location;
-    }
+//    public void setLocation(Location location)
+//    {
+//        if(location != null) {
+//            this.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+//        }
+//        this.location = location;
+//    }
 
-    public boolean hasLocation(){
-        return this.location != null;
+    public boolean hasLatLng(){
+        return this.latlng != null;
     }
 
     public void setLatLng(LatLng latlng){

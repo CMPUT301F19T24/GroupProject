@@ -6,6 +6,7 @@ import android.media.Image;
 public abstract class Mood implements Comparable{
     protected String name;
     protected int image; // Use following format: R.drawable.emot_sad, place PNGs in res/drawable
+    protected int image_small;
     protected int color; // Use hexadecimal in format :0x<alpha><red><green><blue>
 
     public String getName()
@@ -20,6 +21,7 @@ public abstract class Mood implements Comparable{
     {
         return this.color;
     }
+    public int getImageSmall() { return this.image_small;}
 
     @Override
     public int compareTo(Object o) {

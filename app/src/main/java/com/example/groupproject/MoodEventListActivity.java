@@ -189,7 +189,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                     b_uploadImage.setVisibility(View.GONE);
                 }
 
-                if(curMoodEvent.getLocation() == null)
+                if(curMoodEvent.getLatLng() == null)
                 {
                     // Hide if no cords are provided
 //                    ll_detailedMap.setVisibility(View.GONE);
