@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GroupProject</string>
+    <string name="app_name">Moody</string>
     <string name="add_mood">
         <font size="20"> "ADD MOOD EVENT"</font>
         <font size="13">\n"Add a new mood event to your history</font>
@@ -24,9 +24,9 @@
     <string name="DetailedMoodName">DetailedMoodName</string>
     <string name="socialSituation">N/A</string>
 
-    <!--    Adding all hardcoded string values here.-->
-    <!--    layout: login_screen.xml-->
-    <string name="app_title">   MOOD TRACKER</string>
+<!--    Adding all hardcoded string values here.-->
+<!--    layout: login_screen.xml-->
+    <string name="app_title">   MOODY</string>
     <string name="subtitle">    Tell me how you really feel</string>
     <string name="username_field_hint"> Username</string>
     <string name="password_field_hint"> Password</string>
