@@ -3,11 +3,11 @@ package com.example.groupproject;
 import java.util.Arrays;
 
 enum RelationshipStatus {
-    INVISIBLE("Invisible"),
-    PENDING_VISIBLE("Pending response to enable viewing"),
-    VISIBLE("Visible"),
-    PENDING_FOLLOWING("Pending response to enable following"),
-    FOLLOWING("Following");
+    INVISIBLE("Invisible"),                                     //Not Visible
+    PENDING_VISIBLE("Pending response to enable viewing"),      //Not Visible
+    VISIBLE("Visible"),                                         //Visible
+    PENDING_FOLLOWING("Pending response to enable following"),  //Visible
+    FOLLOWING("Following");                                     //Visible
 
     private String str;
 

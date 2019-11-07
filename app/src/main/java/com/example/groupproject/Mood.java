@@ -1,8 +1,5 @@
 package com.example.groupproject;
 
-import android.graphics.Color;
-import android.media.Image;
-
 public abstract class Mood implements Comparable{
     protected String name;
     protected int image; // Use following format: R.drawable.emot_sad, place PNGs in res/drawable
