@@ -1,5 +1,7 @@
 package com.example.groupproject;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 
 class FSHConstructor
@@ -14,7 +16,7 @@ class FSHConstructor
     private FSHConstructor()
     {
     fsh = new FireStoreHandler();
-}
+    }
 
     // static method to create instance of Singleton class
     public static FSHConstructor getInstance()
