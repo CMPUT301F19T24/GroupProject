@@ -18,69 +18,106 @@ import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
 
 public class Login extends AppCompatActivity {
-        String username, password;
+    String username, password;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.login_screen);
-            initialize();
+    /**
+     * Changes the view to login_screen.xml
+     *
+     * @author riona
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.login_screen);
+        initialize();
         }
 
-        private void initialize() {
-            Button signIn = findViewById(R.id.sign_in_button);
+    /**
+     * Sets up listener to tell when the user hits the sign in button
+     * Then checks whether the username and password are valid and in the database.
+     *
+     * @author riona
+     */
+    private void initialize() {
+        Button signIn = findViewById(R.id.sign_in_button);
 
-            signIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    username = getUsername();
-                    password = getPassword();
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                username = getUsername();
+                password = getPassword();
 
-                    validUsernameAndPassword(username, password);
+                validUsernameAndPassword(username, password);
 
-                }
-            });
-        }
+            }
+        });
+    }
 
-        public String getUsername() {
+    /**
+     * Gets the username that the user entered
+     *
+     * @author riona
+     * @return username as a String
+     */
+    public String getUsername() {
                 EditText editUsername = findViewById(R.id.username_field);
                 String userName = editUsername.getText().toString();
 
                 return userName;
         }
 
-        public String getPassword() {
+    /**
+     * Gets the password the user entered
+     *
+     * @author riona
+     * @return password as a String
+     */
+    public String getPassword() {
             EditText editPassword = findViewById(R.id.password_field);
             String passWord = editPassword.getText().toString();
             return passWord;
         }
 
-        public void validUsernameAndPassword(String username, String password) {
+    /**
+     * Checks whether the username and password entered are valid
+     * Conditions for valid username:
+     *      - Not empty string
+     *      - Username is in database
+     * Conditions for valid password:
+     *      - password is at least 6 characters
+     *
+     * @author riona
+     * @param username
+     * @param password
+     */
+    public void validUsernameAndPassword(String username, String password) {
             boolean validUsername = true;
             boolean validPassword = true;
+            EditText editUsername = findViewById(R.id.username_field);
+            EditText editPassword = findViewById(R.id.password_field);
 
             if (username.isEmpty()) {
                 validUsername = false;
+                editUsername.setError("Invalid username");
             }
             // TODO: Conditional to check if the username is in the data base AND check usernames with their respective passwords
-            if (password.isEmpty()) {
+            if (password.length() < 6) {
                 validPassword = false;
+                editPassword.setError("Invalid password");
             }
-            if (!validUsername && !validPassword) {
-                Toast toast = Toast.makeText(this, "Invalid username and password", Toast.LENGTH_SHORT);
-                toast.show();
-            } else if (!validUsername) {
-                Toast toast = Toast.makeText(this, "Invalid username", Toast.LENGTH_SHORT);
-                toast.show();
-            } else if (!validPassword) {
-                Toast toast = Toast.makeText(this, "No password entered", Toast.LENGTH_SHORT);
-                toast.show();
-            } else {
+            if (validPassword && validUsername) {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
             }
         }
 
+    /**
+     * Opens dialog fragment for creating a new account
+     *
+     * @author riona
+     * @param view
+     */
     public void createNewAccount(View view)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
