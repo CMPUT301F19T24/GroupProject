@@ -18,10 +18,21 @@ Some general information:
         2. Format for username: [username]@cmput301-c6741.web.app ----> "@cmput301-c6741.web.app" needs to be appended
         3.
 */
+
 public class CreateAccountDialog extends DialogFragment {
 
     boolean validUsername, validPassword, passwordsMatch;
 
+    /**
+     * Function that is called when the CreateAccount dialog is created.
+     * Creates the view on to be displayed on the phone/emulator.
+     *
+     * @author riona
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         System.out.println("CreateAccountDialog");
@@ -30,7 +41,14 @@ public class CreateAccountDialog extends DialogFragment {
         return view;
     }
 
-
+    /**
+     * This function automatically runs once the view is created
+     * Sets up functionality for the "REGISTER" button on the account creation dialog.
+     *
+     * @author riona
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -55,6 +73,12 @@ public class CreateAccountDialog extends DialogFragment {
         });
     }
 
+    /**
+     * Gets the username that the user entered.
+     *
+     * @author riona
+     * @return username as a string
+     */
     private String getUsername() {
         View view = getView();
         EditText editUsername = view.findViewById(R.id.new_username);
@@ -62,6 +86,12 @@ public class CreateAccountDialog extends DialogFragment {
         return username;
     }
 
+    /**
+     * Gets the password that the user entered.
+     *
+     * @author riona
+     * @return password as a string
+     */
     private String getPassword() {
         View view = getView();
         EditText editPassword = view.findViewById(R.id.new_password);
@@ -69,6 +99,12 @@ public class CreateAccountDialog extends DialogFragment {
         return password;
     }
 
+    /**
+     * Gets the confirmed password
+     *
+     * @author riona
+     * @return confirmed password as a string
+     */
     private String getConfirmPassword() {
         View view = getView();
         EditText editPassword = view.findViewById(R.id.confirm_password);
@@ -76,7 +112,15 @@ public class CreateAccountDialog extends DialogFragment {
         return password;
     }
 
-    // Still needs to check if the username is available.
+    /**
+     * Checks whether the username that was entered is valid
+     * Conditions for a valid username:
+     *      - String cannot be empty
+     *
+     * @param username
+     * @return valid, when valid == true the username is valid,
+     *                when valid == false: the username is not valid
+     */
     private boolean checkUsername(String username) {
         boolean valid = true;
         if (username.isEmpty()){
@@ -87,6 +131,15 @@ public class CreateAccountDialog extends DialogFragment {
         return valid;
     }
 
+    /**
+     * Checks whether the password is valid
+     * Conditions for a valid password:
+     *      - Password must be at least 6 letters
+     *
+     * @param password
+     * @return valid, when valid == true the password is valid,
+     *                when valid == false: the password is not valid
+     */
     private boolean checkPassword(String password) {
         boolean valid = true;
         if (password.isEmpty()){
@@ -97,6 +150,13 @@ public class CreateAccountDialog extends DialogFragment {
         return valid;
     }
 
+    /**
+     * Checks whether the entered password matches the confirm password
+     * @param password
+     * @param verifyPassword
+     * @return valid, when valid == true the passwords match,
+     *                when valid == false: the username is not valid
+     */
     private boolean checkPasswordMatch(String password, String verifyPassword) {
         boolean valid = true;
         if (!password.equals(verifyPassword)) {
