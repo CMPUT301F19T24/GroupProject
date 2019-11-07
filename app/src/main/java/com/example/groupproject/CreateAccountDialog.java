@@ -117,6 +117,7 @@ public class CreateAccountDialog extends DialogFragment {
      * Conditions for a valid username:
      *      - String cannot be empty
      *
+     * @author riona
      * @param username
      * @return valid, when valid == true the username is valid,
      *                when valid == false: the username is not valid
@@ -137,6 +138,7 @@ public class CreateAccountDialog extends DialogFragment {
      * Conditions for a valid password:
      *      - Password must be at least 6 letters
      *
+     * @author riona
      * @param password
      * @return valid, when valid == true the password is valid,
      *                when valid == false: the password is not valid
@@ -153,6 +155,8 @@ public class CreateAccountDialog extends DialogFragment {
 
     /**
      * Checks whether the entered password matches the confirm password
+     *
+     * @author riona
      * @param password
      * @param verifyPassword
      * @return valid, when valid == true the passwords match,

@@ -20,7 +20,11 @@ import java.util.ArrayList;
 public class Login extends AppCompatActivity {
         String username, password;
 
-        @Override
+    /**
+     *
+     * @param savedInstanceState
+     */
+    @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.login_screen);
