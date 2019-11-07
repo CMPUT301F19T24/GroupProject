@@ -45,7 +45,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
     static int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-
+//    private LocationListener locationListener =
 
     // TODO: For hard code test. May be modified later.
     Location myLocation;
@@ -111,6 +111,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
 //                        getCurrentLocation();
                     }
                 });
+//                locationToggleBtn.getTextOn
 
                 b_submit.setOnClickListener(new View.OnClickListener() {
                     // Check if it wants to include location
@@ -121,7 +122,27 @@ public class AddMoodEventActivity extends AppCompatActivity {
                         getCurrentLocation();
                         LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
                         if(checkLocationPermission()) {
-                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0,(LocationListener) AddMoodEventActivity.this);
+                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0,new LocationListener() {
+                                @Override
+                                public void onLocationChanged(Location location) {
+                                    System.out.println("Location Changed");
+                                }
+
+                                @Override
+                                public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                                }
+
+                                @Override
+                                public void onProviderEnabled(String s) {
+
+                                }
+
+                                @Override
+                                public void onProviderDisabled(String s) {
+
+                                }
+                            });
                             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                             if(location == null){
                                 Toast.makeText(getApplicationContext(), "GPS SIgnal not found", Toast.LENGTH_LONG).show();
