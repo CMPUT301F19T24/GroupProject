@@ -84,7 +84,7 @@ public class Login extends AppCompatActivity {
      * @param password
      */
     public void validUsernameAndPassword(String username, String password, View view) {
-        FBAuth fbAuth = new FBAuth();
+        FireStoreHandler fbAuth = new FireStoreHandler();
         boolean validUsername = true;
         boolean validPassword = true;
         EditText editUsername = findViewById(R.id.username_field);
