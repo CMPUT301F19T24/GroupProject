@@ -23,8 +23,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.SimpleDateFormat;
@@ -42,6 +46,9 @@ public class AddMoodEventActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private Boolean mLocationPermissionGranted;
     static int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+
 
     // TODO: For hard code test. May be modified later.
     Location myLocation;
@@ -53,6 +60,17 @@ public class AddMoodEventActivity extends AppCompatActivity {
         setContentView(R.layout.choose_current_mood);
         System.out.println("AddMoodEventActivity");
         initalize();
+        // TODO: Add some more permission safety stuff
+        getLocationPermission();
+        myLocation = getCurrentLocation();
+
+        System.out.println("Checking Location Permission: " + checkLocationPermission());
+        if(myLocation != null){
+            System.out.println("Lat: " + myLocation.getLatitude() + ", Lon: " + myLocation.getLongitude());
+        }
+        else{
+            System.out.println(myLocation);
+        }
     }
 
     private void initalize()
@@ -113,16 +131,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
         });
 
-        // TODO: Add some more permission safety stuff
-        getLocationPermission();
-        myLocation = getCurrentlocation();
-        System.out.println("Checking Location Permission: " + checkLocationPermission());
-        if(myLocation != null){
-            System.out.println("Lat: " + myLocation.getLatitude() + ", Lon: " + myLocation.getLongitude());
-        }
-        else{
-            System.out.println(myLocation);
-        }
+
 
 
         if (true) {
@@ -135,9 +144,31 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     }
 
-    public Location getCurrentlocation(){
-        final Location[] myLocation = new Location[1];
+    public Location getCurrentLocation(){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20*1000);
+        System.out.println("asdasd");
+//        locationCallback = new LocationCallback() {
+//            @Override
+//            public void onLocationResult(LocationResult locationResult) {
+//                for (Location location : locationResult.getLocations()) {
+//
+//                    LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+//
+//                    System.out.println("LatLng "+latLng+ "");
+//
+//
+//                    fusedLocationClient.removeLocationUpdates(locationCallback);
+//
+//                }
+//            };
+//        };
+//        fusedLocationClient.requestLocationUpdates(locationCallback, this);
+
+        final Location[] myLocation = new Location[1];
+
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -152,6 +183,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
 //                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,10.0f));
 //                            mMap.addMarker(new MarkerOptions().position(myLatLng).title("My Current Position"));
 //                            location.getAltitude()
+//                            return location;
                         }
                     }
                 });
@@ -162,7 +194,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
 //            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
 //                    1000, mLocationListener);
 //        }
-
+//        return fusedLocationClient.getLastLocation();
         return myLocation[0];
     }
 

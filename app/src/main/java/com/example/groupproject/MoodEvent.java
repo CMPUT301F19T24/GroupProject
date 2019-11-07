@@ -23,9 +23,9 @@ public class MoodEvent implements Comparable {
     private String reasonText;
     private Image reasonImage;
     private Location location;
+    private LatLng latlng;
     private User owner;
 
-    private FusedLocationProviderClient fusedLocationClient;
 
               MoodEvent(Mood currentMood,
               Calendar timeStamp,
@@ -41,7 +41,12 @@ public class MoodEvent implements Comparable {
         this.socialSituation = socialSituation; // Optional
         this.reasonText = reasonText; // Optional
         this.reasonImage = reasonImage; // Optional
-        this.location = location; // Optional
+        this.setLocation(location); // Optional
+
+    }
+
+    public String getInfo(){
+        return ("Owner: " + this.owner + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString() + ", Social Situation: " + this.socialSituation + ", LatLng: " + this.latlng);
     }
 
     public Mood getMood()
@@ -73,6 +78,8 @@ public class MoodEvent implements Comparable {
     {
         return this.location;
     }
+
+    public LatLng getLatLng() {return this.latlng;}
 
     public User getOwner()
     {
@@ -106,7 +113,12 @@ public class MoodEvent implements Comparable {
 
     public void setLocation(Location location)
     {
+        this.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
         this.location = location;
+    }
+
+    public void setLatLng(LatLng latlng){
+          this.latlng = latlng;
     }
 
     public void setOwner(User owner)

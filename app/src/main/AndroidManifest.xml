@@ -33,22 +33,23 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-<!--        <activity-->
-<!--            android:name=".MapsActivity"-->
-<!--            android:label="@string/title_activity_maps">-->
-<!--&lt;!&ndash;            <intent-filter>&ndash;&gt;-->
-<!--&lt;!&ndash;                <action android:name="android.intent.action.MAIN" />&ndash;&gt;-->
+        <activity
+            android:name=".MapsActivity">
+<!--            android:label="@string/title_activity_maps"-->
 
-<!--&lt;!&ndash;                <category android:name="android.intent.category.LAUNCHER" />&ndash;&gt;-->
-<!--&lt;!&ndash;            </intent-filter>&ndash;&gt;-->
-
-<!--        </activity>-->
-        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".MainActivity">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name=".MoodEventListActivity"></activity>
         <activity android:name=".AddMoodEventActivity"></activity>
