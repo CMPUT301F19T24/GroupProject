@@ -5,6 +5,7 @@ import android.media.Image;
 
 import java.util.ArrayList;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 
