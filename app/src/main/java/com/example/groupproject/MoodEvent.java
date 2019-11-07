@@ -5,13 +5,7 @@ import android.media.Image;
 
 import java.util.ArrayList;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.Arrays;
 import java.util.Calendar;
 
 import static com.example.groupproject.SortingMethod.*;
@@ -122,6 +116,11 @@ public class MoodEvent implements Comparable {
 
     public int compareTo(Object o, SortingMethod sm)
     {
+        /**
+         * Returns the comparasion depending on the sorting method
+         *
+         * @param sm - See SortingMethod for details
+         */
         switch(sm)
         {
             case NAME:
@@ -137,6 +136,16 @@ public class MoodEvent implements Comparable {
 
     public boolean contains(String query)
     {
+        /**
+         * Determines whether or not the moodevent contains the query in anyway, shape or form.
+         *
+         * Checks the following:
+         * - MoodName
+         * - Timestamp
+         * - Owner name
+         *
+         * @param query - String to search by
+         */
         String[] parsedQuery = query.split(" ");
 
         Boolean rc = false;
