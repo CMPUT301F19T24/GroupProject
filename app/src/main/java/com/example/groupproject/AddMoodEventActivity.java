@@ -5,36 +5,33 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class AddMoodEventActivity extends AppCompatActivity {
@@ -62,6 +59,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
         initalize();
         // TODO: Add some more permission safety stuff
         getLocationPermission();
+
         myLocation = getCurrentLocation();
 
         System.out.println("Checking Location Permission: " + checkLocationPermission());
@@ -94,6 +92,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 popupWindow.setOutsideTouchable(true);
 
                 Button b_submit = popupView.findViewById(R.id.b_submit);
+                final Button locationToggleBtn = popupView.findViewById(R.id.locationToggleBtn);
 
                 EditText autoTime = popupView.findViewById(R.id.autoTime);
                 SimpleDateFormat timeF = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -104,6 +103,46 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
 
                 autoTime.setText(time + " " + date);
+
+                locationToggleBtn.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+//                        getCurrentLocation();
+                    }
+                });
+
+                b_submit.setOnClickListener(new View.OnClickListener() {
+                    // Check if it wants to include location
+                    @Override
+                    public void onClick(View view) {
+//                        location
+//                        startLocationUpdates();
+                        getCurrentLocation();
+                        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                        if(checkLocationPermission()) {
+                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0,(LocationListener) AddMoodEventActivity.this);
+                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if(location == null){
+                                Toast.makeText(getApplicationContext(), "GPS SIgnal not found", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), "Success! Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude(), Toast.LENGTH_LONG).show();
+                                System.out.println("Lat: " + location.getLatitude());
+                                System.out.println("Lon: " + location.getLongitude());
+                            }
+
+                        }
+                        else{
+                            System.out.println("Else");
+                            //TODO: Comes here if user didn't allow permission;
+                        }
+//                        System.out.println("Lat: " + myLocation.getLatitude());
+//                        System.out.println("Lon: " + myLocation.getLongitude());
+                    }
+                });
+
+
 
 //
 //                LinearLayout ll = popupView.findViewById(R.id.ll_detail_header);
@@ -144,57 +183,18 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     }
 
+    private void startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
     public Location getCurrentLocation(){
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(20*1000);
         System.out.println("asdasd");
-//        locationCallback = new LocationCallback() {
-//            @Override
-//            public void onLocationResult(LocationResult locationResult) {
-//                for (Location location : locationResult.getLocations()) {
-//
-//                    LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-//
-//                    System.out.println("LatLng "+latLng+ "");
-//
-//
-//                    fusedLocationClient.removeLocationUpdates(locationCallback);
-//
-//                }
-//            };
-//        };
-//        fusedLocationClient.requestLocationUpdates(locationCallback, this);
-
         final Location[] myLocation = new Location[1];
 
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            System.out.println("LOCATION");
-                            // Logic to handle location object
-                            myLocation[0] = location;
-                            System.out.println("Lat: " + location.getLatitude() + ", Lon: " + location.getLongitude());
-//                            LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,10.0f));
-//                            mMap.addMarker(new MarkerOptions().position(myLatLng).title("My Current Position"));
-//                            location.getAltitude()
-//                            return location;
-                        }
-                    }
-                });
-//        Location currentLocation = new Location("currentLocation");
-//        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-//                    1000, mLocationListener);
-//        }
-//        return fusedLocationClient.getLastLocation();
         return myLocation[0];
     }
 

@@ -64,7 +64,7 @@
 
 
             <ToggleButton
-                android:id="@+id/toggleButton2"
+                android:id="@+id/locationToggleBtn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
