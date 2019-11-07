@@ -34,6 +34,9 @@ class Relationship implements Comparable{
 
     public boolean isVisible()
     {
+        /**
+         * See RelationshipStatus for details.
+         */
         return this.status.compareTo(RelationshipStatus.VISIBLE) >= 0;
     };
 }

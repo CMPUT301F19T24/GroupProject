@@ -1,15 +1,6 @@
 package com.example.groupproject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.GregorianCalendar;
-
-import static com.example.groupproject.SocialSituation.ALONE;
-import static com.example.groupproject.SocialSituation.CROWD;
-import static com.example.groupproject.SocialSituation.NONE;
-import static com.example.groupproject.SocialSituation.WITH_SEVERAL;
-import static com.example.groupproject.SocialSituation.WITH_SOMEONE;
 
 class FSHConstructor
 {
@@ -53,18 +44,27 @@ class FireStoreHandler {
     // Communicates with Remote
     protected void pullMoodEventListFromRemote()
     {
+        /**
+         * Populate the local cache with values from remote
+         */
         // TODO
         cachedMoodEvents = (ArrayList<MoodEvent>) fst.cachedMoodEvents.clone();
     }
 
     protected void pullUserListFromRemote()
     {
+        /**
+         * Populate the local cache with values from remote
+         */
         // TODO
         cachedUsers = (ArrayList<User>) fst.cachedUsers.clone();
     }
 
     protected void pullRelationshipsFromRemotes()
     {
+        /**
+         * Populate the local cache with values from remote
+         */
         // TODO
         cachedRelationship = (ArrayList<Relationship>) fst.cachedRelationship.clone();
 
@@ -73,6 +73,9 @@ class FireStoreHandler {
     // Communicates with Remote
     private void pushMoodEventListToRemote()
     {
+        /**
+         * Pushes local cached values to remote
+         */
         // TODO
         fst.cachedMoodEvents = (ArrayList<MoodEvent>) cachedMoodEvents.clone();
 
@@ -80,6 +83,9 @@ class FireStoreHandler {
 
     private void pushUserListToRemote()
     {
+        /**
+         * Pushes local cached values to remote
+         */
         // TODO
         fst.cachedUsers = (ArrayList<User>) cachedUsers.clone();
 
@@ -87,12 +93,18 @@ class FireStoreHandler {
 
     private void pushRelationshipsToRemotes()
     {
+        /**
+         * Pushes local cached values to remote
+         */
         // TODO
         fst.cachedRelationship = (ArrayList<Relationship>) cachedRelationship.clone();
     }
 
     private void updateAllCachedLists()
     {
+        /**
+         * Clear, and update everything from remote
+         */
         cachedMoodEvents.clear();
         cachedUsers.clear();
         cachedRelationship.clear();
@@ -104,6 +116,12 @@ class FireStoreHandler {
 
     public ArrayList<MoodEvent> getMoodEventsByUsername(String username)
     {
+        /**
+         * Get a list of moodevents owned by [username]
+         *
+         * @param username - Exact string representing a unique User object
+         * @return - Arraylist of MoodEvents fitting the criteria
+         */
         updateAllCachedLists();
         ArrayList<MoodEvent> arr = new ArrayList<>();
         for(MoodEvent i : cachedMoodEvents)
@@ -118,6 +136,12 @@ class FireStoreHandler {
 
     public ArrayList<MoodEvent> getMoodEventsByMoodName(String moodName)
     {
+        /**
+         * Get a list of moodevents sharing a Mood
+         *
+         * @param moodName - Exact string representing a unique Mood object
+         * @return - Arraylist of MoodEvents fitting the criteria
+         */
         updateAllCachedLists();
         ArrayList<MoodEvent> arr = new ArrayList<>();
         for(MoodEvent i : cachedMoodEvents)
@@ -132,6 +156,13 @@ class FireStoreHandler {
 
     public ArrayList<MoodEvent> getMoodEventsByMoodNameAndUserName(String moodName, String username)
     {
+        /**
+         * Get a list of moodevents owned by [username]
+         *
+         * @param moodName - Exact string representing a unique Mood object
+         * @param username - Exact string representing a unique User object
+         * @return - Arraylist of MoodEvents fitting the criteria
+         */
         updateAllCachedLists();
         ArrayList<MoodEvent> arr = new ArrayList<>();
         for(MoodEvent i : cachedMoodEvents)
@@ -146,6 +177,14 @@ class FireStoreHandler {
 
     public ArrayList<MoodEvent> getVisibleMoodEvents(String username)
     {
+        /**
+         * Get a list of moodevents visible to [username]
+         * See RelationshipStatus for valid values
+         * See Relationship for what is defined as visible
+         *
+         * @param username - Exact string representing a unique User object
+         * @return - Arraylist of MoodEvents fitting the criteria
+         */
         updateAllCachedLists();
         ArrayList<MoodEvent> arr_me = new ArrayList<>();
         ArrayList<Relationship> arr_rs = getRelationShipOfSender(username);
@@ -173,6 +212,12 @@ class FireStoreHandler {
 
     public ArrayList<Relationship> getRelationShipOfSender(String username)
     {
+        /**
+         * Get a list of Relationship objects that [username] is the sender of.
+         *
+         * @param username - Exact string representing a unique User object
+         * @return - Arraylist of Relationships fitting the criteria
+         */
         ArrayList<Relationship> arr_rs = new ArrayList<>();
         for(Relationship i : cachedRelationship)
         {
@@ -184,16 +229,21 @@ class FireStoreHandler {
         return arr_rs;
     }
 
-    public User getUserObjWIthUsername(String un)
+    public User getUserObjWIthUsername(String username)
     {
+        /**
+         * Get the user object that has an exact unique username
+         *
+         * @param username - Exact string representing a unique username
+         * @return - User object fitting the criteria
+         */
+
         User rc = null;
         updateAllCachedLists();
 
         for(User i : cachedUsers)
         {
-//            System.out.println(.getUserName());
-
-            if(i.getUserName() == un)
+            if(i.getUserName() == username)
             {
                 rc = i;
                 break;
@@ -204,6 +254,13 @@ class FireStoreHandler {
 
     public void editMoodEvent(MoodEvent me)
     {
+        /**
+         * Update the Moodevent that has the same key on the remote
+         * The key is the combination of username, and timestamp associated with the moodevent
+         *
+         * @param me - MoodEvent object to be deleted
+         *
+         */
         for(MoodEvent i : cachedMoodEvents)
         {
             if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName() == me.getOwner().getUserName())
@@ -218,6 +275,13 @@ class FireStoreHandler {
     }
     public void deleteMoodEvent(MoodEvent me)
     {
+        /**
+         * Delete the Moodevent that has the same key from the remote
+         * The key is the combination of username, and timestamp associated with the moodevent
+         *
+         * @param me - MoodEvent object to be deleted
+         *
+         */
         for(MoodEvent i : cachedMoodEvents)
         {
             if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName() == me.getOwner().getUserName())

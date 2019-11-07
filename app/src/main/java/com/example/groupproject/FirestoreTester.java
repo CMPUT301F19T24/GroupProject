@@ -1,3 +1,7 @@
+/**
+ * This is a temporary testing tool used to emulate the remote.
+ */
+
 package com.example.groupproject;
 
 import java.util.ArrayList;
