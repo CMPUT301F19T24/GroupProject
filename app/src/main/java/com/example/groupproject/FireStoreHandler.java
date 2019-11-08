@@ -403,18 +403,32 @@ class FireStoreHandler {
                             dialog.dismiss();
                             Toast.makeText(view.getContext(), "Your account has been created", Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.w(TAG, "loginUserWithEmail:failed");
                             try {
                                 throw task.getException();
                             } catch (FirebaseAuthUserCollisionException e) {
                                 editText.setError("This username is unavailable");
+                                Log.w(TAG, "loginUserWithEmail:usernameUnavailable");
                             } catch (FirebaseAuthWeakPasswordException e) {
                                 passwordText.setError("Password must be at least 6 characters");
+                                Log.w(TAG, "loginUserWithEmail:weakPassword");
                             } catch (Exception e) {
+                                Log.w(TAG, "loginUserWithEmail:failed");
                                 Toast.makeText(view.getContext(), "An error occurred while creating account", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
                 });
+    }
+
+
+    public void deleteUser(String username) {
+        username = username + "@cmput301-c6741.web.app";
+        fbAuth.getCurrentUser().delete();
+    }
+
+    public String getCurrentUser(){
+        String fetchedUser = fbAuth.getCurrentUser().getDisplayName().toString();
+        fetchedUser = fetchedUser.substring(0, fetchedUser.length()-21);
+        return  (fetchedUser);
     }
 }
