@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import static com.example.groupproject.MainActivity.USER_INSTANCE;
 import static com.example.groupproject.MainActivity.TEMP_CACHED_USERS_LIST;
+import static com.example.groupproject.MainActivity.FSH_INSTANCE;
 
 /**
  * A placeholder fragment containing a simple view to demonstrate follower/following relationships.
@@ -66,6 +67,7 @@ public class GeneralizedFragment extends Fragment {
         for (int i = 0; i < TEMP_CACHED_USERS_LIST.size(); i++){
             userDataList.add(i, TEMP_CACHED_USERS_LIST.get(i));
         }
+
 //        userDataList.add(USER_INSTANCE);
         userAdapter = new CustomUserList(this.getContext(), userDataList);
 

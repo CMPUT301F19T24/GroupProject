@@ -27,7 +27,18 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
+
+        switch(position){
+            case 0:
+                return new FollowingFragment();
+            case 1:
+                return new FollowersFragment();
+            case 2:
+                return new RequestsFragment();
+        }
+        // Default case;
         return GeneralizedFragment.newInstance(position + 1);
+
     }
 
     @Nullable
