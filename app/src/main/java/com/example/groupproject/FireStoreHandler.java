@@ -273,6 +273,9 @@ class FireStoreHandler {
         return rc;
     }
 
+    public ArrayList<User> getCachedUsers() {
+        return cachedUsers;}
+      
     public void editMoodEvent(MoodEvent me)
     {
         /**

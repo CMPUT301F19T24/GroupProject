@@ -7,10 +7,12 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     // Global Accessor
-    public static FSHConstructor FSH_INSTANCE;
+    public static FSHConstructor FSH_INSTANCE; public static ArrayList<User> TEMP_CACHED_USERS_LIST;
     public static User USER_INSTANCE;
 
     public MainActivity()
@@ -18,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super();
         FSH_INSTANCE.getInstance();
         USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Darth Vader");
+        TEMP_CACHED_USERS_LIST = FSH_INSTANCE.getInstance().fsh.getCachedUsers();
     }
 
     @Override

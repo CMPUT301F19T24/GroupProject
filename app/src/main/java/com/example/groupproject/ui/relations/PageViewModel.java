@@ -12,12 +12,16 @@ public class PageViewModel extends ViewModel {
     private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
         @Override
         public String apply(Integer input) {
-            return "Hello world from section: " + input;
+            return "Once integrated, this page will display: " + input;
         }
     });
 
     public void setIndex(int index) {
         mIndex.setValue(index);
+    }
+
+    public int getIndex(){
+        return mIndex.getValue();
     }
 
     public LiveData<String> getText() {

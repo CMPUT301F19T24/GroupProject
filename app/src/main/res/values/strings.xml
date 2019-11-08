@@ -36,7 +36,7 @@
     <string name="create_new_account_btn">Create one</string>
 
     <!--    layout: v_user_list_layout.xml-->
-    <string name="placeholder_follower">John Wick</string>
+    <string name="placeholder_follower">Luke Skywalker</string>
     <!--    layout: v_user_requests-->
     <string name="follow_requests_lbl">Follow Requests</string>
     <string name="current_followers_lbl">Current Followers</string>
@@ -46,6 +46,8 @@
     <string name="tab_text_following">Following</string>
     <string name="tab_text_followers">Followers</string>
     <string name="tab_text_requests">Requests</string>
+    <string name="confirm_button">CONFIRM</string>
+    <string name="delete_button">DELETE</string>
 
 
     <string name="register_confirm">REGISTER</string>
