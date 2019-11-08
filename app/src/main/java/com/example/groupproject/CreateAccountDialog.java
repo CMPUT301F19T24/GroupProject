@@ -1,6 +1,7 @@
 package com.example.groupproject;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-/*
-Some general information:
-        1. Firebase min password length is 6 characters
-        2. Format for username: [username]@cmput301-c6741.web.app ----> "@cmput301-c6741.web.app" needs to be appended
-        3.
-*/
+
+import static android.content.ContentValues.TAG;
+
 
 public class CreateAccountDialog extends DialogFragment {
 
@@ -117,6 +115,7 @@ public class CreateAccountDialog extends DialogFragment {
      * Checks whether the username that was entered is valid
      * Conditions for a valid username:
      *      - String cannot be empty
+     *      - Cannot be named "testUser" or "testUser0" since those are involved in testing functionality
      *
      * @author riona
      * @param username
@@ -128,7 +127,9 @@ public class CreateAccountDialog extends DialogFragment {
         EditText editUsername = getView().findViewById(R.id.new_username);
 
         if (username.isEmpty()){
-            editUsername.setError("Username cannot be empty");
+            editUsername.setError("This field cannot be empty");
+            valid = false;
+        } if (username.equals("testUser") || username.equals("testUser0")) {
             valid = false;
         }
         return valid;
@@ -137,7 +138,8 @@ public class CreateAccountDialog extends DialogFragment {
     /**
      * Checks whether the password is valid
      * Conditions for a valid password:
-     *      - Password must be at least 6 letters
+     *      - Cannot be empty string
+     *      - Must be at least 6 characters long (checked by FireStoreHandler)
      *
      * @author riona
      * @param password
@@ -147,8 +149,8 @@ public class CreateAccountDialog extends DialogFragment {
     private boolean checkPassword(String password) {
         boolean valid = true;
         EditText editPassword = getView().findViewById(R.id.new_password);
-        if (password.length() < 6){
-            editPassword.setError("Password must be at least 6 characters");
+        if (password.isEmpty()){
+            editPassword.setError("This field cannot be empty");
             valid = false;
         }
         return valid;

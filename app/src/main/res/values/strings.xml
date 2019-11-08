@@ -16,7 +16,8 @@
         <font size="20"> "MY FOLLOWERS"</font>
         <font size="13">\n"Manage which users are able to see your moods"</font>
     </string>
-    <string name="sign_out">sign out</string>
+    <string name="sign_out">SIGN OUT</string>
+    <string name="sign_out_cancel">CANCEL</string>
     <string name="sign_out_confirm">sign out</string>
     <string name="UserName">Shia Labeouf</string>
     <string name="detailedMoodName">DetailedMoodName</string>
@@ -45,5 +46,8 @@
     <string name="tab_text_following">Following</string>
     <string name="tab_text_followers">Followers</string>
     <string name="tab_text_requests">Requests</string>
+
+
+    <string name="register_confirm">REGISTER</string>
 </resources>
 
