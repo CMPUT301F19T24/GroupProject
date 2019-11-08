@@ -32,13 +32,6 @@ public class GeneralizedFragment extends Fragment {
     private ListView userListView;
     private ArrayAdapter<User> userAdapter;
     private ArrayList<User> userDataList;
-    private ArrayList<User> followerDataList;
-    private ArrayList<User> followingDataList;
-    private ArrayList<User> requestsDataList;
-    private ArrayAdapter<User> userRequestAdapter;
-    private ArrayAdapter<User> followingAdapter;
-    private ArrayAdapter<User> followerAdapter;
-    private ArrayAdapter<User> requestsAdapter;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 

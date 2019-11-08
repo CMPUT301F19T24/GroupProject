@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import static com.example.groupproject.MainActivity.TEMP_CACHED_USERS_LIST;
 
 public class FollowingFragment extends Fragment {
-
+    /**
+     * @author: vivek
+     *
+     */
     private ListView userListView;
     private ArrayAdapter<User> userArrayAdapter;
     private ArrayList<User> userFollowerList;

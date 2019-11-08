@@ -7,6 +7,9 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 public class PageViewModel extends ViewModel {
+    /**
+     * Live data container for tabbed list.
+     */
 
     private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
     private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
@@ -17,10 +20,17 @@ public class PageViewModel extends ViewModel {
     });
 
     public void setIndex(int index) {
+        /**
+         * Initialize value to live tab index value
+         */
         mIndex.setValue(index);
     }
 
     public int getIndex(){
+        /**
+         * Returns the value of index
+         * @return index Current index value
+         */
         return mIndex.getValue();
     }
 

@@ -19,8 +19,8 @@ import com.example.groupproject.User;
 import java.util.List;
 
 public class CustomRequestList extends ArrayAdapter<User>{
-    /*
-    Custom view of a user list
+    /**
+     * Custom Array Adapter to view requests from a list of users
      */
     private List<User> users;
     private Context context;
@@ -35,6 +35,12 @@ public class CustomRequestList extends ArrayAdapter<User>{
     @Override
     // Specify which view the user list will use: In this case Following/Requests
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
+        /**
+         * Builds a request view object given an user.
+         * @param position Item in user list to be displayed to view
+         * @param convertView Previously existing view, Nullable
+         * @return view View item modelled after position of list.
+         */
         View view = convertView;
         User user = this.users.get(position);
 //        view.setBackgroundColor(getRe);
