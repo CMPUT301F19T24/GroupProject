@@ -48,9 +48,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void clickMyFollowers(View view)
+    public void clickMyMap(View view)
     {
-
+        Intent intent = new Intent(this, com.example.groupproject.MapsActivity.class);
+        startActivity(intent);
     }
 
     public void clickSignOut(View view)

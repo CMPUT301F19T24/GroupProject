@@ -13,8 +13,8 @@
         <font size="13">\n"Request to follow other users"\n"View the moods of people you follow"</font>
     </string>
     <string name="followers">
-        <font size="20"> "MY FOLLOWERS"</font>
-        <font size="13">\n"Manage which users are able to see your moods"</font>
+        <font size="20"> "MAP"</font>
+        <font size="13">\n"View mood events on a map"</font>
     </string>
     <string name="sign_out">SIGN OUT</string>
     <string name="sign_out_cancel">CANCEL</string>
