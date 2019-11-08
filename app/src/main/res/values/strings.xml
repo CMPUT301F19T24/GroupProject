@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GroupProject</string>
+    <string name="app_name">Moody</string>
     <string name="add_mood">
         <font size="20"> "ADD MOOD EVENT"</font>
         <font size="13">\n"Add a new mood event to your history</font>
@@ -16,7 +16,8 @@
         <font size="20"> "MY FOLLOWERS"</font>
         <font size="13">\n"Manage which users are able to see your moods"</font>
     </string>
-    <string name="sign_out">sign out</string>
+    <string name="sign_out">SIGN OUT</string>
+    <string name="sign_out_cancel">CANCEL</string>
     <string name="sign_out_confirm">sign out</string>
     <string name="UserName">Shia Labeouf</string>
     <string name="detailedMoodName">DetailedMoodName</string>
@@ -24,9 +25,9 @@
     <string name="DetailedMoodName">DetailedMoodName</string>
     <string name="socialSituation">N/A</string>
 
-    <!--    Adding all hardcoded string values here.-->
-    <!--    layout: login_screen.xml-->
-    <string name="app_title">   MOOD TRACKER</string>
+<!--    Adding all hardcoded string values here.-->
+<!--    layout: login_screen.xml-->
+    <string name="app_title">   MOODY</string>
     <string name="subtitle">    Tell me how you really feel</string>
     <string name="username_field_hint"> Username</string>
     <string name="password_field_hint"> Password</string>
@@ -47,4 +48,8 @@
     <string name="tab_text_requests">Requests</string>
     <string name="confirm_button">CONFIRM</string>
     <string name="delete_button">DELETE</string>
+
+
+    <string name="register_confirm">REGISTER</string>
 </resources>
+

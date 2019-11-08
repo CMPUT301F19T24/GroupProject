@@ -1,8 +1,6 @@
 package com.example.groupproject;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,10 +31,17 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        /**
+         * Construct the elements
+         *
+         * @param - See base method for details
+         * @return - See base method for details
+         */
         View listItem = convertView;
         if(listItem == null)
             listItem = LayoutInflater.from(this.context).inflate(R.layout.e_list_mood_events,parent,false);
 
+        // Initialize the fields
         MoodEvent curMoodEvent = this.moodEventArrayList.get(position);
 
         Mood curMood = curMoodEvent.getMood();
@@ -56,6 +60,7 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
         String curTimeStampStr = String.format("%d-%d-%d", curTimeStamp.get(Calendar.DATE), curTimeStamp.get(Calendar.MONTH), curTimeStamp.get(Calendar.YEAR));
         String usernameStr = curOwner.getUserName();
 
+        // Populate the fields
         try
         {
             tvMoodName.setText(moodNameStr);
@@ -76,6 +81,12 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
 
     public void setSortingMethod(final SortingMethod sm)
     {
+        /**
+         * Set the sorting method to order the moodevents by
+         * See SortingMethod for details
+         *
+         * @param sm - Sorting method to use
+         */
         this.sm = sm;
 
         this.sort(new Comparator<MoodEvent>() {

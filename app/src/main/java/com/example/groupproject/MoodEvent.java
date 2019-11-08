@@ -4,7 +4,9 @@ import android.location.Location;
 import android.media.Image;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.Calendar;
 
 import static com.example.groupproject.SortingMethod.*;
@@ -15,8 +17,10 @@ public class MoodEvent implements Comparable {
     private SocialSituation socialSituation;
     private String reasonText;
     private Image reasonImage;
-    private Location location;
+//    private Location location;
+    private LatLng latlng;
     private User owner;
+
 
               MoodEvent(Mood currentMood,
               Calendar timeStamp,
@@ -24,7 +28,10 @@ public class MoodEvent implements Comparable {
               SocialSituation socialSituation,
               String reasonText,
               Image reasonImage,
-              Location location)
+//              Location location
+              LatLng latlng
+              )
+
     {
         this.mood = currentMood;
         this.timeStamp = timeStamp;
@@ -32,7 +39,13 @@ public class MoodEvent implements Comparable {
         this.socialSituation = socialSituation; // Optional
         this.reasonText = reasonText; // Optional
         this.reasonImage = reasonImage; // Optional
-        this.location = location; // Optional
+//        this.setLocation(location); // Optional
+        this.setLatLng(latlng);
+
+    }
+
+    public String getInfo(){
+        return ("Owner: " + this.owner + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString() + ", Social Situation: " + this.socialSituation + ", LatLng: " + this.latlng.latitude + ", " + this.latlng.longitude);
     }
 
     public Mood getMood()
@@ -60,10 +73,12 @@ public class MoodEvent implements Comparable {
         return this.reasonImage;
     }
 
-    public Location getLocation()
-    {
-        return this.location;
-    }
+//    public Location getLocation()
+//    {
+//        return this.location;
+//    }
+
+    public LatLng getLatLng() {return this.latlng;}
 
     public User getOwner()
     {
@@ -95,9 +110,20 @@ public class MoodEvent implements Comparable {
         this.reasonImage = reasonImage;
     }
 
-    public void setLocation(Location location)
-    {
-        this.location = location;
+//    public void setLocation(Location location)
+//    {
+//        if(location != null) {
+//            this.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+//        }
+//        this.location = location;
+//    }
+
+    public boolean hasLatLng(){
+        return this.latlng != null;
+    }
+
+    public void setLatLng(LatLng latlng){
+          this.latlng = latlng;
     }
 
     public void setOwner(User owner)
@@ -113,6 +139,11 @@ public class MoodEvent implements Comparable {
 
     public int compareTo(Object o, SortingMethod sm)
     {
+        /**
+         * Returns the comparasion depending on the sorting method
+         *
+         * @param sm - See SortingMethod for details
+         */
         switch(sm)
         {
             case NAME:
@@ -128,6 +159,16 @@ public class MoodEvent implements Comparable {
 
     public boolean contains(String query)
     {
+        /**
+         * Determines whether or not the moodevent contains the query in anyway, shape or form.
+         *
+         * Checks the following:
+         * - MoodName
+         * - Timestamp
+         * - Owner name
+         *
+         * @param query - String to search by
+         */
         String[] parsedQuery = query.split(" ");
 
         Boolean rc = false;
