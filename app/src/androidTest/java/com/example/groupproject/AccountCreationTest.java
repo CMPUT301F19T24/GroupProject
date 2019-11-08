@@ -1,12 +1,14 @@
 package com.example.groupproject;
 
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.robotium.solo.Solo;
 
@@ -17,19 +19,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertNull;
+import org.junit.Test;
 
-public class AccountCreationTest extends FireStoreHandler {
+public class AccountCreationTest {
     private Solo solo;
     String mockUsername = "testUser";
     String mockPassword = "password";
     String domainToAppend = "@cmput301-c6741.web.app";
 
-    String knownUser = "riona";
-    String knownPassword = "password";
-    String invalidPassword = "short";
-
-    FireStoreHandler FSH = new FireStoreHandler();
+    FirebaseAuth.AuthStateListener mAuth;
 
     @Rule
     public ActivityTestRule<Login> rule =
@@ -41,45 +39,33 @@ public class AccountCreationTest extends FireStoreHandler {
 
         // initialize Login as the test environment
         solo.assertCurrentActivity("Wrong Activity", Login.class);
+
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(mockUsername + domainToAppend, mockPassword)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseAuth.getInstance().getCurrentUser().delete();
+                        }
+                    }
+                });
+        FirebaseAuth.getInstance().signOut();
     }
 
-    // Test for when you try to create an account that's name is already taken
     @Test
-    public void AccountUnavailableTest(){
-        solo.clickOnText("Create one", 1, true);
-        solo.enterText((EditText) solo.getView(R.id.new_username), knownUser);
-        solo.enterText((EditText) solo.getView(R.id.new_password), knownPassword);
-        solo.enterText((EditText) solo.getView(R.id.confirm_password), knownPassword);
+    public void AccountCreationTest() {
+        assertEquals(null, FirebaseAuth.getInstance().getCurrentUser());
+        solo.scrollDown();
+        solo.clickOnText("Create one");
+        solo.enterText((EditText) solo.getView(R.id.new_username), mockUsername);
+        solo.enterText((EditText) solo.getView(R.id.new_password), mockPassword);
+        solo.enterText((EditText) solo.getView(R.id.confirm_password), mockPassword);
         solo.clickOnButton("REGISTER");
-        assertTrue(solo.waitForLogMessage("loginUserWithEmail:usernameUnavailable"));
-    }
-
-    @Test
-    public void PasswordInvalidTest(){
-        solo.clickOnText("Create one", 1, true);
-        solo.enterText((EditText) solo.getView(R.id.new_username), knownUser);
-        solo.enterText((EditText) solo.getView(R.id.new_password), invalidPassword);
-        solo.enterText((EditText) solo.getView(R.id.confirm_password), invalidPassword);
-        solo.clickOnButton("REGISTER");
-        assertTrue(solo.waitForLogMessage("loginUserWithEmail:weakPassword"));
-    }
-
-    @Test
-    public void MismatchedPasswordTest(){
-        solo.clickOnText("Create one", 1, true);
-        solo.enterText((EditText) solo.getView(R.id.new_username), knownUser);
-        solo.enterText((EditText) solo.getView(R.id.new_password), invalidPassword);
-        solo.enterText((EditText) solo.getView(R.id.confirm_password), knownPassword);
-        solo.clickOnButton("REGISTER");
-        assertTrue(((EditText) solo.getView(R.id.confirm_password)).getError().toString() == "Passwords must match");
-    }
-
-    @Test
-    public void SignInTest() {
+        solo.waitForDialogToClose();
+        solo.enterText((EditText) solo.getView(R.id.username_field), mockUsername);
+        solo.enterText((EditText) solo.getView(R.id.password_field), mockPassword);
+        solo.scrollUp();
         solo.clickOnButton("SIGN IN");
-        solo.enterText((EditText) solo.getView(R.id.username_field), knownUser);
-        solo.enterText((EditText) solo.getView(R.id.password_field), knownPassword);
         solo.assertCurrentActivity("Not in main screen", Login.class);
-
     }
 }

@@ -15,12 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import static android.content.ContentValues.TAG;
-/*
-Some general information:
-        1. Firebase min password length is 6 characters
-        2. Format for username: [username]@cmput301-c6741.web.app ----> "@cmput301-c6741.web.app" needs to be appended
-        3.
-*/
+
 
 public class CreateAccountDialog extends DialogFragment {
 
@@ -120,6 +115,7 @@ public class CreateAccountDialog extends DialogFragment {
      * Checks whether the username that was entered is valid
      * Conditions for a valid username:
      *      - String cannot be empty
+     *      - Cannot be named "testUser" or "testUser0" since those are involved in testing functionality
      *
      * @author riona
      * @param username
@@ -132,6 +128,8 @@ public class CreateAccountDialog extends DialogFragment {
 
         if (username.isEmpty()){
             editUsername.setError("This field cannot be empty");
+            valid = false;
+        } if (username.equals("testUser") || username.equals("testUser0")) {
             valid = false;
         }
         return valid;
