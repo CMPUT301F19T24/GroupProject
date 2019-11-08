@@ -19,13 +19,19 @@ import com.example.groupproject.User;
 import java.util.List;
 
 public class CustomUserList extends ArrayAdapter<User> {
-    /*
-    Custom view of a user list
+    /**
+     * Implements a custom Array adapter for viewing users in a list.
+     * @author Vivek
+     *
      */
     private List<User> users;
     private Context context;
 
     public CustomUserList(Context context, List<User> users){
+        /**
+         * @param context
+         * @param users List of users to be displayed
+         */
         super(context, 0, users);
         this.users = users;
         this.context = context;
@@ -35,6 +41,12 @@ public class CustomUserList extends ArrayAdapter<User> {
     @Override
     // Specify which view the user list will use: In this case Following/Requests
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
+        /**
+         * Builds a view with respect to user in a list.
+         * @param position Item in user list to be displayed to view
+         * @param convertView Previously existing view, Nullable
+         * @return view View item modelled after position of list.
+         */
         View view = convertView;
         User user = this.users.get(position);
 

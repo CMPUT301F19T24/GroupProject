@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import static com.example.groupproject.MainActivity.TEMP_CACHED_USERS_LIST;
 
 public class RequestsFragment extends Fragment {
-
+    /**
+     * @author: vivek
+     * Handles displaying of requests fragment under Requests Tab
+     */
     private ListView userListView;
     private ArrayAdapter<User> userArrayAdapter;
     private ArrayList<User> userRequestList;
@@ -35,6 +38,9 @@ public class RequestsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState){
+        /**
+         * List view population with requests from users when creating.
+         */
         View root = inflater.inflate(R.layout.fragment_relations, viewGroup, false);
         userListView = root.findViewById(R.id.users_list);
         TextView messageView = root.findViewById(R.id.section_label);

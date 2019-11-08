@@ -15,7 +15,6 @@ import com.example.groupproject.R;
  * one of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.tab_text_following, R.string.tab_text_followers, R.string.tab_text_requests};
     private final Context mContext;
@@ -26,7 +25,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
+        /**
+         * Instantiates the fragment for the given page.
+         * @param position Position on tab list of item
+         * @return Fragment inflated fragment with contents
+         */
+        // getItem is called to
 
         switch(position){
             case 0:
@@ -44,12 +48,20 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
+        /**
+         * Returns title of page in position
+         * @param position - Index of page on tab list.
+         * @return String Name of the page in position
+         */
         return mContext.getResources().getString(TAB_TITLES[position]);
     }
 
     @Override
     public int getCount() {
-        // Show 3 total pages.
+        /**
+         * Returns total number of pages in tab list
+         * @return int Number of pages
+         */
         return TAB_TITLES.length;
     }
 }

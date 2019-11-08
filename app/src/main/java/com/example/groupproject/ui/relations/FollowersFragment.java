@@ -19,12 +19,18 @@ import java.util.ArrayList;
 import static com.example.groupproject.MainActivity.TEMP_CACHED_USERS_LIST;
 
 public class FollowersFragment extends Fragment {
-
+    /**
+     * @author: vivek
+     * Handles displaying of fragment under Followers Tab
+     */
     private ListView userListView;
     private ArrayAdapter<User> userArrayAdapter;
     private ArrayList<User> userFollowerList;
 
     public void onCreate(Bundle savedInstanceState) {
+        /**
+         * Initially create
+         */
         super.onCreate(savedInstanceState);
         userFollowerList = new ArrayList<>();
         for (int i = 0; i < TEMP_CACHED_USERS_LIST.size(); i++){
@@ -35,6 +41,10 @@ public class FollowersFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState){
+        /**
+         * Fills the listview with a users's follower.
+         * @return root inflated view with filled list
+         */
         View root = inflater.inflate(R.layout.fragment_relations, viewGroup, false);
         userListView = root.findViewById(R.id.users_list);
         TextView messageView = root.findViewById(R.id.section_label);
