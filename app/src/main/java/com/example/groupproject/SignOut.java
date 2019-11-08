@@ -26,6 +26,7 @@ public class SignOut extends DialogFragment {
         final View view = inflater.inflate(R.layout.sign_out_dialog, container);
         getDialog().requestWindowFeature(STYLE_NORMAL);
         getDialog().setCancelable(true);
+        final FireStoreHandler fbAuth = new FireStoreHandler();
 
         // initialize buttons
         Button signOut = view.findViewById(R.id.sign_out_confirm);
@@ -35,7 +36,7 @@ public class SignOut extends DialogFragment {
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeViews(view);
+                fbAuth.signOut(view);
             }
         });
 
@@ -48,16 +49,5 @@ public class SignOut extends DialogFragment {
         });
 
         return view;
-    }
-
-    /**
-     * Swaps the view from current screen to login screen.
-     *
-     * @author riona
-     * @param v
-     */
-    public void changeViews(View v) {
-        Intent intent = new Intent(getActivity(), com.example.groupproject.Login.class);
-        startActivity(intent);
     }
 }

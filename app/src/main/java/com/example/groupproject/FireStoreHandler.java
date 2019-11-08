@@ -342,4 +342,9 @@ class FireStoreHandler {
                 });
     }
 
+    public void signOut(View view) {
+        fbAuth.signOut();
+        Intent intent = new Intent(view.getRootView().getContext(), Login.class);
+        view.getRootView().getContext().startActivity(intent);
+    }
 }
