@@ -2,20 +2,14 @@ package com.example.groupproject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import java.util.ArrayList;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
     String username, password;
@@ -47,9 +41,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 username = getUsername();
                 password = getPassword();
-
-                validUsernameAndPassword(username, password);
-
+                validUsernameAndPassword(username, password, view);
             }
         });
     }
@@ -85,32 +77,32 @@ public class Login extends AppCompatActivity {
      *      - Not empty string
      *      - Username is in database
      * Conditions for valid password:
-     *      - password is at least 6 characters
+     *      - password is at least 6 characters (handled by FireStoreHandler)
      *
      * @author riona
      * @param username
      * @param password
      */
-    public void validUsernameAndPassword(String username, String password) {
-            boolean validUsername = true;
-            boolean validPassword = true;
-            EditText editUsername = findViewById(R.id.username_field);
-            EditText editPassword = findViewById(R.id.password_field);
+    public void validUsernameAndPassword(String username, String password, View view) {
+        FireStoreHandler fbAuth = new FireStoreHandler();
+        boolean validUsername = true;
+        boolean validPassword = true;
+        EditText editUsername = findViewById(R.id.username_field);
+        EditText editPassword = findViewById(R.id.password_field);
 
-            if (username.isEmpty()) {
-                validUsername = false;
-                editUsername.setError("Invalid username");
-            }
-            // TODO: Conditional to check if the username is in the data base AND check usernames with their respective passwords
-            if (password.length() < 6) {
-                validPassword = false;
-                editPassword.setError("Invalid password");
-            }
-            if (validPassword && validUsername) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-            }
+        if (username.isEmpty()) {
+            validUsername = false;
+            editUsername.setError("This field cannot be empty");
         }
+        if (password.isEmpty()) {
+            validPassword = false;
+            editPassword.setError("This field cannot be empty");
+        }
+
+        if (validPassword && validUsername) {
+            fbAuth.login(username, password, view);
+        }
+    }
 
     /**
      * Opens dialog fragment for creating a new account
@@ -123,7 +115,6 @@ public class Login extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         CreateAccountDialog createAccountDialog = new CreateAccountDialog();
         createAccountDialog.show(fragmentManager, "Create Account");
-
 
     }
 }

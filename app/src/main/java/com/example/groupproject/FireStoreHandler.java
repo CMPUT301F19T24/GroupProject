@@ -1,6 +1,26 @@
 package com.example.groupproject;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+
 import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 class FSHConstructor
 {
@@ -14,7 +34,7 @@ class FSHConstructor
     private FSHConstructor()
     {
     fsh = new FireStoreHandler();
-}
+    }
 
     // static method to create instance of Singleton class
     public static FSHConstructor getInstance()
@@ -29,6 +49,7 @@ class FSHConstructor
 class FireStoreHandler {
     // Testing
     private FirestoreTester fst;
+    private FirebaseAuth fbAuth = FirebaseAuth.getInstance();
 
     protected ArrayList<MoodEvent> cachedMoodEvents;
     protected ArrayList<User> cachedUsers;
@@ -294,4 +315,106 @@ class FireStoreHandler {
         }
     }
 
+
+    public void login(String username, final String password, final View view) {
+        /**
+         * Function responsible for logging in. Linked to Login class.
+         * Checks the username and password, if they are valid and correspond to
+         * an existing account, the user is logged in and redirected to the main screen.
+         *
+         * @author riona
+         * @param username String containing the entered username
+         * @param password String containing the entered password
+         * @param view The view that the program had at the time of this function call.
+         */
+
+        // Append "@cmput301-c6741.web.app" to the end to make the username
+        // the email format that firebase expects
+        username = username + "@cmput301-c6741.web.app";
+        fbAuth.signInWithEmailAndPassword(username, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        EditText passwordText = view.getRootView().findViewById(R.id.password_field);
+                        EditText editText = view.getRootView().findViewById(R.id.username_field);
+                        if (task.isSuccessful()) {
+                            // If login was successful print statement to the log and change view
+                            Log.d(TAG, "loginUserWithEmail:successful");
+                            Intent intent = new Intent(view.getRootView().getContext(), MainActivity.class);
+                            view.getRootView().getContext().startActivity(intent);
+                        } else {
+                            // If login fails print statement to the log, and catch exceptions
+                            Log.w(TAG, "loginUserWithEmail:failed");
+
+                            // Catches specific exceptions as well as a generic catch all
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthInvalidUserException e) {
+                                editText.setError("User does not exist");
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                passwordText.setError("Incorrect Password");
+                            }catch (Exception e) {
+                                Toast.makeText(view.getContext(), "An error occurred while logging in", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    public void signOut(View view) {
+        /**
+         * Function to sign out a user and change the view
+         * back to the login screen.
+         *
+         * @author riona
+         * @param view the view at the time of this function call
+         */
+
+        fbAuth.signOut();
+        Intent intent = new Intent(view.getRootView().getContext(), Login.class);
+        view.getRootView().getContext().startActivity(intent);
+    }
+
+    public void createNewUser(String username, String password, final View view, final Dialog dialog) {
+        /**
+         * Function responsible for creating new users.
+         * Linked to CreateAccountDialog. Will exit the dialog upon
+         * successful account creation, otherwise will state why it
+         * couldn't create account.
+         *
+         * @author riona
+         * @param username username entered by the user
+         * @param password password entered by the user
+         * @param view the view at the time of this function call
+         * @param dialog the dialog that was open at when this function was called
+         */
+        username = username + "@cmput301-c6741.web.app";
+        fbAuth.createUserWithEmailAndPassword(username, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        EditText passwordText = view.getRootView().findViewById(R.id.new_password);
+                        EditText editText = view.getRootView().findViewById(R.id.new_username);
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "loginUserWithEmail:successful");
+                            dialog.dismiss();
+                            Toast.makeText(view.getContext(), "Your account has been created", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.w(TAG, "loginUserWithEmail:failed");
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthUserCollisionException e) {
+                                editText.setError("This username is unavailable");
+                            } catch (FirebaseAuthWeakPasswordException e) {
+                                passwordText.setError("Password must be at least 6 characters");
+                            } catch (Exception e) {
+                                Toast.makeText(view.getContext(), "An error occurred while creating account", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
 }
