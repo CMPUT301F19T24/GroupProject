@@ -27,21 +27,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
-//        int newPosition = position + 1;
-//        // Return a fragment based on which position the user is in
-//        switch (newPosition){
-//            case 0://TODO: serve from arry
-//                FollowingFragment.newInstance();
-//            case 1:
-//                FollowersFragment.newInstance();
-//            case 2:
-//                RequestsFragment.newInstance();
-//        }
-//        switch  (position){
-//            case 0:
-//                FollowingFragment.newInstance();
-//        }
-        return PlaceholderFragment.newInstance(position + 1);
+        return GeneralizedFragment.newInstance(position + 1);
     }
 
     @Nullable
@@ -52,7 +38,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 2 total pages.
-        return 3;
+        // Show 3 total pages.
+        return TAB_TITLES.length;
     }
 }
