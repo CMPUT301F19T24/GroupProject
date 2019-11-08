@@ -21,6 +21,14 @@ import org.junit.Test;
 
 import org.junit.Test;
 
+/**
+ * Test responsible to testing actual account creation
+ * Deletes uesr "testUser" if they already exist, then creates
+ * a new account under that username and signs in with it to
+ * prove that the account is valid.
+ *
+ * @author riona
+ */
 public class AccountCreationTest {
     private Solo solo;
     String mockUsername = "testUser";
