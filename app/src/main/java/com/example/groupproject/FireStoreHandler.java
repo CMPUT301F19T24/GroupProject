@@ -247,5 +247,7 @@ class FireStoreHandler {
         return rc;
     }
 
-
+    public ArrayList<User> getCachedUsers() {
+        return cachedUsers;
+    }
 }
