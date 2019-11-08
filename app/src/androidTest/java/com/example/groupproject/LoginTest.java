@@ -8,6 +8,7 @@ import androidx.test.rule.ActivityTestRule;
 import com.google.firebase.auth.FirebaseAuth;
 import com.robotium.solo.Solo;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -78,5 +79,14 @@ public class LoginTest {
         solo.clickOnButton("SIGN IN");
         assertTrue(solo.waitForLogMessage("loginUserWithEmail:failed"));
         solo.assertCurrentActivity("Must still be on login", Login.class);
+    }
+
+    /**
+     * Close activity after each test
+     * @throws Exception
+     */
+    @After
+    public void tearDown() throws Exception{
+        solo.finishOpenedActivities();
     }
 }

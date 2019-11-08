@@ -15,6 +15,7 @@ import com.robotium.solo.Solo;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -75,5 +76,14 @@ public class AccountCreationTest {
         solo.scrollUp();
         solo.clickOnButton("SIGN IN");
         solo.assertCurrentActivity("Not in main screen", Login.class);
+    }
+
+    /**
+     * Close activity after each test
+     * @throws Exception
+     */
+    @After
+    public void tearDown() throws Exception{
+        solo.finishOpenedActivities();
     }
 }
