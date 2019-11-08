@@ -336,7 +336,9 @@ class FireStoreHandler {
                                 editText.setError("User does not exist");
                             } catch (FirebaseAuthInvalidCredentialsException e) {
                                 passwordText.setError("Incorrect Password");
-                            } catch (Exception e) {
+//                            } catch (FirebaseAuthWeakPasswordException e) {
+//                                passwordText.setError("Incorrect Password");
+                            }catch (Exception e) {
                                 Toast.makeText(view.getContext(), "An error occurred while logging in", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -362,6 +364,7 @@ class FireStoreHandler {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "loginUserWithEmail:successful");
                             dialog.dismiss();
+                            Toast.makeText(view.getContext(), "Your account has been created", Toast.LENGTH_SHORT).show();
                         } else {
                             Log.w(TAG, "loginUserWithEmail:failed");
                             try {

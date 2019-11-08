@@ -77,7 +77,7 @@ public class Login extends AppCompatActivity {
      *      - Not empty string
      *      - Username is in database
      * Conditions for valid password:
-     *      - password is at least 6 characters
+     *      - password is at least 6 characters (handled by FireStoreHandler)
      *
      * @author riona
      * @param username
@@ -92,11 +92,11 @@ public class Login extends AppCompatActivity {
 
         if (username.isEmpty()) {
             validUsername = false;
-            editUsername.setError("Invalid username");
+            editUsername.setError("This field cannot be empty");
         }
-        if (password.length() < 6) {
+        if (password.isEmpty()) {
             validPassword = false;
-            editPassword.setError("Invalid password");
+            editPassword.setError("This field cannot be empty");
         }
 
         if (validPassword && validUsername) {
