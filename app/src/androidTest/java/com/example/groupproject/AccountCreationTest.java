@@ -27,6 +27,9 @@ import org.junit.Test;
  * Deletes uesr "testUser" if they already exist, then creates
  * a new account under that username and signs in with it to
  * prove that the account is valid.
+ * NOTE: On occasion a test will fail due to Robotium being
+ * unable to find the text/button it needs to click on. This is generally fixed
+ * when you run the program again
  *
  * @author riona
  */
