@@ -54,6 +54,7 @@ public class CreateAccountDialog extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         Toast.makeText(getContext(), "Invalid Username", Toast.LENGTH_LONG);
         Button confirm = view.findViewById(R.id.register_confirm);
+        final FireStoreHandler fbAuth = new FireStoreHandler();
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,8 +67,8 @@ public class CreateAccountDialog extends DialogFragment {
                 passwordsMatch = checkPasswordMatch(password, verifyPassword);
 
                 if (validUsername && validPassword && passwordsMatch) {
-                    // Save the username and password as a key-value pair to database
-                    getDialog().dismiss();
+                    fbAuth.createNewUser(username, password, view, getDialog());
+
                 }
             }
         });
