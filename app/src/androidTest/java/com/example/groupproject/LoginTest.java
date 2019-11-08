@@ -17,8 +17,8 @@ import static junit.framework.TestCase.assertTrue;
 
 /**
  * Tests responsible for checking that sign in is working properly
- * NOTE: On occasion a will fail due to Robotium being
- * unable to find the text it needs to click on. This is generally fixed
+ * NOTE: On occasion a test will fail due to Robotium being
+ * unable to find the text/button it needs to click on. This is generally fixed
  * when you run the program again
  *
  * @author riona
