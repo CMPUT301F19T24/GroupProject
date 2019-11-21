@@ -3,6 +3,7 @@ package com.example.groupproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -18,18 +19,22 @@ public class MainActivity extends AppCompatActivity {
     public MainActivity()
     {
         super();
+
         FSH_INSTANCE.getInstance();
-        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Darth Vader");
+        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Obi Wan");
         TEMP_CACHED_USERS_LIST = FSH_INSTANCE.getInstance().fsh.getCachedUsers();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /* For testing from main screen */
-
         setContentView(R.layout.main_screen);
+
+        /* For testing from main screen */
+        TextView curUserName = findViewById(R.id.tv_curUsername);
+        curUserName.setText(USER_INSTANCE.getUserName());
     }
+
 
     public void clickAddMoodEvent(View view)
     {

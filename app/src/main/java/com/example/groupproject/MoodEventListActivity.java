@@ -35,7 +35,7 @@ public class MoodEventListActivity extends AppCompatActivity {
     private ArrayList<MoodEvent> moodEventDataList;
 
     // Defines
-    private static final SortingMethod DEFAULT_SORTING_METHOD = SortingMethod.DATE;
+    private static final SortingMethod DEFAULT_SORTING_METHOD = SortingMethod.DATE_NTOO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +207,6 @@ public class MoodEventListActivity extends AppCompatActivity {
                 // Setup spinner
                 s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, SocialSituation.getNames()));
                 s_socialSituation.setSelection(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
-                System.out.println(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
 
                 if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName())
                 {

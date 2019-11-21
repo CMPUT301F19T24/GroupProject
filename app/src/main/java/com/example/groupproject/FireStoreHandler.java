@@ -275,7 +275,19 @@ class FireStoreHandler {
 
     public ArrayList<User> getCachedUsers() {
         return cachedUsers;}
-      
+
+    public void addMoodEvent(MoodEvent me)
+    {
+        /**
+         * Add mood event to cache
+         *
+         * @param me - MoodEvent object to be added
+         *
+         */
+        cachedMoodEvents.add(me);
+
+        pushMoodEventListToRemote();
+    }
     public void editMoodEvent(MoodEvent me)
     {
         /**
