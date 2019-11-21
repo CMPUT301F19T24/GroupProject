@@ -185,7 +185,8 @@ public class MoodEventListActivity extends AppCompatActivity {
 
                 Button b_apply = popupView.findViewById(R.id.b_apply);
                 Button b_delete = popupView.findViewById(R.id.b_delete);
-                Button b_uploadImage = popupView.findViewById(R.id.b_upload_img);
+                Button b_image_from_camera = popupView.findViewById(R.id.b_add_from_camera);
+                Button b_image_from_photos = popupView.findViewById(R.id.b_add_from_photo);
 
                 if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName())
                 {
@@ -193,7 +194,8 @@ public class MoodEventListActivity extends AppCompatActivity {
                     s_socialSituation.setEnabled(false);
                     b_apply.setVisibility(View.GONE);
                     b_delete.setVisibility(View.GONE);
-                    b_uploadImage.setVisibility(View.GONE);
+                    b_image_from_camera.setVisibility(View.GONE);
+                    b_image_from_photos.setVisibility(View.GONE);
                 }
 
                 // Populate display
@@ -213,7 +215,9 @@ public class MoodEventListActivity extends AppCompatActivity {
                     // Disable buttons
                     b_apply.setVisibility(View.GONE);
                     b_delete.setVisibility(View.GONE);
-                    b_uploadImage.setVisibility(View.GONE);
+                    b_image_from_camera.setVisibility(View.GONE);
+                    b_image_from_photos.setVisibility(View.GONE);
+
                 }
 
                 if(curMoodEvent.getLatLng() == null)
@@ -223,6 +227,23 @@ public class MoodEventListActivity extends AppCompatActivity {
                 }
 
                 et_desc.setText(curMoodEvent.getReasonText());
+
+
+                b_image_from_camera.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // TODO
+
+                    }
+                });
+
+                b_image_from_photos.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // TODO
+
+                    }
+                });
 
                 b_apply.setOnClickListener(new View.OnClickListener() {
                     @Override

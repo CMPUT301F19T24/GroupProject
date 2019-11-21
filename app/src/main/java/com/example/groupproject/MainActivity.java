@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super();
 
         FSH_INSTANCE.getInstance();
-        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Obi Wan");
+        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Han Solo");
         TEMP_CACHED_USERS_LIST = FSH_INSTANCE.getInstance().fsh.getCachedUsers();
     }
 

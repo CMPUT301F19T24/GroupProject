@@ -45,7 +45,16 @@ public class MoodEvent implements Comparable {
     }
 
     public String getInfo(){
-        return ("Owner: " + this.owner + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString() + ", Social Situation: " + this.socialSituation + ", LatLng: " + this.latlng.latitude + ", " + this.latlng.longitude);
+        if(hasLatLng())
+        {
+            return ("Owner: " + this.owner + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString() + ", Social Situation: " + this.socialSituation + ", LatLng: " + this.latlng.latitude + ", " + this.latlng.longitude);
+        }
+        else
+        {
+            return ("Owner: " + this.owner + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString() + ", Social Situation: " + this.socialSituation + ", LatLng: null");
+
+        }
+
     }
 
     public Mood getMood()
@@ -109,14 +118,6 @@ public class MoodEvent implements Comparable {
     {
         this.reasonImage = reasonImage;
     }
-
-//    public void setLocation(Location location)
-//    {
-//        if(location != null) {
-//            this.setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-//        }
-//        this.location = location;
-//    }
 
     public boolean hasLatLng(){
         return this.latlng != null;

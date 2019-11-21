@@ -124,11 +124,25 @@
                 android:visibility="visible"
                 app:srcCompat="@drawable/test_pic" />
 
-            <Button
-                android:id="@+id/b_upload_img"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Upload New Image" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/b_add_from_camera"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:text="Add Image From Camera" />
+
+                <Button
+                    android:id="@+id/b_add_from_photo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:text="Add Image From Photos" />
+            </LinearLayout>
 
         </LinearLayout>
 
