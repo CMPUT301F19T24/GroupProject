@@ -134,7 +134,7 @@ public class MoodEvent implements Comparable {
 
     @Override
     public int compareTo(Object o) { // By default, sort by date
-        return compareTo(o, DATE);
+        return compareTo(o, DATE_OTON);
     }
 
     public int compareTo(Object o, SortingMethod sm)
@@ -148,8 +148,10 @@ public class MoodEvent implements Comparable {
         {
             case NAME:
                 return this.mood.compareTo(((MoodEvent) o).getMood());
-            case DATE:
+            case DATE_OTON:
                 return this.timeStamp.compareTo(((MoodEvent) o).getTimeStamp());
+            case DATE_NTOO:
+                return -1 * this.timeStamp.compareTo(((MoodEvent) o).getTimeStamp());
             case OWNER:
                 return this.owner.getUserName().compareTo(((MoodEvent) o).getOwner().getUserName());
             default:

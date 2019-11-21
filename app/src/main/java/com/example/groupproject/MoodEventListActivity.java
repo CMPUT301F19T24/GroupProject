@@ -35,7 +35,7 @@ public class MoodEventListActivity extends AppCompatActivity {
     private ArrayList<MoodEvent> moodEventDataList;
 
     // Defines
-    private static final SortingMethod DEFAULT_SORTING_METHOD = SortingMethod.DATE;
+    private static final SortingMethod DEFAULT_SORTING_METHOD = SortingMethod.DATE_NTOO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,10 +207,16 @@ public class MoodEventListActivity extends AppCompatActivity {
                 // Setup spinner
                 s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, SocialSituation.getNames()));
                 s_socialSituation.setSelection(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
-                System.out.println(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
 
-                // Display cleanup
-                if(curMoodEvent.getLocation() == null)
+                if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName())
+                {
+                    // Disable buttons
+                    b_apply.setVisibility(View.GONE);
+                    b_delete.setVisibility(View.GONE);
+                    b_uploadImage.setVisibility(View.GONE);
+                }
+
+                if(curMoodEvent.getLatLng() == null)
                 {
                     // TODO: Renable me
 //                    ll_detailedMap.setVisibility(View.GONE);
