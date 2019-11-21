@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
+import static com.example.groupproject.MainActivity.FSH_INSTANCE;
+import static com.example.groupproject.MainActivity.USER_INSTANCE;
 import static com.example.groupproject.SocialSituation.ALONE;
 import static com.example.groupproject.SocialSituation.CROWD;
 import static com.example.groupproject.SocialSituation.NONE;
@@ -40,17 +42,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private boolean mLocationPermissionGranted;
     private FusedLocationProviderClient fusedLocationClient;
-    ArrayList<MoodEvent> cachedMoodEvents = new ArrayList<>();
     public static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
-//    private FusedLocationProviderClient fusedLocationClient;
     ArrayList<LatLng> randomLatLng = new ArrayList<>();
 
-    //==== TODO: Will be removed later
-    private static final String UN_LUKE = "Luke Skywalker";
-    private static final String UN_LEIA = "Leia Organa";
-    private static final String UN_HANS = "Han Solo";
-    private static final String UN_OBI_WAN = "Obi Wan";
-    private static final String UN_DARTH_VADER = "Darth Vader";
     //====
 
     @Override
@@ -86,27 +80,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        setUpMapIfNeeded();
 
         getLocationPermission();
-        prePopulateData();
+//        prePopulateData();
 //        setUpMapIfNeeded();
 
-        for(final MoodEvent moodEvent : cachedMoodEvents){
+        for(final MoodEvent moodEvent : FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName()))
+        {
             System.out.println(moodEvent.getInfo());
             fetchLocations(moodEvent);
 
         }
     }
 
-
-
     public void fetchLocations(MoodEvent moodEvent){
-        System.out.println("YES:" + moodEvent.getLatLng());
-        MarkerOptions op = new MarkerOptions();
-        BitmapDescriptor bitmapMarker = BitmapDescriptorFactory.fromResource(moodEvent.getMood().getImageSmall());
-        op.position(moodEvent.getLatLng())
-                .title(moodEvent.getMood().getName())
-                .icon(bitmapMarker)
-                .draggable(false);
-        mMap.addMarker(op);
+        if(moodEvent.getLatLng() != null)
+        {
+            MarkerOptions op = new MarkerOptions();
+            BitmapDescriptor bitmapMarker = BitmapDescriptorFactory.fromResource(moodEvent.getMood().getImageSmall());
+            op.position(moodEvent.getLatLng())
+                    .title(moodEvent.getMood().getName())
+                    .icon(bitmapMarker)
+                    .draggable(false);
+            mMap.addMarker(op);
+        }
     }
 
     private void createRandomLatLng(){
@@ -143,28 +138,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationCityHall.setLongitude(-113.490112);
         LatLng lCH = new LatLng(53.545883, -113.490112);
 
-        cachedMoodEvents.
-                add(new MoodEvent(new Happy(),
-                        new GregorianCalendar(2001,01,01),
-                        new User(UN_LUKE), ALONE, "Womp-rats", null, randomLatLng.get(0)));
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_LUKE), WITH_SOMEONE, "Lost Hand", null, randomLatLng.get(1)));
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2003,01,01), new User(UN_LUKE), NONE, "Hans + Leia", null, randomLatLng.get(2)));
-        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,01,01), new User(UN_LUKE), WITH_SEVERAL, "Death Star", null, randomLatLng.get(3)));
-
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User(UN_LEIA), CROWD, "Capture", null, randomLatLng.get(4)));
-        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2002,01,01), new User(UN_LEIA), CROWD, "Death Star", null, randomLatLng.get(5)));
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2004,01,01), new User(UN_LEIA), WITH_SOMEONE, "Jabba", null, randomLatLng.get(6)));
-
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_HANS), ALONE, "Carbonite", null, randomLatLng.get(7)));
-
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2001,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "Qui-Gon", null, randomLatLng.get(8)));
-        cachedMoodEvents.add(new MoodEvent(new Anxious(), new GregorianCalendar(2002,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "High Ground", null, randomLatLng.get(9)));
-
-        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2001,1,1), new User(UN_DARTH_VADER), ALONE, "Shimi", null, randomLatLng.get(10)));
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2002,1,1), new User(UN_DARTH_VADER), CROWD, "Men, Women, Children", null, randomLatLng.get(11)));
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2003,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "High Ground", null, randomLatLng.get(12)));
-        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,1,1), new User(UN_DARTH_VADER), WITH_SEVERAL, "Killing Palpatine", null, randomLatLng.get(13)));
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2005,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "Dieing", null, randomLatLng.get(14)));
+//        cachedMoodEvents.
+//                add(new MoodEvent(new Happy(),
+//                        new GregorianCalendar(2001,01,01),
+//                        new User(UN_LUKE), ALONE, "Womp-rats", null, randomLatLng.get(0)));
+//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_LUKE), WITH_SOMEONE, "Lost Hand", null, randomLatLng.get(1)));
+//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2003,01,01), new User(UN_LUKE), NONE, "Hans + Leia", null, randomLatLng.get(2)));
+//        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,01,01), new User(UN_LUKE), WITH_SEVERAL, "Death Star", null, randomLatLng.get(3)));
+//
+//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User(UN_LEIA), CROWD, "Capture", null, randomLatLng.get(4)));
+//        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2002,01,01), new User(UN_LEIA), CROWD, "Death Star", null, randomLatLng.get(5)));
+//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2004,01,01), new User(UN_LEIA), WITH_SOMEONE, "Jabba", null, randomLatLng.get(6)));
+//
+//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_HANS), ALONE, "Carbonite", null, randomLatLng.get(7)));
+//
+//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2001,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "Qui-Gon", null, randomLatLng.get(8)));
+//        cachedMoodEvents.add(new MoodEvent(new Anxious(), new GregorianCalendar(2002,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "High Ground", null, randomLatLng.get(9)));
+//
+//        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2001,1,1), new User(UN_DARTH_VADER), ALONE, "Shimi", null, randomLatLng.get(10)));
+//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2002,1,1), new User(UN_DARTH_VADER), CROWD, "Men, Women, Children", null, randomLatLng.get(11)));
+//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2003,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "High Ground", null, randomLatLng.get(12)));
+//        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,1,1), new User(UN_DARTH_VADER), WITH_SEVERAL, "Killing Palpatine", null, randomLatLng.get(13)));
+//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2005,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "Dieing", null, randomLatLng.get(14)));
 
 
     }
