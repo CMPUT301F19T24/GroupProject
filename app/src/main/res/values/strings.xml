@@ -16,7 +16,8 @@
         <font size="20"> "MAP"</font>
         <font size="13">\n"View mood events on a map"</font>
     </string>
-    <string name="sign_out">sign out</string>
+    <string name="sign_out">SIGN OUT</string>
+    <string name="sign_out_cancel">CANCEL</string>
     <string name="sign_out_confirm">sign out</string>
     <string name="UserName">Shia Labeouf</string>
     <string name="detailedMoodName">DetailedMoodName</string>
@@ -47,4 +48,6 @@
     <string name="tab_text_requests">Requests</string>
     <string name="confirm_button">CONFIRM</string>
     <string name="delete_button">DELETE</string>
+
+    <string name="register_confirm">REGISTER</string>
 </resources>
