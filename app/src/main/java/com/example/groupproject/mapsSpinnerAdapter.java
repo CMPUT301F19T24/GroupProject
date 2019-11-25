@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 public class MapsSpinnerAdapter extends ArrayAdapter {
 
-    Integer[] images = {R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
-    String[] moodNames = {"Happy", "Sad", "Angry", "Anxious", "Disgusted"};
+    Integer[] images = {0, R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
+    String[] moodNames = {"Show All", "Happy", "Sad", "Angry", "Anxious", "Disgusted"};
 
     public MapsSpinnerAdapter(Context context, int textViewResourceId, String[] names){
         super(context, textViewResourceId, names);

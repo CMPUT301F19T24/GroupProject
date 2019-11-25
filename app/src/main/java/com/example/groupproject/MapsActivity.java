@@ -5,18 +5,22 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,9 +29,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Random;
@@ -48,31 +54,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted;
     private FusedLocationProviderClient fusedLocationClient;
     public static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
+
     ArrayList<LatLng> randomLatLng = new ArrayList<>();
+
+    private LocationRequest locationRequest;
 
     Spinner mSpinner;
 
-    Integer[] images = {R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
-    String[] moodNames = {"Happy", "Sad", "Angry", "Anxious", "Disgusted"};
+    Integer[] images = {0, R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
+    String[] moodNames = {"Show ALL", "Happy", "Sad", "Angry", "Anxious", "Disgusted"};
     //====
+    ArrayList<MoodEvent> moodEvents;
+    ArrayList<Marker> markerArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mSpinner = findViewById(R.id.mapHistorySpinner);
-
-
-
-        ArrayList<MoodEvent> moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
+        markerArray = new ArrayList<>();
+        moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
 
 //        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, moodNames);
-        mSpinner.setAdapter(new MapsSpinnerAdapter(MapsActivity.this, R.layout.activity_maps_spinner, moodNames));
+        MapsSpinnerAdapter mapsSpinnerAdapter = new MapsSpinnerAdapter(MapsActivity.this, R.layout.activity_maps_spinner, moodNames);
+        mSpinner.setAdapter(mapsSpinnerAdapter);
 
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i==0) fetchAllMoods(moodEvents);
+                else fetchSpecificMood(moodEvents, moodNames[i]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                System.out.println("Nothing Selected");
+            }
+        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+
         System.out.println("111");
         System.out.println(moodEvents);
     }
@@ -90,6 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(getApplicationContext(),"MAP READY", Toast.LENGTH_LONG);
         mMap = googleMap;
+        getCurrentLocation();
         updateCurrentLocation();
         // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(-34, 151);
@@ -102,11 +128,86 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        prePopulateData();
 //        setUpMapIfNeeded();
 
-        for(final MoodEvent moodEvent : FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName()))
-        {
-            System.out.println(moodEvent.getInfo());
-            fetchLocations(moodEvent);
+        fetchAllMoods(moodEvents);
 
+    }
+
+    public void getCurrentLocation(){
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20 * 1000);
+
+        if (checkLocationPermission()) {
+            LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    Toast.makeText(getApplicationContext(), "Location Changed", Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+
+                }
+            });
+
+            if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) == null) {
+                Toast.makeText(getApplicationContext(), "GPS Signal not found", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
+//                rc = new LatLng(myLocation[0].getLatitude(), myLocation[0].getLongitude());
+            }
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "GPS Permission Issue", Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    public void resetMapMarkers(){
+//        if(markerArray != null) {
+        for (Marker m: markerArray) {
+            m.remove();
+//            }
+        }
+    }
+
+    private boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void fetchAllMoods(ArrayList<MoodEvent> moodEvent){
+        resetMapMarkers();
+        for(final MoodEvent m : moodEvent)
+        {
+            System.out.println(m.getInfo());
+            fetchLocations(m);
+        }
+    }
+
+    public void fetchSpecificMood(ArrayList<MoodEvent> moodEvent, String moodName){
+        resetMapMarkers();
+        for(final MoodEvent m: moodEvent){
+            if(m.getMood().getName() == moodName) {
+                fetchLocations(m);
+            }
         }
     }
 
@@ -119,7 +220,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .title(moodEvent.getMood().getName())
                     .icon(bitmapMarker)
                     .draggable(false);
-            mMap.addMarker(op);
+
+            Marker marker = mMap.addMarker(op);
+            markerArray.add(marker);
         }
     }
 
