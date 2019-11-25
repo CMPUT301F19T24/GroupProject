@@ -6,16 +6,15 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        app:srcCompat="@drawable/emot_happy_small" />
+        android:id="@+id/mapSpinnerImage"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_weight="0" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/mapSpinnerText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="TextView" />
+        android:layout_height="35dp"
+        android:layout_weight="0.5"
+        android:textAlignment="center" />
 </LinearLayout>

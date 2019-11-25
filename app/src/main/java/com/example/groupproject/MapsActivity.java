@@ -11,6 +11,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -37,6 +40,8 @@ import static com.example.groupproject.SocialSituation.NONE;
 import static com.example.groupproject.SocialSituation.WITH_SEVERAL;
 import static com.example.groupproject.SocialSituation.WITH_SOMEONE;
 
+
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private GoogleMap mMap;
@@ -45,18 +50,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
     ArrayList<LatLng> randomLatLng = new ArrayList<>();
 
+    Spinner mSpinner;
+
+    Integer[] images = {R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
+    String[] moodNames = {"Happy", "Sad", "Angry", "Anxious", "Disgusted"};
     //====
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        mSpinner = findViewById(R.id.mapHistorySpinner);
+
+
+
+        ArrayList<MoodEvent> moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
+
+//        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, moodNames);
+        mSpinner.setAdapter(new MapsSpinnerAdapter(MapsActivity.this, R.layout.activity_maps_spinner, moodNames));
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
+        System.out.println("111");
+        System.out.println(moodEvents);
     }
 
     /**
@@ -70,6 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(getApplicationContext(),"MAP READY", Toast.LENGTH_LONG);
         mMap = googleMap;
         updateCurrentLocation();
         // Add a marker in Sydney and move the camera
