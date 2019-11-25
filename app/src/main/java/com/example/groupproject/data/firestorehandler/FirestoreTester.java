@@ -26,7 +26,7 @@ import static com.example.groupproject.data.relations.SocialSituation.WITH_SEVER
 import static com.example.groupproject.data.relations.SocialSituation.WITH_SOMEONE;
 
 public class FirestoreTester {
-    private static final String UN_LUKE = "Luke Skywalker";
+    private static final String UN_LUKE = "donald";
     private static final String UN_LEIA = "Leia Organa";
     private static final String UN_HANS = "Han Solo";
     private static final String UN_OBI_WAN = "Obi Wan";

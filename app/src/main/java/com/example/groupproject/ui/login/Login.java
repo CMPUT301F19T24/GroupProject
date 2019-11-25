@@ -8,8 +8,10 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.groupproject.MainActivity;
 import com.example.groupproject.R;
 import com.example.groupproject.data.firestorehandler.FireStoreHandler;
+import com.example.groupproject.data.user.User;
 
 public class Login extends AppCompatActivity {
     String username, password;
@@ -101,6 +103,7 @@ public class Login extends AppCompatActivity {
 
         if (validPassword && validUsername) {
             fbAuth.login(username, password, view);
+            MainActivity.USER_INSTANCE = new User(username);
         }
     }
 

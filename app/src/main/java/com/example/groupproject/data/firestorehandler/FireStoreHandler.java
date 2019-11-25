@@ -133,7 +133,7 @@ public class FireStoreHandler {
         ArrayList<MoodEvent> arr = new ArrayList<>();
         for(MoodEvent i : cachedMoodEvents)
         {
-            if(i.getOwner().getUserName() == username)
+            if(i.getOwner().getUserName().compareTo(username) == 0)
             {
                 arr.add(i);
             }
@@ -174,7 +174,7 @@ public class FireStoreHandler {
         ArrayList<MoodEvent> arr = new ArrayList<>();
         for(MoodEvent i : cachedMoodEvents)
         {
-            if(i.getMood().getName() == moodName && i.getOwner().getUserName() == username)
+            if(i.getMood().getName() == moodName && i.getOwner().getUserName().compareTo(username) == 0)
             {
                 arr.add(i);
             }
@@ -233,7 +233,7 @@ public class FireStoreHandler {
 
         for(User i : cachedUsers)
         {
-            if(i.getUserName() != username)
+            if(i.getUserName().compareTo(username) != 0)
             {
                 cachedNames.add(i.getUserName());
             }
@@ -242,7 +242,7 @@ public class FireStoreHandler {
 
         for(Relationship j : cachedRelationship)
         {
-            if(j.getSender().getUserName() == username)
+            if(j.getSender().getUserName().compareTo(username) == 0)
             {
                 foundNames.add(j.getRecipiant().getUserName());
 
@@ -276,7 +276,7 @@ public class FireStoreHandler {
         ArrayList<Relationship> arr_rs = new ArrayList<>();
         for(Relationship i : cachedRelationship)
         {
-            if(i.getRecipiant().getUserName() == username)
+            if(i.getRecipiant().getUserName().compareTo(username) == 0)
             {
                 arr_rs.add(i);
             }
@@ -295,7 +295,7 @@ public class FireStoreHandler {
         ArrayList<Relationship> arr_rs = new ArrayList<>();
         for(Relationship i : cachedRelationship)
         {
-            if(i.getRecipiant().getUserName() == username && i.isPending())
+            if(i.getRecipiant().getUserName().compareTo(username) == 0 && i.isPending())
             {
                 arr_rs.add(i);
             }
@@ -307,7 +307,7 @@ public class FireStoreHandler {
     {
         for(Relationship i : cachedRelationship)
         {
-            if(i.getSender().getUserName() == sender && i.getRecipiant().getUserName() == receiver)
+            if(i.getSender().getUserName().compareTo(sender) == 0 && i.getRecipiant().getUserName().compareTo(receiver) == 0)
             {
                 i.setStatus(rs);
             }
@@ -329,7 +329,7 @@ public class FireStoreHandler {
 
         for(User i : cachedUsers)
         {
-            if(i.getUserName() == username)
+            if(i.getUserName().compareTo(username) == 0)
             {
                 rc = i;
                 break;
@@ -364,7 +364,7 @@ public class FireStoreHandler {
          */
         for(MoodEvent i : cachedMoodEvents)
         {
-            if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName() == me.getOwner().getUserName())
+            if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName().compareTo(me.getOwner().getUserName()) == 0)
             {
                 cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
                 cachedMoodEvents.add(me);
@@ -385,7 +385,7 @@ public class FireStoreHandler {
          */
         for(MoodEvent i : cachedMoodEvents)
         {
-            if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName() == me.getOwner().getUserName())
+            if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName().compareTo(me.getOwner().getUserName()) == 0)
             {
                 cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
 
@@ -422,6 +422,7 @@ public class FireStoreHandler {
                             // If login was successful print statement to the log and change view
                             Log.d(TAG, "loginUserWithEmail:successful");
                             Intent intent = new Intent(view.getRootView().getContext(), MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             view.getRootView().getContext().startActivity(intent);
                         } else {
                             // If login fails print statement to the log, and catch exceptions
