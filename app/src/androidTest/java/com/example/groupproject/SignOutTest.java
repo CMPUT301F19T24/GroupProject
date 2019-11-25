@@ -1,14 +1,9 @@
 package com.example.groupproject;
 
-import android.widget.EditText;
-
-import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.example.groupproject.ui.login.Login;
 import com.google.firebase.auth.FirebaseAuth;
 import com.robotium.solo.Solo;
 

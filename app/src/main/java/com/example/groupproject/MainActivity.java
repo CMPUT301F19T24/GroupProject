@@ -8,6 +8,14 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.groupproject.data.firestorehandler.FSHConstructor;
+import com.example.groupproject.data.user.User;
+import com.example.groupproject.ui.login.SignOut;
+import com.example.groupproject.ui.maps.MapsActivity;
+import com.example.groupproject.ui.moodlists.AddMoodEventActivity;
+import com.example.groupproject.ui.moodlists.MoodEventListActivity;
+import com.example.groupproject.ui.relations.RelationshipViewActivity;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super();
 
         FSH_INSTANCE.getInstance();
-        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Han Solo");
+        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Leia Organa");
         TEMP_CACHED_USERS_LIST = FSH_INSTANCE.getInstance().fsh.getCachedUsers();
     }
 
@@ -38,24 +46,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickAddMoodEvent(View view)
     {
-        Intent intent = new Intent(this, com.example.groupproject.AddMoodEventActivity.class);
+        Intent intent = new Intent(this, AddMoodEventActivity.class);
         startActivity(intent);
     }
     public void clickMoodHistory(View view)
     {
-        Intent intent = new Intent(this, com.example.groupproject.MoodEventListActivity.class);
+        Intent intent = new Intent(this, MoodEventListActivity.class);
         startActivity(intent);
     }
 
     public void clickFollowing(View view)
     {
-        Intent intent = new Intent(this, com.example.groupproject.relations.class);
+        Intent intent = new Intent(this, RelationshipViewActivity.class);
         startActivity(intent);
     }
 
     public void clickMyMap(View view)
     {
-        Intent intent = new Intent(this, com.example.groupproject.MapsActivity.class);
+        Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
 

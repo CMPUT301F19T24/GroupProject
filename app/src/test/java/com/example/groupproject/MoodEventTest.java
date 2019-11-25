@@ -1,10 +1,17 @@
 package com.example.groupproject;
 
+import com.example.groupproject.data.moodevents.MoodEvent;
+import com.example.groupproject.data.moods.Angry;
+import com.example.groupproject.data.moods.Happy;
+import com.example.groupproject.data.moods.Sad;
+import com.example.groupproject.data.user.User;
+import com.example.groupproject.ui.moodlists.SortingMethod;
+
 import org.junit.Test;
 
 import java.util.GregorianCalendar;
 
-import static com.example.groupproject.SocialSituation.NONE;
+import static com.example.groupproject.data.relations.SocialSituation.NONE;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -20,7 +27,7 @@ public class MoodEventTest {
         MoodEvent b = new MoodEvent(new Happy(), new GregorianCalendar(2002,01,01), new User("B"), NONE, " ", null, null);
         MoodEvent c = new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User("C"), NONE, " ", null, null);
 
-        assert(a.compareTo(b,SortingMethod.DATE) <= -1); // 2001 < 2002
+        assert(a.compareTo(b, SortingMethod.DATE) <= -1); // 2001 < 2002
         assert(a.compareTo(b,SortingMethod.NAME) <= -1); // Angry < Happy
 
         assert(b.compareTo(a,SortingMethod.DATE) >= 1); // 2002 > 2001

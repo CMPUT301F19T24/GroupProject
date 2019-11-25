@@ -1,15 +1,26 @@
 package com.example.groupproject;
 
+import com.example.groupproject.data.firestorehandler.FireStoreHandler;
+import com.example.groupproject.data.moodevents.MoodEvent;
+import com.example.groupproject.data.moods.Angry;
+import com.example.groupproject.data.moods.Anxious;
+import com.example.groupproject.data.moods.Disgusted;
+import com.example.groupproject.data.moods.Happy;
+import com.example.groupproject.data.moods.Sad;
+import com.example.groupproject.data.relations.Relationship;
+import com.example.groupproject.data.relations.RelationshipStatus;
+import com.example.groupproject.data.user.User;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import static com.example.groupproject.SocialSituation.ALONE;
-import static com.example.groupproject.SocialSituation.CROWD;
-import static com.example.groupproject.SocialSituation.NONE;
-import static com.example.groupproject.SocialSituation.WITH_SEVERAL;
-import static com.example.groupproject.SocialSituation.WITH_SOMEONE;
+import static com.example.groupproject.data.relations.SocialSituation.ALONE;
+import static com.example.groupproject.data.relations.SocialSituation.CROWD;
+import static com.example.groupproject.data.relations.SocialSituation.NONE;
+import static com.example.groupproject.data.relations.SocialSituation.WITH_SEVERAL;
+import static com.example.groupproject.data.relations.SocialSituation.WITH_SOMEONE;
 import static org.junit.Assert.assertEquals;
 
 /**

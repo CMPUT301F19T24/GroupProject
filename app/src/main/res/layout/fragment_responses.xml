@@ -7,18 +7,18 @@
     tools:context=".ui.relations.GeneralizedFragment">
 
     <TextView
-        android:id="@+id/tv_empty_relations"
+        android:id="@+id/tv_empty_responses"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="No Relationships Avaliable" />
+        android:text="No Actions Needed"
+        tools:layout_editor_absoluteY="18dp" />
 
     <ListView
-        android:id="@+id/lv_relations_list"
+        android:id="@+id/lv_responses_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteY="18dp" >
-
 
     </ListView>
 </androidx.constraintlayout.widget.ConstraintLayout>

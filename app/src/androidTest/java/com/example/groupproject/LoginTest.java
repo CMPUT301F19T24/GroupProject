@@ -5,6 +5,8 @@ import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.groupproject.data.firestorehandler.FireStoreHandler;
+import com.example.groupproject.ui.login.Login;
 import com.google.firebase.auth.FirebaseAuth;
 import com.robotium.solo.Solo;
 

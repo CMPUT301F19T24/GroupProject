@@ -16,8 +16,8 @@ import com.example.groupproject.R;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_following, R.string.tab_text_followers, R.string.tab_text_requests};
-    private final Context mContext;
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_relationship, R.string.tab_text_responses};
+private final Context mContext;
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
@@ -34,15 +34,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch(position){
             case 0:
-                return new FollowingFragment();
+                return new RelationshipFollowersFragment();
             case 1:
-                return new FollowersFragment();
-            case 2:
-                return new RequestsFragment();
+                return new RelationshipResponsesFragment();
         }
         // Default case;
-        return GeneralizedFragment.newInstance(position + 1);
-
+//        return GeneralizedFragment.newInstance(position + 1);
+        return null;
     }
 
     @Nullable
