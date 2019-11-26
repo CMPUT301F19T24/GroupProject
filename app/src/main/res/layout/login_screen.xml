@@ -73,13 +73,13 @@
         android:id="@+id/sign_in_button"
         android:layout_width="208dp"
         android:layout_height="35dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="24dp"
         android:background="@color/colorPrimary"
         android:text="@string/sign_in_btn"
         android:textColor="#E7F8FF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/password_field"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="@+id/password_field"
         app:layout_constraintTop_toBottomOf="@+id/password_field" />
 
     <TextView
@@ -99,6 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:focusable="auto"
         android:onClick="createNewAccount"
         android:text="@string/create_new_account_btn"
         android:textIsSelectable="false"
@@ -109,6 +110,23 @@
         app:layout_constraintEnd_toEndOf="@+id/subtitle"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/no_account" />
+
+    <TextView
+        android:id="@+id/credentialMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center_vertical"
+        android:includeFontPadding="false"
+        android:text="@string/credentialMessage"
+        android:textAlignment="gravity"
+        android:textColor="#FD0000"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/sign_in_button"
+        app:layout_constraintEnd_toEndOf="@+id/password_field"
+        app:layout_constraintStart_toStartOf="@+id/password_field"
+        app:layout_constraintTop_toBottomOf="@+id/password_field"
+        app:layout_constraintVertical_bias="0.31"
+        tools:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

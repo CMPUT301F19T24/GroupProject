@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -416,8 +417,7 @@ public class FireStoreHandler {
                     @Override
 
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        EditText passwordText = view.getRootView().findViewById(R.id.password_field);
-                        EditText editText = view.getRootView().findViewById(R.id.username_field);
+                        TextView errorMessage = view.getRootView().findViewById(R.id.credentialMessage);
                         if (task.isSuccessful()) {
                             // If login was successful print statement to the log and change view
                             Log.d(TAG, "loginUserWithEmail:successful");
@@ -432,9 +432,11 @@ public class FireStoreHandler {
                             try {
                                 throw task.getException();
                             } catch (FirebaseAuthInvalidUserException e) {
-                                editText.setError("User does not exist");
+                                //editText.setError("User does not exist");
+                                errorMessage.setVisibility(view.VISIBLE);
                             } catch (FirebaseAuthInvalidCredentialsException e) {
-                                passwordText.setError("Incorrect Password");
+                                //passwordText.setError("Incorrect Password");
+                                errorMessage.setVisibility(view.VISIBLE);
                             }catch (Exception e) {
                                 Toast.makeText(view.getContext(), "An error occurred while logging in", Toast.LENGTH_SHORT).show();
                             }
