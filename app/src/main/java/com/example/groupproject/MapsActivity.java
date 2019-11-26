@@ -32,10 +32,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Random;
 
 import static com.example.groupproject.MainActivity.FSH_INSTANCE;
@@ -58,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<LatLng> randomLatLng = new ArrayList<>();
 
     private LocationRequest locationRequest;
+    MapsBottomSheetDialogFragment mapsBottomSheetDialogFragment;
 
     Spinner mSpinner;
 
@@ -67,6 +70,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<MoodEvent> moodEvents;
     ArrayList<Marker> markerArray;
 
+    private HashMap<Marker, MoodEvent> markerHashMap;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mSpinner = findViewById(R.id.mapHistorySpinner);
         markerArray = new ArrayList<>();
         moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
+        markerHashMap = new HashMap<>();
 
 //        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, moodNames);
         MapsSpinnerAdapter mapsSpinnerAdapter = new MapsSpinnerAdapter(MapsActivity.this, R.layout.activity_maps_spinner, moodNames);
@@ -96,7 +103,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
+        mapsBottomSheetDialogFragment = MapsBottomSheetDialogFragment.newInstance();
 
         System.out.println("111");
         System.out.println(moodEvents);
@@ -143,7 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    Toast.makeText(getApplicationContext(), "Location Changed", Toast.LENGTH_LONG).show();
+
                 }
 
                 @Override
@@ -211,7 +218,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void fetchLocations(MoodEvent moodEvent){
+    public void fetchLocations(final MoodEvent moodEvent){
+
         if(moodEvent.getLatLng() != null)
         {
             MarkerOptions op = new MarkerOptions();
@@ -222,9 +230,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .draggable(false);
 
             Marker marker = mMap.addMarker(op);
+            markerHashMap.put(marker, moodEvent);
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    MoodEvent event = markerHashMap.get(marker);
+                    System.out.println(event.getMood().getName());
+                    System.out.println(event.getInfo());
+
+//                    Bundle bundle = createMoodEventBundle(moodEvent);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("moodEvent", event);
+//                    String moodIconName = bundle.getString("moodIcon");
+//                    System.out.println("Bundle Name: " +moodIconName);
+
+                    mapsBottomSheetDialogFragment.setArguments(bundle);
+                    mapsBottomSheetDialogFragment.show(getSupportFragmentManager(),"show_mood_history_dialog_fragment");
+                    return false;
+                }
+            });
+
             markerArray.add(marker);
         }
     }
+
+//    private Bundle createMoodEventBundle(MoodEvent moodEvent){
+//        Bundle bundle = new Bundle();
+//        bundle.putString("moodIcon", moodEvent.getMood().getName());
+//        if(moodEvent.getTimeStamp() != null) bundle.putString("moodDate", moodEvent.getTimeStamp().toString());
+//        if(moodEvent.getReasonText() != null) bundle.putString("moodReason", moodEvent.getReasonText());
+//        if(moodEvent.getReasonImage() != null) bundle.putString("moodImage", moodEvent.getReasonImage().toString());
+//        if(moodEvent.getSocialSituation() != null) bundle.putString("moodSocialSituation", moodEvent.getSocialSituation().toString());
+//        return bundle;
+//    }
 
     private void createRandomLatLng(){
         float lat = 53.545883f;

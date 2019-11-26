@@ -3,6 +3,7 @@ package com.example.groupproject;
 import android.location.Location;
 import android.media.Image;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.model.LatLng;
@@ -11,7 +12,7 @@ import java.util.Calendar;
 
 import static com.example.groupproject.SortingMethod.*;
 
-public class MoodEvent implements Comparable {
+public class MoodEvent implements Comparable, Serializable {
     private Mood mood;
     private Calendar timeStamp;
     private SocialSituation socialSituation;
