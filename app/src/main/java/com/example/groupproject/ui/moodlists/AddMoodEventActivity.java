@@ -1,19 +1,27 @@
 package com.example.groupproject.ui.moodlists;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,6 +29,7 @@ import android.widget.Toast;
 
 import static android.R.layout.simple_spinner_item;
 
+import com.example.groupproject.MainActivity;
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
 import com.example.groupproject.data.relations.SocialSituation;
@@ -52,7 +61,14 @@ public class AddMoodEventActivity extends AppCompatActivity {
     Button b_add_from_photo;
     Switch sw_include_location;
     Button b_submit_new_mood_event;
+    ImageView imageView;
     private ArrayList<Mood> validMoods;
+
+    private static final int PICK_IMAGE = 0;
+    private static final int CAMERA_PIC_REQUEST = 1;
+    Uri imageUri;
+
+    private int STORAGE_PERMISSION_CODE = 1;
 
     Image attachedImage;
 
@@ -80,6 +96,8 @@ public class AddMoodEventActivity extends AppCompatActivity {
         b_add_from_photo = findViewById(R.id.b_add_from_photo);
         sw_include_location = findViewById(R.id.sw_include_location);
         b_submit_new_mood_event = findViewById(R.id.b_submit_new_mood_event);
+
+        imageView = findViewById(R.id.image_from_gallery);
 
         initializeTextViews();
         initializeSpinner();
@@ -116,18 +134,28 @@ public class AddMoodEventActivity extends AppCompatActivity {
         b_add_from_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+
+
 
 //                attachedImage = TODO
+//                openCamera();
             }
         });
 
         b_add_from_photo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 // TODO
-
+                if (ContextCompat.checkSelfPermission(AddMoodEventActivity.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(AddMoodEventActivity.this, "You have already granted this permission!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    requestStoragePermission();
+                }
 //                attachedImage = TODO
+
+                openGallery();
             }
         });
 
@@ -137,6 +165,75 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 addMoodToCache();
             }
         });
+    }
+
+    private void requestStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission needed")
+                    .setMessage("This permission is needed because of this and that")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(AddMoodEventActivity.this,
+                                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == STORAGE_PERMISSION_CODE)  {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openGallery(){
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, PICK_IMAGE);
+    }
+
+    private void openCamera(){
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case 0:
+                if(resultCode == RESULT_OK){
+                    imageUri = data.getData();
+                    imageView.setImageURI(imageUri);
+                }
+
+                break;
+            case 1:
+                if(resultCode == RESULT_OK){
+                    imageUri = data.getData();
+                    imageView.setImageURI(imageUri);
+                }
+                break;
+        }
     }
 
     private void addMoodToCache() {
