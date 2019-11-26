@@ -35,6 +35,7 @@
     <string name="no_account_lbl">Don\'t have an account</string>
     <string name="create_new_account_btn">Create one</string>
     <string name="credentialMessage">Invalid username or password</string>
+    <string name="help">HELP</string>
 
     <!--    layout: v_user_list_layout.xml-->
     <string name="placeholder_follower">Luke Skywalker</string>

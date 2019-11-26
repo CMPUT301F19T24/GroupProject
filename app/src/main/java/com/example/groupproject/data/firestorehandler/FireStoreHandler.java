@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -490,13 +491,16 @@ public class FireStoreHandler {
                                 throw task.getException();
                             } catch (FirebaseAuthUserCollisionException e) {
                                 editText.setError("This username is unavailable");
-                                Log.w(TAG, "loginUserWithEmail:usernameUnavailable");
+                                Log.w(TAG, "createUserWithEmail:usernameUnavailable");
                             } catch (FirebaseAuthWeakPasswordException e) {
                                 passwordText.setError("Password must be at least 6 characters");
-                                Log.w(TAG, "loginUserWithEmail:weakPassword");
+                                Log.w(TAG, "createUserWithEmail:weakPassword");
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                editText.setError("Can only contain 'a-z', '0-9', and certain special characters");
+                                Log.w(TAG, "createUserWithEmail:illegalCharacter");
                             } catch (Exception e) {
                                 Log.w(TAG, "loginUserWithEmail:failed");
-                                Toast.makeText(view.getContext(), "An error occurred while creating account", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(view.getContext(), "An unexpected error occurred while creating account", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
