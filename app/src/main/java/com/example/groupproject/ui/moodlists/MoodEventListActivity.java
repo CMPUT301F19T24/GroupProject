@@ -3,11 +3,13 @@ package com.example.groupproject.ui.moodlists;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
 import com.example.groupproject.data.relations.SocialSituation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,7 +49,7 @@ public class MoodEventListActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
-
+    Bitmap bitmap;
 
 
 
@@ -270,7 +273,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                         curMoodEvent.setReasonText(et_desc.getText().toString());
 
                         // TODO: Add me
-//                        curMoodEvent.setReasonImage();
+                        curMoodEvent.setReasonImage(bitmap);
 //                        curMoodEvent.setLocation();
                         curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
 
@@ -311,6 +314,11 @@ public class MoodEventListActivity extends AppCompatActivity {
             imageUri = data.getData();
 //            attachedImage.
 //            iv_desc.setImageURI(imageUri);
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

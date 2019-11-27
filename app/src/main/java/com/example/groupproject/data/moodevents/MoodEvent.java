@@ -1,5 +1,6 @@
 package com.example.groupproject.data.moodevents;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class MoodEvent implements Comparable {
     private Calendar timeStamp;
     private SocialSituation socialSituation;
     private String reasonText;
-    private Image reasonImage;
+    private Bitmap reasonImage;
 //    private Location location;
     private LatLng latlng;
     private User owner;
@@ -30,7 +31,7 @@ public class MoodEvent implements Comparable {
                                User owner,
                                SocialSituation socialSituation,
                                String reasonText,
-                               Image reasonImage,
+                               Bitmap reasonImage,
 //              Location location
                                LatLng latlng
               )
@@ -80,7 +81,7 @@ public class MoodEvent implements Comparable {
         return this.reasonText;
     }
 
-    public Image getReasonImage()
+    public Bitmap getReasonImage()
     {
         return this.reasonImage;
     }
@@ -117,7 +118,7 @@ public class MoodEvent implements Comparable {
         this.reasonText = reasonText;
     }
 
-    public void setReasonImage(Image reasonImage)
+    public void setReasonImage(Bitmap reasonImage)
     {
         this.reasonImage = reasonImage;
     }
