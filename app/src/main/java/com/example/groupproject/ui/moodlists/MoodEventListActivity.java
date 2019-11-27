@@ -47,7 +47,9 @@ public class MoodEventListActivity extends AppCompatActivity {
     // Defines
     private static final SortingMethod DEFAULT_SORTING_METHOD = SortingMethod.DATE_NTOO;
 
-    private static final int PICK_IMAGE = 100;
+    private static final int PICK_IMAGE = 0;
+    private static final int CAMERA_PIC_REQUEST = 1;
+
     Uri imageUri;
     Bitmap bitmap;
 
@@ -250,6 +252,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         // TODO
+                        openCamera();
 
                     }
                 });
@@ -307,18 +310,38 @@ public class MoodEventListActivity extends AppCompatActivity {
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    private void openCamera(){
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
-            imageUri = data.getData();
-//            attachedImage.
-//            iv_desc.setImageURI(imageUri);
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        switch(requestCode) {
+            case PICK_IMAGE:
+                if(resultCode == RESULT_OK){
+                    imageUri = data.getData();
+//                    imageView.setImageURI(imageUri);
+
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                break;
+            case CAMERA_PIC_REQUEST:
+                if(resultCode == RESULT_OK){
+//                    imageUri = data.getData();
+//                    imageView.setImageURI(imageUri);
+                    Bundle extras = data.getExtras();
+                    bitmap = (Bitmap) extras.get("data");
+//                    imageView.setImageBitmap(bitmap);
+                }
+                break;
         }
     }
 

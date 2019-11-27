@@ -141,7 +141,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
 
 //                attachedImage = TODO
-//                openCamera();
+                activeTakePhoto();
             }
         });
 
@@ -198,6 +198,17 @@ public class AddMoodEventActivity extends AppCompatActivity {
         }
     }
 
+    private void activeTakePhoto() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 110);
+        } else {
+            openCamera();
+        }
+
+    }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == STORAGE_PERMISSION_CODE)  {
@@ -205,6 +216,13 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (requestCode == 110) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
             }
         }
     }
@@ -215,8 +233,9 @@ public class AddMoodEventActivity extends AppCompatActivity {
     }
 
     private void openCamera(){
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+
     }
 
     @Override
@@ -240,8 +259,15 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 break;
             case CAMERA_PIC_REQUEST:
                 if(resultCode == RESULT_OK){
-                    imageUri = data.getData();
-                    imageView.setImageURI(imageUri);
+//                    imageUri = data.getData();
+//                    imageView.setImageURI(imageUri);
+                    Bundle extras = data.getExtras();
+                    bitmap = (Bitmap) extras.get("data");
+                    imageView.setImageBitmap(bitmap);
+
+
+
+
                 }
                 break;
         }
