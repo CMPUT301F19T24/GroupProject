@@ -220,14 +220,15 @@ public class AddMoodEventActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
-            case 0:
+            case PICK_IMAGE:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
                     imageView.setImageURI(imageUri);
+
                 }
 
                 break;
-            case 1:
+            case CAMERA_PIC_REQUEST:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
                     imageView.setImageURI(imageUri);
