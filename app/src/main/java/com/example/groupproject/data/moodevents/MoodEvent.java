@@ -3,6 +3,7 @@ package com.example.groupproject.data.moodevents;
 import android.graphics.Bitmap;
 import android.media.Image;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.example.groupproject.data.relations.SocialSituation;
@@ -15,7 +16,7 @@ import java.util.Calendar;
 
 import static com.example.groupproject.ui.moodlists.SortingMethod.*;
 
-public class MoodEvent implements Comparable {
+public class MoodEvent implements Comparable, Serializable {
     private Mood mood;
     private Calendar timeStamp;
     private SocialSituation socialSituation;
