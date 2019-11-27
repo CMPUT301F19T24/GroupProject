@@ -8,6 +8,8 @@
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA"> </uses-permission>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -16,10 +18,6 @@
         android:roundIcon="@drawable/custom_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".relations"
-            android:label="@string/title_activity_relations"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -34,7 +32,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity">
+            android:name=".ui.maps.MapsActivity">
 <!--            android:label="@string/title_activity_maps"-->
 
 <!--            <intent-filter>-->
@@ -44,16 +42,17 @@
 <!--            </intent-filter>-->
         </activity>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".ui.moodlists.MoodEventListActivity"></activity>
+        <activity android:name=".ui.moodlists.AddMoodEventActivity"></activity>
+        <activity android:name=".ui.relations.RelationshipViewActivity"></activity>
+        <activity android:name=".ui.login.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MoodEventListActivity"></activity>
-        <activity android:name=".AddMoodEventActivity"></activity>
-        <activity android:name=".Login"></activity>
 
 
         <meta-data

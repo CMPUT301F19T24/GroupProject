@@ -1,5 +1,8 @@
 package com.example.groupproject;
 
+import com.example.groupproject.data.relations.Relationship;
+import com.example.groupproject.data.relations.RelationshipStatus;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
