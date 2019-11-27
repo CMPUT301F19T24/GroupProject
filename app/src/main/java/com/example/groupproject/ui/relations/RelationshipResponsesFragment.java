@@ -35,6 +35,9 @@ public class RelationshipResponsesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState){
+        localRelationships = FSH_INSTANCE.getInstance().fsh.getPendingResponsesOfUser(USER_INSTANCE.getUserName());
+        relationshipContainer.notifyDataSetChanged();
+
         View root = inflater.inflate(R.layout.fragment_responses, viewGroup, false);
         userListView = root.findViewById(R.id.lv_responses_list);
         userListView.setAdapter(relationshipContainer);

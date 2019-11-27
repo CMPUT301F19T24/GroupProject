@@ -135,10 +135,11 @@ public class AddMoodEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addMoodToCache();
+
             }
         });
     }
-
+    // Pushes moodEvent to remote.
     private void addMoodToCache() {
         try {
             Mood newMood = validMoods.get(s_select_mood.getSelectedItemPosition());
@@ -172,7 +173,8 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
             MoodEvent newMoodEvent = new MoodEvent(newMood, newTimestamp, USER_INSTANCE, SocialSituation.values()[s_social_sit.getSelectedItemPosition()], tv_desc.getText().toString(), attachedImage, newLatlng);
 
-            FSH_INSTANCE.getInstance().fsh.addMoodEvent(newMoodEvent);
+//            FSH_INSTANCE.getInstance().fsh.addMoodEvent(newMoodEvent);
+            FSH_INSTANCE.getInstance().fsh.pushNewMoodEventToRemote(newMoodEvent);
 
             Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
             finish();

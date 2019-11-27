@@ -23,7 +23,7 @@ import static com.example.groupproject.MainActivity.FSH_INSTANCE;
 public class RelationshipList extends ArrayAdapter<Relationship> {
     /**
      * Implements a custom Array adapter for viewing users in a list.
-     * @author Vivek
+     * @author Vivek, Donald
      *
      */
     private List<Relationship> relations;

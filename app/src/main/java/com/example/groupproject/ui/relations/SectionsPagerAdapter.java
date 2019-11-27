@@ -21,6 +21,7 @@ private final Context mContext;
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
+
     }
 
     @Override

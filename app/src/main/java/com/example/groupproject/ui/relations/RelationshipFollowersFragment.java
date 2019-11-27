@@ -34,6 +34,9 @@ public class RelationshipFollowersFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState){
+        localRelationships = FSH_INSTANCE.getInstance().fsh.getRelationShipOfSender(USER_INSTANCE.getUserName());
+        relationshipContainer.notifyDataSetChanged();
+
         View root = inflater.inflate(R.layout.fragment_relations, viewGroup, false);
         userListView = root.findViewById(R.id.lv_relations_list);
         userListView.setAdapter(relationshipContainer);

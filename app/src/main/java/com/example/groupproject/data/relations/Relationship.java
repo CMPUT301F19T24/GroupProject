@@ -1,11 +1,16 @@
 package com.example.groupproject.data.relations;
 
 import com.example.groupproject.data.user.User;
+import com.google.firebase.firestore.DocumentReference;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class Relationship implements Comparable{
     private User sender;
     private User recipiant;
     private RelationshipStatus status;
+    private String documentId;
 
     public Relationship(User sender, User recipiant, RelationshipStatus status)
     {
@@ -54,4 +59,12 @@ public class Relationship implements Comparable{
          */
         return (this.status == RelationshipStatus.PENDING_FOLLOWING || this.status == RelationshipStatus.PENDING_VISIBLE);
     };
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
 }

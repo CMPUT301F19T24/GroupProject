@@ -102,7 +102,6 @@ public class ResponsesList extends ArrayAdapter<Relationship> {
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(context.getApplicationContext(), "This user is requesting to be able to subscribe the posts that you've made", Toast.LENGTH_SHORT).show();
-
                     }
                 });
 

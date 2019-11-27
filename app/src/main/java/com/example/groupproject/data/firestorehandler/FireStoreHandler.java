@@ -17,16 +17,32 @@ import com.example.groupproject.data.relations.Relationship;
 import com.example.groupproject.data.relations.RelationshipStatus;
 import com.example.groupproject.data.user.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import org.w3c.dom.Document;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static android.content.ContentValues.TAG;
@@ -35,10 +51,16 @@ public class FireStoreHandler {
     // Testing
     private FirestoreTester fst;
     private FirebaseAuth fbAuth = FirebaseAuth.getInstance();
+    private FirebaseFirestore fbFireStore = FirebaseFirestore.getInstance();
 
     protected ArrayList<MoodEvent> cachedMoodEvents;
     protected ArrayList<User> cachedUsers;
     protected ArrayList<Relationship> cachedRelationship;
+
+    public interface CustomFirebaseDocumentListener {
+        void onSuccess(DocumentReference documentReference);
+        void onFailure(Exception e);
+    }
 
     public FireStoreHandler()
     {
@@ -67,25 +89,116 @@ public class FireStoreHandler {
         cachedUsers = (ArrayList<User>) fst.cachedUsers.clone();
     }
 
+    private void parseRelationshipDocumentIntoCache(QueryDocumentSnapshot document){
+        /**
+         * Convert a FireStore document into relationship object and populates the local cache
+         * @param document - Successfully queried data object from FireStore
+         */
+        try {
+            Map<String, Object> data = document.getData(); // FireStore data is in key,value format.
+            String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail()); // Currently authenticated user.
+            // Get values, otherwise set defaults
+            String statusString = (data.get("status") == null) ? "INVISIBLE" : data.get("status").toString();
+            String user_a_String = (data.get("a") == null) ? "Unknown_user" : data.get("a").toString();
+            String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
+            switch (statusString){
+                case "request":
+                    if (user_a_String == currentUserName){ // Current user sent the request
+                        statusString = "PENDING_VISIBLE";
+                    } else if (user_b_String == currentUserName) { // Current user is the one receiving request
+                        statusString = "PENDING_FOLLOWING";
+                    }
+            }
+            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString);
+            Relationship newRelationship = new Relationship(new User(user_a_String), new User(user_b_String), relationshipStatus);
+            newRelationship.setDocumentId(document.getId());
+            cachedRelationship.add(newRelationship);
+            Log.d(TAG, "relation document parse: successfully parsed" + document.getData());
+        } catch(Exception e) {
+            Log.d(TAG, "relationship document parse: failed", e);
+        }
+    }
+
     protected void pullRelationshipsFromRemotes()
     {
         /**
-         * Populate the local cache with values from remote
+         * Populate the local cache with relationships of current user
          */
-        // TODO
-        cachedRelationship = (ArrayList<Relationship>) fst.cachedRelationship.clone();
+        CollectionReference relationsRef = fbFireStore.collection("relationships");
+        String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
+        Log.d(TAG, "DocumentSnapshot: attempting pull for " + currentUserName);
+        // Clear current relationship cache because db is queried TODO
+//        cachedRelationship = new ArrayList<Relationship>();
+        // Get all users who are following this user.
+        relationsRef.whereEqualTo("a", currentUserName).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot document : task.getResult()){
+                                parseRelationshipDocumentIntoCache(document);
+                                Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                            }
+                        } else {
+                            Log.d(TAG, "DocumentSnapshot data: failed to fetch");
+                        }
+                    }
+                });
 
+//        cachedRelationship = (ArrayList<Relationship>) fst.cachedRelationship.clone();
+
+    }
+    private Map<String, Object> hashMapMoodEvent(MoodEvent moodEvent){
+        // Package a mood event
+        Map<String, Object> moodData = new HashMap<>();
+        moodData.put("mood", moodEvent.getMood().getName());
+        moodData.put("owner", moodEvent.getOwner().getUserName());
+        if (moodEvent.hasLatLng()){
+            GeoPoint geoPoint = new GeoPoint(moodEvent.getLatLng().latitude, moodEvent.getLatLng().longitude);
+            moodData.put("location", geoPoint);
+        }
+        moodData.put("reasonText", moodEvent.getReasonText());
+        moodData.put("reasonImage", "");
+        moodData.put("timeStamp", new Timestamp(new Date(moodEvent.getTimeStamp())));
+        moodData.put("socialSituation", moodEvent.getSocialSituation().toString());
+        return moodData;
+    }
+    private void pushAttachedImageToRemote(MoodEvent moodEvent){
+        // TODO
     }
 
     // Communicates with Remote
-    private void pushMoodEventListToRemote()
-    {
+    public void pushNewMoodEventToRemote(final MoodEvent moodEvent){
         /**
-         * Pushes local cached values to remote
+         * Push a local mood event to remote
          */
-        // TODO
-        fst.cachedMoodEvents = (ArrayList<MoodEvent>) cachedMoodEvents.clone();
+        Map<String, Object> moodData = hashMapMoodEvent(moodEvent);
+        // Image upload not implemented.
+        // When uploading - attach metadata of document reference to image.
 
+        Task<DocumentReference> task = fbFireStore.collection("moodEvents")
+                .add(moodData)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        moodEvent.onSuccess(documentReference);
+                        Log.d(TAG, "Mood Event uploaded to remote");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        moodEvent.onFailure(e);
+                        Log.d(TAG, "Failed to upload mood event");
+                    }
+                });
+    }
+
+    private Task<DocumentReference> pushNewUserToRemote(final String userName){
+        Map<String, Object> user = new HashMap<>();
+        user.put("name", userName);
+        Task<DocumentReference> added_user = fbFireStore.collection("users").add(user);
+        return added_user;
     }
 
     private void pushUserListToRemote()
@@ -350,8 +463,6 @@ public class FireStoreHandler {
          *
          */
         cachedMoodEvents.add(me);
-
-        pushMoodEventListToRemote();
     }
     public void editMoodEvent(MoodEvent me)
     {
@@ -369,7 +480,6 @@ public class FireStoreHandler {
                 cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
                 cachedMoodEvents.add(me);
 
-                pushMoodEventListToRemote();
                 break;
             }
         }
@@ -389,7 +499,7 @@ public class FireStoreHandler {
             {
                 cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
 
-                pushMoodEventListToRemote();
+                // del here..
                 break;
             }
         }
@@ -475,7 +585,6 @@ public class FireStoreHandler {
         fbAuth.createUserWithEmailAndPassword(username, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         EditText passwordText = view.getRootView().findViewById(R.id.new_password);
                         EditText editText = view.getRootView().findViewById(R.id.new_username);
@@ -507,6 +616,14 @@ public class FireStoreHandler {
         fbAuth.getCurrentUser().delete();
     }
 
+    public String truncateEmailFromUsername(String email){
+        String truncatedName = email;
+        if (truncatedName.length() > 23){// We know "@cmput301-c6741.web.app" exists and is 23 char long
+            truncatedName = truncatedName.substring(0, truncatedName.length() - 23);
+        }
+        return truncatedName;
+
+    }
     public String getCurrentUser(){
         String fetchedUser = fbAuth.getCurrentUser().getDisplayName().toString();
         fetchedUser = fetchedUser.substring(0, fetchedUser.length()-21);

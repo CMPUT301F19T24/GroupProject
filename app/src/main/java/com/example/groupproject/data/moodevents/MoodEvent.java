@@ -4,17 +4,19 @@ import android.media.Image;
 
 import java.util.ArrayList;
 
+import com.example.groupproject.data.firestorehandler.FireStoreHandler;
 import com.example.groupproject.data.relations.SocialSituation;
 import com.example.groupproject.ui.moodlists.SortingMethod;
 import com.example.groupproject.data.user.User;
 import com.example.groupproject.data.moods.Mood;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.Calendar;
 
 import static com.example.groupproject.ui.moodlists.SortingMethod.*;
 
-public class MoodEvent implements Comparable {
+public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDocumentListener {
     private Mood mood;
     private Calendar timeStamp;
     private SocialSituation socialSituation;
@@ -23,6 +25,8 @@ public class MoodEvent implements Comparable {
 //    private Location location;
     private LatLng latlng;
     private User owner;
+    private DocumentReference documentReference;
+    private FireStoreHandler.CustomFirebaseDocumentListener customFirebaseDocumentListener;
 
 
               public MoodEvent(Mood currentMood,
@@ -135,7 +139,8 @@ public class MoodEvent implements Comparable {
         this.owner = owner;
     }
 
-
+    public void setDocumentReference(DocumentReference reference){this.documentReference = reference;}
+    public DocumentReference getDocumentReference(){return this.documentReference;}
     @Override
     public int compareTo(Object o) { // By default, sort by date
         return compareTo(o, DATE_OTON);
@@ -161,6 +166,18 @@ public class MoodEvent implements Comparable {
             default:
                 throw new IllegalStateException("Unexpected value: " + sm);
         }
+    }
+
+    @Override
+    public void onSuccess(DocumentReference documentReference) {
+        // Upon successful FireStore update, update document reference
+        this.setDocumentReference(documentReference);
+        System.out.println("NEW DOCUMENT ID:" + this.getDocumentReference().getId());
+    }
+
+    @Override
+    public void onFailure(Exception e) {
+        System.out.println(e);
     }
 
     public boolean contains(String query)
