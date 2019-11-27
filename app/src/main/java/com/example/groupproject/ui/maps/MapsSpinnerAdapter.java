@@ -1,4 +1,4 @@
-package com.example.groupproject;
+package com.example.groupproject.ui.maps;
 
 import android.content.Context;
 import android.text.Layout;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.groupproject.R;
 
 public class MapsSpinnerAdapter extends ArrayAdapter {
 

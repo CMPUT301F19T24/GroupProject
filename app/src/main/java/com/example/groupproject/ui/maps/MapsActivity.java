@@ -13,12 +13,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.groupproject.MapsBottomSheetDialogFragment;
-import com.example.groupproject.MapsSpinnerAdapter;
 import com.example.groupproject.R;
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,11 +31,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Random;
 

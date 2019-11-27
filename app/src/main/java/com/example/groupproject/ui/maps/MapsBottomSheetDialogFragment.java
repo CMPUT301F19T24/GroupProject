@@ -1,4 +1,4 @@
-package com.example.groupproject;
+package com.example.groupproject.ui.maps;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -7,8 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.example.groupproject.R;
+import com.example.groupproject.data.moodevents.MoodEvent;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
@@ -57,18 +60,12 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         TextView moodName = view.findViewById(R.id.moodName);
         TextView moodDateView = view.findViewById(R.id.moodDate);
         TextView moodReasonView = view.findViewById(R.id.moodReason);
+        TextView moodImageTextView = view.findViewById(R.id.moodImageText);
         ImageView moodImageView = view.findViewById(R.id.moodImage);
         TextView moodSocialSituationView = view.findViewById(R.id.moodSocialSituation);
 
         Bundle bundle = getArguments();
         MoodEvent moodEvent = (MoodEvent)bundle.getSerializable("moodEvent");
-
-
-//        String moodIconName = bundle.getString("moodIcon");
-//        String moodDate = bundle.getString("moodDate");
-//        String moodReason = bundle.getString("moodReason");
-//        String moodImage = bundle.getString("moodImage");
-//        String moodSocialSituation = bundle.getString("moodSocialSituation");
 
         System.out.println(moodEvent.getMood().getName());
 
@@ -77,8 +74,17 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         moodDateView.setText(moodEvent.getTimeStamp().getTime().toString());
         moodReasonView.setText((moodEvent.getReasonText() != null ? moodEvent.getReasonText() : ""));
         moodSocialSituationView.setText((moodEvent.getSocialSituation() != null ? moodEvent.getSocialSituation().toString() : ""));
+//        System.out.println(moodEvent.getReasonImage() != null);
+        if(moodEvent.getReasonImage() == null){
+            moodImageTextView.setVisibility(View.GONE);
+            moodImageView.setVisibility(View.GONE);
+        }
+        else{
+            moodImageTextView.setVisibility(View.VISIBLE);
+            moodImageView.setVisibility(View.VISIBLE);
+            moodImageView.setImageBitmap(moodEvent.getReasonImage());
+        }
+
 
     }
-
-
 }
