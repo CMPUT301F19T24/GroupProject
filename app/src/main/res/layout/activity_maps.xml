@@ -31,16 +31,6 @@
             android:backgroundTint="#FCC42A2A"
             android:backgroundTintMode="src_in" />
 
-        <Button
-            android:id="@+id/changeToListViewButton"
-            android:layout_width="125dp"
-            android:layout_height="35dp"
-            android:layout_margin="15dp"
-            android:layout_weight="1"
-            android:background="@drawable/gradient_following"
-            android:text="View As List"
-            android:textColor="#FFFFFF" />
-
     </LinearLayout>
 
     <fragment

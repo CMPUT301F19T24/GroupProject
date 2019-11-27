@@ -77,10 +77,6 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         moodDateView.setText(moodEvent.getTimeStamp().getTime().toString());
         moodReasonView.setText((moodEvent.getReasonText() != null ? moodEvent.getReasonText() : ""));
         moodSocialSituationView.setText((moodEvent.getSocialSituation() != null ? moodEvent.getSocialSituation().toString() : ""));
-//        moodImageView.setImageResource(moodEvent.getReasonImage());
-
-//        if (moodDate != null) moodDateView.setText(moodDate);
-
 
     }
 

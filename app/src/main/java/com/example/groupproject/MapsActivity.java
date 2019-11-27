@@ -66,12 +66,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     Integer[] images = {0, R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
     String[] moodNames = {"Show ALL", "Happy", "Sad", "Angry", "Anxious", "Disgusted"};
-    //====
+
     ArrayList<MoodEvent> moodEvents;
     ArrayList<Marker> markerArray;
 
     private HashMap<Marker, MoodEvent> markerHashMap;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,7 +224,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             MarkerOptions op = new MarkerOptions();
             BitmapDescriptor bitmapMarker = BitmapDescriptorFactory.fromResource(moodEvent.getMood().getImageSmall());
             op.position(moodEvent.getLatLng())
-                    .title(moodEvent.getMood().getName())
+//                    .title(moodEvent.getMood().getName())
                     .icon(bitmapMarker)
                     .draggable(false);
 
@@ -281,16 +280,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    /*
     public void prePopulateData(){
         createRandomLatLng();
-//        Location locationWestEd = new Location("");
-//        locationWestEd.setLatitude(53.5225);
-//        locationWestEd.setLongitude(-113.6242);
+        Location locationWestEd = new Location("");
+        locationWestEd.setLatitude(53.5225);
+        locationWestEd.setLongitude(-113.6242);
         LatLng lWestEd = new LatLng(53.5225, -113.6242);
 
-//        Location locationSouthgate = new Location("");
-//        locationSouthgate.setLatitude(53.4855);
-//        locationSouthgate.setLongitude(-113.5137);
+        Location locationSouthgate = new Location("");
+        locationSouthgate.setLatitude(53.4855);
+        locationSouthgate.setLongitude(-113.5137);
         LatLng lSG = new LatLng(53.4855, -113.5137);
 
         Location locationCityHall = new Location("");
@@ -298,31 +298,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationCityHall.setLongitude(-113.490112);
         LatLng lCH = new LatLng(53.545883, -113.490112);
 
-//        cachedMoodEvents.
-//                add(new MoodEvent(new Happy(),
-//                        new GregorianCalendar(2001,01,01),
-//                        new User(UN_LUKE), ALONE, "Womp-rats", null, randomLatLng.get(0)));
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_LUKE), WITH_SOMEONE, "Lost Hand", null, randomLatLng.get(1)));
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2003,01,01), new User(UN_LUKE), NONE, "Hans + Leia", null, randomLatLng.get(2)));
-//        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,01,01), new User(UN_LUKE), WITH_SEVERAL, "Death Star", null, randomLatLng.get(3)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User(UN_LEIA), CROWD, "Capture", null, randomLatLng.get(4)));
-//        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2002,01,01), new User(UN_LEIA), CROWD, "Death Star", null, randomLatLng.get(5)));
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2004,01,01), new User(UN_LEIA), WITH_SOMEONE, "Jabba", null, randomLatLng.get(6)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_HANS), ALONE, "Carbonite", null, randomLatLng.get(7)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2001,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "Qui-Gon", null, randomLatLng.get(8)));
-//        cachedMoodEvents.add(new MoodEvent(new Anxious(), new GregorianCalendar(2002,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "High Ground", null, randomLatLng.get(9)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2001,1,1), new User(UN_DARTH_VADER), ALONE, "Shimi", null, randomLatLng.get(10)));
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2002,1,1), new User(UN_DARTH_VADER), CROWD, "Men, Women, Children", null, randomLatLng.get(11)));
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2003,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "High Ground", null, randomLatLng.get(12)));
-//        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,1,1), new User(UN_DARTH_VADER), WITH_SEVERAL, "Killing Palpatine", null, randomLatLng.get(13)));
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2005,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "Dieing", null, randomLatLng.get(14)));
+        cachedMoodEvents.
+                add(new MoodEvent(new Happy(),
+                        new GregorianCalendar(2001,01,01),
+                        new User(UN_LUKE), ALONE, "Womp-rats", null, randomLatLng.get(0)));
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_LUKE), WITH_SOMEONE, "Lost Hand", null, randomLatLng.get(1)));
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2003,01,01), new User(UN_LUKE), NONE, "Hans + Leia", null, randomLatLng.get(2)));
+        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,01,01), new User(UN_LUKE), WITH_SEVERAL, "Death Star", null, randomLatLng.get(3)));
+
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User(UN_LEIA), CROWD, "Capture", null, randomLatLng.get(4)));
+        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2002,01,01), new User(UN_LEIA), CROWD, "Death Star", null, randomLatLng.get(5)));
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2004,01,01), new User(UN_LEIA), WITH_SOMEONE, "Jabba", null, randomLatLng.get(6)));
+
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_HANS), ALONE, "Carbonite", null, randomLatLng.get(7)));
+
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2001,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "Qui-Gon", null, randomLatLng.get(8)));
+        cachedMoodEvents.add(new MoodEvent(new Anxious(), new GregorianCalendar(2002,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "High Ground", null, randomLatLng.get(9)));
+
+        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2001,1,1), new User(UN_DARTH_VADER), ALONE, "Shimi", null, randomLatLng.get(10)));
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2002,1,1), new User(UN_DARTH_VADER), CROWD, "Men, Women, Children", null, randomLatLng.get(11)));
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2003,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "High Ground", null, randomLatLng.get(12)));
+        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,1,1), new User(UN_DARTH_VADER), WITH_SEVERAL, "Killing Palpatine", null, randomLatLng.get(13)));
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2005,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "Dieing", null, randomLatLng.get(14)));
 
 
-    }
+    }*/
 
 
 
