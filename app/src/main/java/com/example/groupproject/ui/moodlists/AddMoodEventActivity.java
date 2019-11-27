@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,6 +43,7 @@ import com.example.groupproject.data.moods.Sad;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -67,6 +69,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 0;
     private static final int CAMERA_PIC_REQUEST = 1;
     Uri imageUri;
+    Bitmap bitmap;
 
     private int STORAGE_PERMISSION_CODE = 1;
 
@@ -225,6 +228,13 @@ public class AddMoodEventActivity extends AppCompatActivity {
                     imageUri = data.getData();
                     imageView.setImageURI(imageUri);
 
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
 
                 break;
@@ -268,7 +278,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 newLatlng = getCurrentLocation();
             }
 
-            MoodEvent newMoodEvent = new MoodEvent(newMood, newTimestamp, USER_INSTANCE, SocialSituation.values()[s_social_sit.getSelectedItemPosition()], tv_desc.getText().toString(), attachedImage, newLatlng);
+            MoodEvent newMoodEvent = new MoodEvent(newMood, newTimestamp, USER_INSTANCE, SocialSituation.values()[s_social_sit.getSelectedItemPosition()], tv_desc.getText().toString(), bitmap, newLatlng);
 
             FSH_INSTANCE.getInstance().fsh.addMoodEvent(newMoodEvent);
 
