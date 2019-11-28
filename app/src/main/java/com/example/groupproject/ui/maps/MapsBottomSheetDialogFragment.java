@@ -52,10 +52,7 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        System.out.println("12930130192830918290310923810209");
 
-
-        //        setContentView()
         ImageView moodIconView = view.findViewById(R.id.moodIcon);
         TextView moodName = view.findViewById(R.id.moodName);
         TextView moodDateView = view.findViewById(R.id.moodDate);
@@ -74,7 +71,7 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         moodDateView.setText(moodEvent.getTimeStamp().getTime().toString());
         moodReasonView.setText((moodEvent.getReasonText() != null ? moodEvent.getReasonText() : ""));
         moodSocialSituationView.setText((moodEvent.getSocialSituation() != null ? moodEvent.getSocialSituation().toString() : ""));
-//        System.out.println(moodEvent.getReasonImage() != null);
+
         if(moodEvent.getReasonImage() == null){
             moodImageTextView.setVisibility(View.GONE);
             moodImageView.setVisibility(View.GONE);
