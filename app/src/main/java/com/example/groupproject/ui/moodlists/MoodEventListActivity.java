@@ -60,6 +60,10 @@ public class MoodEventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         System.out.println("MoodEventListActivity");
         setContentView(R.layout.v_list_mood_events);
+
+        TextView tv_currentUserName = findViewById(R.id.tv_user_name);
+        tv_currentUserName.setText(USER_INSTANCE.getUserName());
+
         initialize();
     }
 
@@ -77,9 +81,6 @@ public class MoodEventListActivity extends AppCompatActivity {
         setupPopUpMenu();
         setupSorting();
         setupSearching();
-
-        TextView tv_currentUserName = findViewById(R.id.tv_user_name);
-        tv_currentUserName.setText(USER_INSTANCE.getUserName());
 
         moodEventAdapter.addAll(populateFromRemote());
 
