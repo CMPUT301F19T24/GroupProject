@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.groupproject.R;
 import com.example.groupproject.data.moodevents.MoodEvent;
@@ -62,6 +63,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(getApplicationContext(), "MapReady", Toast.LENGTH_LONG).show();
+
         mMap = googleMap;
         updateCurrentLocation();
         // Add a marker in Sydney and move the camera

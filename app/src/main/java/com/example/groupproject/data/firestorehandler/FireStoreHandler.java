@@ -32,6 +32,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -40,6 +41,7 @@ import org.w3c.dom.Document;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -101,15 +103,17 @@ public class FireStoreHandler {
             String statusString = (data.get("status") == null) ? "INVISIBLE" : data.get("status").toString();
             String user_a_String = (data.get("a") == null) ? "Unknown_user" : data.get("a").toString();
             String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
-            switch (statusString){
-                case "request":
-                    if (user_a_String == currentUserName){ // Current user sent the request
-                        statusString = "PENDING_VISIBLE";
-                    } else if (user_b_String == currentUserName) { // Current user is the one receiving request
-                        statusString = "PENDING_FOLLOWING";
-                    }
+            System.out.println("STATUS IS: " + statusString);
+            if (statusString.compareTo("request") == 0){
+                System.out.println("lalalalal");
+                if (user_a_String.compareTo(currentUserName) == 0){ // Current user sent the request
+                    System.out.println("I want to update status string to Pending visible, current is");
+                    statusString = "PENDING_VISIBLE";
+                } else if (user_b_String.compareTo(currentUserName) == 0) { // Current user is the one receiving request
+                    statusString = "PENDING_FOLLOWING";
+                }
             }
-            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString);
+            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString.toString());
             Relationship newRelationship = new Relationship(new User(user_a_String), new User(user_b_String), relationshipStatus);
             newRelationship.setDocumentId(document.getId());
             cachedRelationship.add(newRelationship);
@@ -119,34 +123,49 @@ public class FireStoreHandler {
         }
     }
 
+    private void onCompleteRelationshipDocumentPull(@NonNull Task<QuerySnapshot> task){
+        if (task.isSuccessful()){
+            for (QueryDocumentSnapshot document: task.getResult()){
+                parseRelationshipDocumentIntoCache(document);
+                Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+            }
+        } else {
+            Log.d(TAG, "DocumentSnapshot data: failed to fetch");
+        }
+    }
+
     protected void pullRelationshipsFromRemotes()
     {
         /**
          * Populate the local cache with relationships of current user
          */
-        CollectionReference relationsRef = fbFireStore.collection("relationships");
-        String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
-        Log.d(TAG, "DocumentSnapshot: attempting pull for " + currentUserName);
-        // Clear current relationship cache because db is queried TODO
-//        cachedRelationship = new ArrayList<Relationship>();
-        // Get all users who are following this user.
-        relationsRef.whereEqualTo("a", currentUserName).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                parseRelationshipDocumentIntoCache(document);
-                                Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                            }
-                        } else {
-                            Log.d(TAG, "DocumentSnapshot data: failed to fetch");
+        try {
+            CollectionReference relationsRef = fbFireStore.collection("relationships");
+            String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
+            Log.d(TAG, "DocumentSnapshot: attempting pull for " + currentUserName);
+            // Clear current relationship cache because db is queried TODO
+            cachedRelationship = new ArrayList<Relationship>();
+            // Get all users where a is current user.
+            relationsRef.whereEqualTo("a", currentUserName).get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            onCompleteRelationshipDocumentPull(task);
                         }
-                    }
-                });
+                    });
+            // Get all users where b is current user.
+            relationsRef.whereEqualTo("b", currentUserName).get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            onCompleteRelationshipDocumentPull(task);
+                        }
+                    });
 
 //        cachedRelationship = (ArrayList<Relationship>) fst.cachedRelationship.clone();
-
+        } catch(Exception e){
+            Log.d(TAG, "relationship pull: failed to pull" + e);
+        }
     }
     private Map<String, Object> hashMapMoodEvent(MoodEvent moodEvent){
         // Package a mood event
@@ -159,7 +178,7 @@ public class FireStoreHandler {
         }
         moodData.put("reasonText", moodEvent.getReasonText());
         moodData.put("reasonImage", "");
-        moodData.put("timeStamp", new Timestamp(new Date(moodEvent.getTimeStamp())));
+        moodData.put("timeStamp", moodEvent.getTimeStamp().getTime());
         moodData.put("socialSituation", moodEvent.getSocialSituation().toString());
         return moodData;
     }
@@ -224,6 +243,7 @@ public class FireStoreHandler {
     {
         /**
          * Clear, and update everything from remote
+         * Just clear, don't push/pull from remote
          */
         cachedMoodEvents.clear();
         cachedUsers.clear();
@@ -343,6 +363,7 @@ public class FireStoreHandler {
 
         Set<String> cachedNames = new HashSet<String>();
         Set<String> foundNames = new HashSet<String>();
+        pullRelationshipsFromRemotes();
 
         for(User i : cachedUsers)
         {
