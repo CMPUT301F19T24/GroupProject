@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -416,8 +418,7 @@ public class FireStoreHandler {
                     @Override
 
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        EditText passwordText = view.getRootView().findViewById(R.id.password_field);
-                        EditText editText = view.getRootView().findViewById(R.id.username_field);
+                        TextView errorMessage = view.getRootView().findViewById(R.id.credentialMessage);
                         if (task.isSuccessful()) {
                             // If login was successful print statement to the log and change view
                             Log.d(TAG, "loginUserWithEmail:successful");
@@ -432,9 +433,11 @@ public class FireStoreHandler {
                             try {
                                 throw task.getException();
                             } catch (FirebaseAuthInvalidUserException e) {
-                                editText.setError("User does not exist");
+                                //editText.setError("User does not exist");
+                                errorMessage.setVisibility(view.VISIBLE);
                             } catch (FirebaseAuthInvalidCredentialsException e) {
-                                passwordText.setError("Incorrect Password");
+                                //passwordText.setError("Incorrect Password");
+                                errorMessage.setVisibility(view.VISIBLE);
                             }catch (Exception e) {
                                 Toast.makeText(view.getContext(), "An error occurred while logging in", Toast.LENGTH_SHORT).show();
                             }
@@ -488,13 +491,17 @@ public class FireStoreHandler {
                                 throw task.getException();
                             } catch (FirebaseAuthUserCollisionException e) {
                                 editText.setError("This username is unavailable");
-                                Log.w(TAG, "loginUserWithEmail:usernameUnavailable");
+                                Log.w(TAG, "createUserWithEmail:usernameUnavailable");
                             } catch (FirebaseAuthWeakPasswordException e) {
                                 passwordText.setError("Password must be at least 6 characters");
-                                Log.w(TAG, "loginUserWithEmail:weakPassword");
+                                Log.w(TAG, "createUserWithEmail:weakPassword");
+                            } catch (FirebaseAuthInvalidCredentialsException e) {
+                                editText.setError("Username cannot contain spaces or any of the following: "+
+                                                  ". [ ] ( ) \" @ : ; \" < > \\ or ,");
+                                Log.w(TAG, "createUserWithEmail:illegalCharacter");
                             } catch (Exception e) {
-                                Log.w(TAG, "loginUserWithEmail:failed");
-                                Toast.makeText(view.getContext(), "An error occurred while creating account", Toast.LENGTH_SHORT).show();
+                                Log.w(TAG, "createUserWithEmail:failed");
+                                Toast.makeText(view.getContext(), "An unexpected error occurred while creating account", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
