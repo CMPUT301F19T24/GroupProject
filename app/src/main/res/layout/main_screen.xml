@@ -60,7 +60,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
     <Button
-        android:id="@+id/followers_button"
+        android:id="@+id/map_button"
         style="@android:style/Widget.Holo.Button.Borderless"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -122,10 +122,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
-        android:layout_marginLeft="14dp"
         android:layout_marginTop="3dp"
         android:text="username"
         android:textColor="#FFFFFF"
+        android:textSize="16sp"
         app:fontFamily="sans-serif-medium"
         app:layout_constraintBottom_toBottomOf="@+id/sign_out"
         app:layout_constraintStart_toStartOf="parent"

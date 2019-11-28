@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.groupproject.R;
@@ -71,6 +72,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerArray = new ArrayList<>();
         moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
         markerHashMap = new HashMap<>();
+
+        TextView curUserName = findViewById(R.id.currentUser);
+        curUserName.setText(USER_INSTANCE.getUserName());
 
 //        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, moodNames);
         MapsSpinnerAdapter mapsSpinnerAdapter = new MapsSpinnerAdapter(MapsActivity.this, R.layout.activity_maps_spinner, moodNames);

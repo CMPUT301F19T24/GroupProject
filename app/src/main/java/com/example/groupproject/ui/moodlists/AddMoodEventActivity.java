@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import static android.R.layout.simple_spinner_item;
 
-import com.example.groupproject.MainActivity;
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
 import com.example.groupproject.data.relations.SocialSituation;
@@ -85,6 +84,9 @@ public class AddMoodEventActivity extends AppCompatActivity {
         attachedImage = null;
 
         setContentView(R.layout.v_new_mood_event);
+        TextView curUserName = findViewById(R.id.addMoodUser);
+        curUserName.setText(USER_INSTANCE.getUserName());
+
         initialize();
     }
 
