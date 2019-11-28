@@ -85,6 +85,7 @@ public class FireStoreHandler {
     protected FirebaseAuth.AuthStateListener authStateListener;
     protected Boolean cachesInitialized;
 
+
     public interface CustomFirebaseDocumentListener {
         void onSuccess(DocumentReference documentReference);
         void onFailure(Exception e);
@@ -236,13 +237,20 @@ public class FireStoreHandler {
                                 MoodEvent newMoodEvent = createBlankMoodEvent();
                                 updateMoodEventFromDocument(createBlankMoodEvent(), document);
                                 // Scan cached mood events to see if this already exists.
+                                MoodEvent me = null;
                                 for (MoodEvent moodEvent: cachedMoodEvents){
                                     if (moodEvent.getDocumentReference() != null){
                                         if (moodEvent.getDocumentReference().getId().compareTo(document.getId()) == 0){
-                                            cachedMoodEvents.remove(moodEvent); // Remove duplicate mood event form cache
+                                            me = moodEvent;
+                                            break;
                                         }
                                     }
                                 }
+                                if(me != null)
+                                {
+                                    cachedMoodEvents.remove(me); // Remove duplicate mood event form cache
+                                }
+
                                 cachedMoodEvents.add(newMoodEvent);
                             }
                         }
@@ -504,6 +512,10 @@ public class FireStoreHandler {
             Log.d(TAG, "Failed to register relationships listener "+key);
         }
 
+    }
+
+    public void editRelationship(Relationship relationship) {
+        // TODO
     }
 
     protected void pullRelationshipsFromRemotes()
@@ -791,7 +803,6 @@ public class FireStoreHandler {
          * @param username - Exact string representing a unique User object
          * @return - Arraylist of MoodEvents fitting the criteria
          */
-        updateAllCachedLists();
         ArrayList<MoodEvent> arr_me = new ArrayList<>();
         ArrayList<Relationship> arr_rs = getRelationShipOfSender(username);
 

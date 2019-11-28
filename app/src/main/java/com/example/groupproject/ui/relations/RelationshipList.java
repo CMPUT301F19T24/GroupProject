@@ -85,7 +85,8 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
             b_forward.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.PENDING_VISIBLE);
+                    relationship.setStatus(RelationshipStatus.PENDING_VISIBLE);
+                    FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                     notifyDataSetChanged();
                 }
             });
@@ -98,7 +99,8 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
             b_back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.INVISIBLE);
+                    relationship.setStatus(RelationshipStatus.INVISIBLE);
+                    FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                     notifyDataSetChanged();
                 }
             });
@@ -111,21 +113,23 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
             b_back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.INVISIBLE);
-                    notifyDataSetChanged();
+                    relationship.setStatus(RelationshipStatus.INVISIBLE);
+                    FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);                    notifyDataSetChanged();
                 }
             });
+            b_forward.setVisibility(View.GONE);
 
-            b_forward.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.PENDING_FOLLOWING);
-                    notifyDataSetChanged();
-                }
-            });
+//            b_forward.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.PENDING_FOLLOWING);
+//                    notifyDataSetChanged();
+//                }
+//            });
         }
         else if(rs == RelationshipStatus.PENDING_FOLLOWING)
         {
+            // Depricated
             b_back.setText("Cancel");
             b_forward.setVisibility(View.GONE);
 
@@ -140,6 +144,7 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
         }
         else if(rs == RelationshipStatus.FOLLOWING)
         {
+            // Depricated
             b_back.setText("Unfollow");
             b_forward.setVisibility(View.GONE);
 

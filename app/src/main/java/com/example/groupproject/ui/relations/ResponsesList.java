@@ -81,7 +81,8 @@ public class ResponsesList extends ArrayAdapter<Relationship> {
                 b_accept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.VISIBLE);
+                        relationship.setStatus(RelationshipStatus.VISIBLE);
+                        FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                         status.setText("Visible");
                         b_accept.setVisibility(View.GONE);
                         b_decline.setVisibility(View.GONE);
@@ -90,13 +91,16 @@ public class ResponsesList extends ArrayAdapter<Relationship> {
                 b_decline.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.INVISIBLE);
+                        relationship.setStatus(RelationshipStatus.INVISIBLE);
+                        FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                         status.setText("Invisible");
                         b_accept.setVisibility(View.GONE);
                         b_decline.setVisibility(View.GONE);
                     }
                 });
             } else if (rs == RelationshipStatus.PENDING_FOLLOWING) {
+
+                // Depricated
                 status.setText("Requesting to Follow");
                 status.setOnClickListener(new View.OnClickListener() {
                     @Override
