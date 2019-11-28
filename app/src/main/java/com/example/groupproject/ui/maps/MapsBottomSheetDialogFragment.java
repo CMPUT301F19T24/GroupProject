@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,7 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         TextView moodImageTextView = view.findViewById(R.id.moodImageText);
         ImageView moodImageView = view.findViewById(R.id.moodImage);
         TextView moodSocialSituationView = view.findViewById(R.id.moodSocialSituation);
+        LinearLayout moodBarView = view.findViewById(R.id.moodBar);
 
         Bundle bundle = getArguments();
         MoodEvent moodEvent = (MoodEvent)bundle.getSerializable("moodEvent");
@@ -74,6 +76,7 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         moodDateView.setText(moodEvent.getTimeStamp().getTime().toString());
         moodReasonView.setText((moodEvent.getReasonText() != null ? moodEvent.getReasonText() : ""));
         moodSocialSituationView.setText((moodEvent.getSocialSituation() != null ? moodEvent.getSocialSituation().toString() : ""));
+        moodBarView.setBackgroundColor(moodEvent.getMood().getColor());
 //        System.out.println(moodEvent.getReasonImage() != null);
         if(moodEvent.getReasonImage() == null){
             moodImageTextView.setVisibility(View.GONE);

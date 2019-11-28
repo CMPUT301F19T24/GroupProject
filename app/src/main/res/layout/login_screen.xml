@@ -11,7 +11,6 @@
         android:id="@+id/login_title"
         android:layout_width="318dp"
         android:layout_height="56dp"
-        android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="@string/app_title"
         android:textColor="#E7F8FF"
@@ -20,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <TextView
         android:id="@+id/subtitle"
@@ -67,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.51185495" />
+        app:layout_constraintGuide_percent="0.54" />
 
     <Button
         android:id="@+id/sign_in_button"
@@ -127,6 +126,13 @@
         app:layout_constraintTop_toBottomOf="@+id/password_field"
         app:layout_constraintVertical_bias="0.31"
         tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
