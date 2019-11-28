@@ -192,7 +192,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                 Button b_image_from_camera = popupView.findViewById(R.id.b_add_from_camera);
                 Button b_image_from_photos = popupView.findViewById(R.id.b_add_from_photo);
 
-                if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName())
+                if(curMoodEvent.getOwner().getUserName().compareTo(USER_INSTANCE.getUserName()) != 0)
                 {
                     // Disable features if this mood event is not owned by the current user
                     s_socialSituation.setEnabled(false);
@@ -214,15 +214,6 @@ public class MoodEventListActivity extends AppCompatActivity {
                 s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, SocialSituation.getNames()));
                 s_socialSituation.setSelection(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
 
-                if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName())
-                {
-                    // Disable buttons
-                    b_apply.setVisibility(View.GONE);
-                    b_delete.setVisibility(View.GONE);
-                    b_image_from_camera.setVisibility(View.GONE);
-                    b_image_from_photos.setVisibility(View.GONE);
-
-                }
 
                 if(curMoodEvent.getLatLng() == null)
                 {
