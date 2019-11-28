@@ -412,8 +412,9 @@ public class FireStoreHandler {
 
         // Append "@cmput301-c6741.web.app" to the end to make the username
         // the email format that firebase expects
-        username = username + "@cmput301-c6741.web.app";
-        fbAuth.signInWithEmailAndPassword(username, password)
+        final String user = username + "@cmput301-c6741.web.app";
+        final String currentUser = username;
+        fbAuth.signInWithEmailAndPassword(user, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
 
@@ -424,6 +425,7 @@ public class FireStoreHandler {
                             Log.d(TAG, "loginUserWithEmail:successful");
                             Intent intent = new Intent(view.getRootView().getContext(), MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            MainActivity.USER_INSTANCE = new User(currentUser);
                             view.getRootView().getContext().startActivity(intent);
                         } else {
                             // If login fails print statement to the log, and catch exceptions
