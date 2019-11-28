@@ -41,6 +41,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -54,6 +55,7 @@ import com.google.android.gms.maps.model.LatLng;
 import org.w3c.dom.Document;
 
 import java.lang.reflect.Array;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,6 +63,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,6 +79,9 @@ public class FireStoreHandler {
     protected ArrayList<User> cachedUsers;
     protected ArrayList<Relationship> cachedRelationship;
     protected HashMap<String, ListenerRegistration> userMoodEventsUpdateListeners;
+    protected HashMap<String, ListenerRegistration> relationshipsUpdateListeners;
+    protected ListenerRegistration usersListListener;
+    protected FirebaseAuth.AuthStateListener authStateListener;
     protected Boolean cachesInitialized;
 
     public interface CustomFirebaseDocumentListener {
@@ -84,7 +90,7 @@ public class FireStoreHandler {
     }
 
     static MoodEvent createBlankMoodEvent(){
-        return new MoodEvent(new Happy(),new GregorianCalendar(), new User(""), SocialSituation.NONE, "", null, new LatLng((double)0.0, (double)0.0));
+        return new MoodEvent(new Happy(),new GregorianCalendar(), new User(""), SocialSituation.NONE, "", null, null);
     }
 
     public FireStoreHandler()
@@ -96,8 +102,81 @@ public class FireStoreHandler {
         userMoodEventsUpdateListeners = new HashMap<>();
         cachesInitialized = false;
         updateAllCachedLists();
+
+        // Set up on auth listener
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                // Determine when a user logs in.
+                FirebaseUser user = fbAuth.getCurrentUser();
+                Log.d(TAG, "Listener is registered and fired now");
+                if (user != null){// New user has logged in. Verify database existence.
+                    final String currentUserName = truncateEmailFromUsername(user.getEmail());
+                    Log.d(TAG,"Listener detected login of user: " + currentUserName);
+                    DocumentReference userRef =  fbFireStore.collection("users").document(currentUserName);
+                    userRef.get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    Log.d(TAG, "Verified successful existence on database" + documentSnapshot);
+                                    if (documentSnapshot.getData() == null){
+                                        HashMap<String, Object> newUserData = new HashMap<>();
+                                        newUserData.put("t", new Timestamp(new Date()));
+                                        fbFireStore.collection("users").document(currentUserName)
+                                                .set(newUserData);
+                                    }
+                                }
+                            });
+                }
+            }
+        };
+
+
+        fbAuth.addAuthStateListener(authStateListener);
+
+        usersListListener = registerUsersListUpdateListener();
     }
     // Communicates with Remote
+    protected ListenerRegistration registerUsersListUpdateListener(){
+        // Listen to updates on the users collection
+        try {
+            Query query = fbFireStore.collection("users");
+            ListenerRegistration registration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null){Log.w(TAG, "Error while listening to users collection :error", e);}
+                    for (DocumentChange documentChange: queryDocumentSnapshots.getDocumentChanges()){
+                        if (documentChange.getType() == DocumentChange.Type.ADDED){
+                            // New user was added -- Directly append to local cache
+                            cachedUsers.add(new User(documentChange.getDocument().getId()));
+                        } else if (documentChange.getType() == DocumentChange.Type.MODIFIED){
+                            String userName = documentChange.getDocument().getId();
+                            User userInCache = findUserInCacheWithUserName(userName);
+                            cachedUsers.remove(userInCache);
+                            cachedUsers.add(new User(userName));
+                        } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
+                            String userName = documentChange.getDocument().getId();
+                            User userInCache = findUserInCacheWithUserName(userName); cachedUsers.remove(userInCache);
+                        }
+                    }
+                }
+            });
+
+            return registration;
+        } catch (Exception e){
+            Log.w(TAG, "Failed to register listener for users collection");
+        }
+        return null;
+    }
+
+    protected User findUserInCacheWithUserName(String userName){
+        for (User currentUser: cachedUsers){
+            if (currentUser.getUserName().compareTo(userName) == 0){
+                return currentUser;
+            }
+        }
+        return null;
+    }
 
     protected void registerMoodEventsUpdateListenerForUser(String userName, Query query){
         // Set a SnapshotListener for this query so all mood events in cache are updated if this event happens again.
@@ -105,19 +184,17 @@ public class FireStoreHandler {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 try {
-                    if (e != null){ // Some error happened
-                        Log.w(TAG, "Error happened while listening :error", e.getCause());
-                    }
+                    if (e != null){Log.w(TAG, "Error while listening : ", e);}
+
                     for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()){
                         if (documentChange.getType() == DocumentChange.Type.ADDED){
-                            // A new document was added = this user created a new mood. Add mood to cache
-                            MoodEvent newMoodEvent = createBlankMoodEvent();
+                            MoodEvent newMoodEvent = createBlankMoodEvent();// A new document was added = this user created a new mood. Add mood to cache
                             updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
                             cachedMoodEvents.add(newMoodEvent);
                             Log.d(TAG, "live Listener: new mood" + documentChange.getDocument().getData());
                         } else if (documentChange.getType() == DocumentChange.Type.MODIFIED){ // Update user's mood event if in cache. otherwise create new one and add into cache.
                             // A document from this user was modified. Update the mood event.
-                            MoodEvent moodEventInCache = findMoodEventFromCacheWithId(documentChange.getDocument().getId());
+                            MoodEvent moodEventInCache = findMoodEventInCacheWithDocumentId(documentChange.getDocument().getId());
                             if (moodEventInCache != null){
                                 updateMoodEventFromDocument(moodEventInCache, documentChange.getDocument());
                             } else {
@@ -128,7 +205,7 @@ public class FireStoreHandler {
                             }
                         } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
                             // User deleted a mood of their's. No need to keep it in cache.
-                            MoodEvent moodEventInCache = findMoodEventFromCacheWithId(documentChange.getDocument().getId());
+                            MoodEvent moodEventInCache = findMoodEventInCacheWithDocumentId(documentChange.getDocument().getId());
                             if (moodEventInCache != null){ // If it exists in local cache, delete it!
                                 cachedMoodEvents.remove(moodEventInCache);
                             }
@@ -167,11 +244,10 @@ public class FireStoreHandler {
         return query;
     }
 
-    protected MoodEvent findMoodEventFromCacheWithId(String id){
+    protected MoodEvent findMoodEventInCacheWithDocumentId(String id){
         // Iterate through all cached mood events and return mood event which matches
         for (MoodEvent currentMoodEvent: cachedMoodEvents){
-            if (currentMoodEvent.getDocumentReference().getId().compareTo(id) == 0){
-                // This is the mood in question.
+            if (currentMoodEvent.getDocumentReference().getId().compareTo(id) == 0){// This is the mood in question.
                 return currentMoodEvent;
             }
         }
@@ -350,12 +426,7 @@ public class FireStoreHandler {
             SocialSituation socialSituation = SocialSituation.NONE;
             if (moodData.get("socialSituation") != null){
                 String sitString = moodData.get("socialSituation").toString();
-                socialSituation = SocialSituation.fromString(sitString); // TEST THIS TODO
-//                if (sitString.compareTo("N/A") == 0) {socialSituation = SocialSituation.NONE;}
-//                else if (sitString.compareTo("Alone") == 0) {socialSituation = SocialSituation.ALONE;}
-//                else if (sitString.compareTo("With someone") == 0) {socialSituation = SocialSituation.WITH_SOMEONE;}
-//                else if (sitString.compareTo("With Several Others") == 0) {socialSituation = SocialSituation.WITH_SEVERAL;}
-//                else if (sitString.compareTo("With a Crowd") == 0) {socialSituation = SocialSituation.CROWD;}
+                socialSituation = SocialSituation.fromString(sitString);
             }
             // TODO image load
             Image reasonImage = null;
@@ -435,14 +506,22 @@ public class FireStoreHandler {
         cachedMoodEvents.clear();
         cachedUsers.clear();
         cachedRelationship.clear();
-        // Also remove any listeners if they exist
-        Iterator hashMapIterator = userMoodEventsUpdateListeners.entrySet().iterator();
-        // Iterate through hashmap and stop listening for updates
-        while (hashMapIterator.hasNext()){
-            Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
-            ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
-            listener.remove();
-        }
+        try {// Remove listener that updates cachedMoodEvents
+            Iterator hashMapIterator = userMoodEventsUpdateListeners.entrySet().iterator();
+            // Iterate through hashmap and stop listening for updates
+            while (hashMapIterator.hasNext()) {
+                Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
+                ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
+                listener.remove();
+            }
+        } catch (Exception e) {Log.w(TAG, "Could not de-register update listeners from cachedMoodEvents", e);}
+
+        try {// Remove listener that updates cachedUsers
+            if (usersListListener != null){
+                usersListListener.remove();
+            }
+        } catch (Exception e) {Log.w(TAG, "Could not de-register update listeners from cachedUsers", e);}
+
         userMoodEventsUpdateListeners.clear();
     }
 
@@ -564,8 +643,7 @@ public class FireStoreHandler {
         return arr_me;
     }
 
-    public ArrayList<Relationship> getRelationShipOfSender(String username)
-    {
+    public ArrayList<Relationship> getRelationShipOfSender(String username){
         /**
          * Get a list of Relationship objects that [username] is the sender of.
          * Will also populate the remote with relationships between previous unmet users
@@ -613,8 +691,7 @@ public class FireStoreHandler {
         return arr_rs;
     }
 
-    public ArrayList<Relationship> getRelationShipOfReceiver(String username)
-    {
+    public ArrayList<Relationship> getRelationShipOfReceiver(String username){
         /**
          * Get a list of Relationship objects that [username] is the receiver of.
          *
@@ -632,8 +709,7 @@ public class FireStoreHandler {
         return arr_rs;
     }
 
-    public ArrayList<Relationship> getPendingResponsesOfUser(String username)
-    {
+    public ArrayList<Relationship> getPendingResponsesOfUser(String username){
         /**
          * Get a list of Relationship objects that [username] is the receiver of.
          *
@@ -651,8 +727,7 @@ public class FireStoreHandler {
         return arr_rs;
     }
 
-    public void setRelationship(String sender, String receiver, RelationshipStatus rs)
-    {
+    public void setRelationship(String sender, String receiver, RelationshipStatus rs){
         for(Relationship i : cachedRelationship)
         {
             if(i.getSender().getUserName().compareTo(sender) == 0 && i.getRecipiant().getUserName().compareTo(receiver) == 0)
@@ -663,8 +738,7 @@ public class FireStoreHandler {
         pushRelationshipsToRemotes();
     }
 
-    public User getUserObjWIthUsername(String username)
-    {
+    public User getUserObjWIthUsername(String username){
         /**
          * Get the user object that has an exact unique username
          *
@@ -689,8 +763,7 @@ public class FireStoreHandler {
     public ArrayList<User> getCachedUsers() {
         return cachedUsers;}
 
-    public void addMoodEvent(MoodEvent me)
-    {
+    public void addMoodEvent(MoodEvent me){
         /**
          * Add mood event to cache
          *
@@ -699,63 +772,57 @@ public class FireStoreHandler {
          */
         cachedMoodEvents.add(me);
     }
-    public void editMoodEvent(MoodEvent me)
-    {
-        /**
-         * Update the Moodevent that has the same key on the remote
-         * The key is the combination of username, and timestamp associated with the moodevent
-         *
-         * @param me - MoodEvent object to be deleted
-         *
-         */
-        for(MoodEvent i : cachedMoodEvents)
-        {
-            if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName().compareTo(me.getOwner().getUserName()) == 0)
-            {
-                cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
-                cachedMoodEvents.add(me);
 
-                break;
+    private String getMoodEventUpdateId(MoodEvent moodEvent, String userName){
+        /**
+         * Determines if a mood Event can be updated
+         * Only owner's of moods can update it if it was pulled from the database.
+         */
+        if (moodEvent.getOwner().getUserName().compareTo(userName) == 0){ // verify ownership and permission to modify.
+            if (moodEvent.getDocumentReference() != null){// Verify this moodEvent was pulled from the database. DocumentReference will exist
+                DocumentReference documentReference = moodEvent.getDocumentReference();
+                if (documentReference.getId() != null){
+                    return documentReference.getId();
+                }
             }
         }
+        return null;
     }
-    public void deleteMoodEvent(MoodEvent moodEvent)
-    {
+    public void editMoodEvent(MoodEvent moodEvent){
         /**
-         * Delete the Moodevent that has the same key from the remote
-         * The key is the combination of username, and timestamp associated with the moodevent
-         *
-         * @param me - MoodEvent object to be deleted
+         * Update the MoodEvent that has the same key on the remote
+         * @param moodEvent - Updated mood event
          *
          */
+        try {
+            String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
+            String documentUpdateId = getMoodEventUpdateId(moodEvent, currentUserName);
 
+            if (documentUpdateId != null) {
+                fbFireStore.collection("moodEvents").document(documentUpdateId)
+                        .update(convertMoodEventToHashMap(moodEvent));
+            }
+        } catch (Exception e){
+            Log.w(TAG, "Mood event update: failed" , e);
+        }
+    }
+    public void deleteMoodEvent(MoodEvent moodEvent){
+        /**
+         * Delete the Moodevent that has the same key from the remote
+         * Verify user can make changes and mood event can be updated on database.
+         * @param moodEvent - MoodEvent object to be deleted
+         */
         try{
             String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
-            if (moodEvent.getOwner().getUserName().compareTo(currentUserName) == 0){ // verify ownership and permission to delete.
-                if (moodEvent.getDocumentReference() != null){// Verify this moodEvent was pulled from the database. DocumentReference will exist
-                    DocumentReference documentReference = moodEvent.getDocumentReference();
-                    String documentId = documentReference.getId();
-                    if (documentId != null){
-                        fbFireStore.collection("moodEvents").document(documentId)
-                                .delete(); // Registered Listener will catch deletion and remove this mood from local cache.
-                    }
-                }
+            String documentUpdateId = getMoodEventUpdateId(moodEvent, currentUserName);
+            if (documentUpdateId != null){
+                fbFireStore.collection("moodEvents").document(documentUpdateId)
+                        .delete(); // Registered Listener will catch deletion and remove this mood from local cache.
             }
         } catch (Exception e){
             Log.d(TAG, "delete mood event: failed " + e);
         }
-//        for(MoodEvent i : cachedMoodEvents)
-//        {
-//            if(i.getTimeStamp().compareTo(moodEvent.getTimeStamp()) == 0 && i.getOwner().getUserName().compareTo(moodEvent.getOwner().getUserName()) == 0)
-//            {
-//                cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
-//
-//                // del here..
-//                break;
-//            }
-//        }
     }
-
 
     public void login(String username, final String password, final View view) {
         /**
@@ -803,7 +870,6 @@ public class FireStoreHandler {
                     }
                 });
     }
-
 
     public void signOut(View view) {
         /**
