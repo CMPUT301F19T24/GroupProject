@@ -1,45 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout3"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent"><![CDATA[
     tools:context=".ui.maps.MapsActivity" />
 
 
 
+
+    ]]>
+
     <TextView
         android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/gradient_followers"
-        android:gravity="center_horizontal|center_vertical"
-        android:text="Current User - name 1's history"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorPrimary"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_vertical"
+        android:paddingLeft="14sp"
+        android:text="current user"
+        android:textAlignment="viewStart"
         android:textColor="#FFFFFF"
-        android:textSize="20sp" />
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Spinner
-            android:id="@+id/mapHistorySpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_margin="15dp"
-            android:layout_weight="3"
-            android:backgroundTint="#FCC42A2A"
-            android:backgroundTintMode="src_in" />
-
-    </LinearLayout>
+    <Spinner
+        android:id="@+id/mapHistorySpinner"
+        android:layout_width="405dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:backgroundTint="#FCC42A2A"
+        android:backgroundTintMode="src_in"
+        app:layout_constraintBottom_toTopOf="@+id/map"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.375"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mapHistorySpinner"
         tools:context=".MapsActivity" />
 
-</LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.07" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
