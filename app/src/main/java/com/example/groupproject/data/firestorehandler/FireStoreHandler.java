@@ -496,10 +496,11 @@ public class FireStoreHandler {
                                 passwordText.setError("Password must be at least 6 characters");
                                 Log.w(TAG, "createUserWithEmail:weakPassword");
                             } catch (FirebaseAuthInvalidCredentialsException e) {
-                                editText.setError("Can only contain 'a-z', '0-9', and certain special characters");
+                                editText.setError("Username cannot contain spaces or any of the following: "+
+                                                  ". [ ] ( ) \" @ : ; \" < > \\ or ,");
                                 Log.w(TAG, "createUserWithEmail:illegalCharacter");
                             } catch (Exception e) {
-                                Log.w(TAG, "loginUserWithEmail:failed");
+                                Log.w(TAG, "createUserWithEmail:failed");
                                 Toast.makeText(view.getContext(), "An unexpected error occurred while creating account", Toast.LENGTH_SHORT).show();
                             }
                         }
