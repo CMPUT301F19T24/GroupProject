@@ -23,4 +23,13 @@ public enum SocialSituation
     public static String[] getNames() {
         return Arrays.toString(values()).replaceAll("^.|.$", "").split(", ");
     }
+
+    public static SocialSituation fromString(String text){
+        for (SocialSituation socialSituation : SocialSituation.values()){
+            if (socialSituation.str.equalsIgnoreCase(text)){
+                return socialSituation;
+            }
+        }
+        return SocialSituation.NONE;
+    }
 }

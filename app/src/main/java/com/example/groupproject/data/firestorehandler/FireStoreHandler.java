@@ -2,6 +2,7 @@ package com.example.groupproject.data.firestorehandler;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.media.Image;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -9,6 +10,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.groupproject.data.moods.Angry;
+import com.example.groupproject.data.moods.Anxious;
+import com.example.groupproject.data.moods.Disgusted;
+import com.example.groupproject.data.moods.Happy;
+import com.example.groupproject.data.moods.Mood;
+import com.example.groupproject.data.moods.Sad;
+import com.example.groupproject.data.relations.SocialSituation;
 import com.example.groupproject.ui.login.Login;
 import com.example.groupproject.MainActivity;
 import com.example.groupproject.R;
@@ -35,6 +43,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.w3c.dom.Document;
 
@@ -42,6 +51,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -73,6 +83,13 @@ public class FireStoreHandler {
         updateAllCachedLists();
     }
     // Communicates with Remote
+    protected  void pullMoodEventsForUser(String userName){
+        /**
+         * Fetch all mood events form a single user
+         */
+
+    }
+
     protected void pullMoodEventListFromRemote()
     {
         /**
@@ -105,9 +122,7 @@ public class FireStoreHandler {
             String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
             System.out.println("STATUS IS: " + statusString);
             if (statusString.compareTo("request") == 0){
-                System.out.println("lalalalal");
                 if (user_a_String.compareTo(currentUserName) == 0){ // Current user sent the request
-                    System.out.println("I want to update status string to Pending visible, current is");
                     statusString = "PENDING_VISIBLE";
                 } else if (user_b_String.compareTo(currentUserName) == 0) { // Current user is the one receiving request
                     statusString = "PENDING_FOLLOWING";
@@ -167,7 +182,7 @@ public class FireStoreHandler {
             Log.d(TAG, "relationship pull: failed to pull" + e);
         }
     }
-    private Map<String, Object> hashMapMoodEvent(MoodEvent moodEvent){
+    private Map<String, Object> convertMoodEventToHashMap(MoodEvent moodEvent){
         // Package a mood event
         Map<String, Object> moodData = new HashMap<>();
         moodData.put("mood", moodEvent.getMood().getName());
@@ -182,6 +197,55 @@ public class FireStoreHandler {
         moodData.put("socialSituation", moodEvent.getSocialSituation().toString());
         return moodData;
     }
+
+    private MoodEvent loadMoodEventFromDocument(QueryDocumentSnapshot document){
+        // Loads a data into a mood object
+        MoodEvent moodEvent = null;
+        try{
+            Map<String, Object> moodData = document.getData();
+            String owner = moodData.get("owner").toString();
+            Calendar timeStamp = new GregorianCalendar();
+            timeStamp.setTime((Date)moodData.get("timeStamp"));
+            Mood mood;
+            String moodString = moodData.get("string").toString();
+            if (moodString.compareTo("Happy") == 0){mood = new Happy();}
+            else if (moodString.compareTo("Sad") == 0) {mood = new Sad();}
+            else if (moodString.compareTo("Disgusted") == 0) { mood = new Disgusted();}
+            else if (moodString.compareTo("Anxious") == 0) { mood = new Anxious();}
+            else if (moodString.compareTo("Angry") == 0) { mood = new Angry();}
+            else {mood = new Happy();}
+            LatLng latlng = null;
+            if (moodData.get("location") != null){
+                GeoPoint savedLocation = (GeoPoint)moodData.get("location");
+                double lat = savedLocation.getLatitude();
+                double lng = savedLocation.getLongitude();
+                latlng = new LatLng(lat, lng);
+            }
+            String reasonText = null;
+            if (moodData.get("reasonText") != null){
+                reasonText = moodData.get("reasonText").toString();
+            }
+            SocialSituation socialSituation = SocialSituation.NONE;
+            if (moodData.get("socialSituation") != null){
+                String sitString = moodData.get("socialSituation").toString();
+                socialSituation = SocialSituation.fromString(sitString); // TEST THIS TODO
+//                if (sitString.compareTo("N/A") == 0) {socialSituation = SocialSituation.NONE;}
+//                else if (sitString.compareTo("Alone") == 0) {socialSituation = SocialSituation.ALONE;}
+//                else if (sitString.compareTo("With someone") == 0) {socialSituation = SocialSituation.WITH_SOMEONE;}
+//                else if (sitString.compareTo("With Several Others") == 0) {socialSituation = SocialSituation.WITH_SEVERAL;}
+//                else if (sitString.compareTo("With a Crowd") == 0) {socialSituation = SocialSituation.CROWD;}
+            }
+            // TODO image load
+            Image reasonImage = null;
+            moodEvent =  new MoodEvent(mood, timeStamp, new User(owner),socialSituation, reasonText, reasonImage, latlng);
+            moodEvent.setDocumentReference(document.getReference());
+
+        } catch (Exception e){
+            Log.d(TAG, "pull Mood Event from firebase: failed to convert hash map to mood event" + e);
+        }
+        return moodEvent;
+    }
+
     private void pushAttachedImageToRemote(MoodEvent moodEvent){
         // TODO
     }
@@ -191,7 +255,7 @@ public class FireStoreHandler {
         /**
          * Push a local mood event to remote
          */
-        Map<String, Object> moodData = hashMapMoodEvent(moodEvent);
+        Map<String, Object> moodData = convertMoodEventToHashMap(moodEvent);
         // Image upload not implemented.
         // When uploading - attach metadata of document reference to image.
 

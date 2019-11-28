@@ -28,4 +28,13 @@ public enum RelationshipStatus {
     public static String[] getNames() {
         return Arrays.toString(values()).replaceAll("^.|.$", "").split(", ");
     }
+
+    public static RelationshipStatus fromString(String text){
+        for (RelationshipStatus i : RelationshipStatus.values()){
+            if (i.str.equalsIgnoreCase(text)){
+                return i;
+            }
+        }
+        return RelationshipStatus.INVISIBLE;
+    }
 }
