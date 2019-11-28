@@ -2,15 +2,14 @@ package com.example.groupproject.data.relations;
 
 import com.example.groupproject.data.user.User;
 import com.google.firebase.firestore.DocumentReference;
-
-import java.util.Calendar;
-import java.util.Date;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class Relationship implements Comparable{
     private User sender;
     private User recipiant;
     private RelationshipStatus status;
-    private String documentId;
+    private QueryDocumentSnapshot document;
 
     public Relationship(User sender, User recipiant, RelationshipStatus status)
     {
@@ -39,6 +38,14 @@ public class Relationship implements Comparable{
         return this.status;
     }
 
+    public void setSender(User sender) {
+        this.sender = sender;
+    }
+
+    public void setRecipiant(User recipiant) {
+        this.recipiant = recipiant;
+    }
+
     public void setStatus(RelationshipStatus rs)
     {
         this.status = rs;
@@ -61,10 +68,17 @@ public class Relationship implements Comparable{
     };
 
     public String getDocumentId() {
-        return documentId;
+        if (document != null){
+            return document.getId();
+        }
+        return null;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
+    public QueryDocumentSnapshot getDocument() {
+        return document;
+    }
+
+    public void setDocument(QueryDocumentSnapshot document) {
+        this.document = document;
     }
 }

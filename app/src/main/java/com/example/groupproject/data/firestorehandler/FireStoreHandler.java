@@ -3,6 +3,7 @@ package com.example.groupproject.data.firestorehandler;
 import android.app.Dialog;
 import android.content.Intent;
 import android.media.Image;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -133,8 +134,6 @@ public class FireStoreHandler {
 
 
         fbAuth.addAuthStateListener(authStateListener);
-
-        usersListListener = registerUsersListUpdateListener();
     }
     // Communicates with Remote
     protected ListenerRegistration registerUsersListUpdateListener(){
@@ -236,6 +235,14 @@ public class FireStoreHandler {
                             for (QueryDocumentSnapshot document: task.getResult()){
                                 MoodEvent newMoodEvent = createBlankMoodEvent();
                                 updateMoodEventFromDocument(createBlankMoodEvent(), document);
+                                // Scan cached mood events to see if this already exists.
+                                for (MoodEvent moodEvent: cachedMoodEvents){
+                                    if (moodEvent.getDocumentReference() != null){
+                                        if (moodEvent.getDocumentReference().getId().compareTo(document.getId()) == 0){
+                                            cachedMoodEvents.remove(moodEvent); // Remove duplicate mood event form cache
+                                        }
+                                    }
+                                }
                                 cachedMoodEvents.add(newMoodEvent);
                             }
                         }
@@ -257,7 +264,7 @@ public class FireStoreHandler {
     protected void pullMoodEventListFromRemote()
     {
         /**
-         * Looks at relations and gets all mood events accessible to.
+         * Looks at relationships in cachedRelations and gets all mood events accessible to.
          * Determining which users' mood events to pull
          * me, me -> FOLLOWING -> another user, me -> VISIBLE -> another user
          */
@@ -301,16 +308,31 @@ public class FireStoreHandler {
     {
         /**
          * Populate the local cache with values from remote
+         * Initial population
          */
         // TODO
-        cachedUsers = (ArrayList<User>) fst.cachedUsers.clone();
+        try{
+            fbFireStore.collection("users").get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()){
+                                for (QueryDocumentSnapshot document: task.getResult()){
+                                    if (document.getId() != null){
+                                        cachedUsers.add(new User(document.getId()));
+                                    }
+                                }
+                            }
+                        }
+                    });
+            // Start listening for further updates to user collection
+            usersListListener = registerUsersListUpdateListener();
+        } catch (Exception e){
+            Log.w(TAG,"Fatal error: failed to pull user list from remote" + e);
+        }
     }
 
-    private void parseRelationshipDocumentIntoCache(QueryDocumentSnapshot document){
-        /**
-         * Convert a FireStore document into relationship object and populates the local cache
-         * @param document - Successfully queried data object from FireStore
-         */
+    private Relationship convertDocumentToRelationship(QueryDocumentSnapshot document){
         try {
             Map<String, Object> data = document.getData(); // FireStore data is in key,value format.
             String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail()); // Currently authenticated user.
@@ -318,18 +340,42 @@ public class FireStoreHandler {
             String statusString = (data.get("status") == null) ? "INVISIBLE" : data.get("status").toString();
             String user_a_String = (data.get("a") == null) ? "Unknown_user" : data.get("a").toString();
             String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
-            System.out.println("STATUS IS: " + statusString);
-            if (statusString.compareTo("request") == 0){
-                if (user_a_String.compareTo(currentUserName) == 0){ // Current user sent the request
+            Log.d(TAG, "STATUS IS: " + statusString);
+            if (statusString.compareTo("request") == 0) {
+                if (user_a_String.compareTo(currentUserName) == 0) { // Current user sent the request
                     statusString = "PENDING_VISIBLE";
                 } else if (user_b_String.compareTo(currentUserName) == 0) { // Current user is the one receiving request
                     statusString = "PENDING_FOLLOWING";
+                } else {
+                    Log.w(TAG, "fatal error: unknown relationship status" + data);
                 }
             }
             RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString.toString());
             Relationship newRelationship = new Relationship(new User(user_a_String), new User(user_b_String), relationshipStatus);
-            newRelationship.setDocumentId(document.getId());
-            cachedRelationship.add(newRelationship);
+            newRelationship.setDocument(document);
+            return newRelationship;
+        } catch (Exception e) { Log.w(TAG, "failed to convert document into relationship" + e);}
+        return null;
+
+    }
+
+    private void parseRelationshipDocumentIntoCache(QueryDocumentSnapshot document){
+        /**
+         * Convert a FireStore document into relationship object and populates the local cache
+         * Does duplicate protection
+         * @param document - Successfully queried data object from FireStore
+         */
+        try {
+            Relationship newRelationship = convertDocumentToRelationship(document);
+            // Duplicate protect
+            for (Relationship relationship: cachedRelationship){
+                if (relationship.getDocumentId().compareTo(newRelationship.getDocumentId()) == 0){
+                    // Remove from cache
+                    cachedRelationship.remove(relationship);
+                    break;
+                }
+            }
+            cachedRelationship.add(newRelationship); // No duplicates in cache are guaranteed.
             Log.d(TAG, "relation document parse: successfully parsed" + document.getData());
         } catch(Exception e) {
             Log.d(TAG, "relationship document parse: failed", e);
@@ -347,6 +393,119 @@ public class FireStoreHandler {
         }
     }
 
+    private void removeAllCachedMoodEventsFromUser(String userName){
+        for (MoodEvent moodEvent: cachedMoodEvents){
+            if (moodEvent.getOwner().getUserName().compareTo(userName) == 0){
+                cachedMoodEvents.remove(moodEvent);
+            }
+        }
+    }
+
+    private void startTrackingMoodEventsForUser(String userName){
+        /**
+         * If a user's moodevents are not tracked, load into local cache and setup listeners.
+         */
+        // If already tracked.
+        ListenerRegistration listeningToUsersMoodEvents = userMoodEventsUpdateListeners.get(userName);
+        if (listeningToUsersMoodEvents == null){ // Not listening for this user's mood events
+            Query query = pullMoodEventsForUserIntoCache(userName); // Does duplicate protection
+            registerMoodEventsUpdateListenerForUser(userName, query);
+        }
+
+    }
+
+    private void stopTrackingMoodEventsForUser(String userName){
+        removeAllCachedMoodEventsFromUser(userName);
+        ListenerRegistration listeningToUsersMoodEvents = userMoodEventsUpdateListeners.get(userName);
+        if (listeningToUsersMoodEvents != null){ // Un-register mood event listener.
+            listeningToUsersMoodEvents.remove();
+        }
+    }
+
+    private void updateMoodEventsListenersFromDocument(QueryDocumentSnapshot documentSnapshot){
+        /**
+         * Determines if this updated relationship needs to be tracked for mood events from this user or not.
+         * If a relationship is updated, we don't want to see mood events from that user.
+         */
+        try {
+            Relationship newRelationship = convertDocumentToRelationship(documentSnapshot);
+            String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
+
+            if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0 || newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){
+                // Do we need to track new mood events from this relationship?'
+                if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0){ // I am the sender..
+                    if (newRelationship.getStatus() == RelationshipStatus.VISIBLE || newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
+                        // me -> VISIBLE -> another, me -> FOLLOWING -> another. Load mood events from another user.
+                        String anotherUser = newRelationship.getRecipiant().getUserName();
+                        startTrackingMoodEventsForUser(anotherUser);
+                    }
+                } else if (newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){// I am the recipient
+                    // Somebody else said I can't see their mood events any more
+                    if (newRelationship.getStatus() != RelationshipStatus.VISIBLE || newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
+                        String anotherUser = newRelationship.getSender().getUserName();
+                        stopTrackingMoodEventsForUser(anotherUser);
+                    }
+                }
+            }
+
+        } catch (Exception e){Log.w(TAG,"update mood events update listeners: Failed " + e);}
+
+    }
+    protected  void registerRelationshipsUpdateListener(String key, Query query){
+        /**
+         * Listen to updates on any relationship changes by this user
+         */
+        try{
+            if (relationshipsUpdateListeners.get(key) != null){
+                relationshipsUpdateListeners.remove(key);
+            }
+            ListenerRegistration registration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    try{
+                        if (e != null){Log.w(TAG, "Error while listening to relationships : ", e);}
+
+                        for (DocumentChange documentChange: queryDocumentSnapshots.getDocumentChanges()){
+                            if (documentChange.getType() == DocumentChange.Type.ADDED){
+                                // New relationship with user was added
+                                parseRelationshipDocumentIntoCache(documentChange.getDocument());
+                                updateMoodEventsListenersFromDocument(documentChange.getDocument());
+                            } else if(documentChange.getType() == DocumentChange.Type.MODIFIED){
+                                // Find relationship in relationsCache and update it.
+                                for (Relationship relationship: cachedRelationship){
+                                    if (relationship.getDocument() != null){
+                                        if (relationship.getDocument().getId().compareTo(documentChange.getDocument().getId()) == 0){
+                                            Relationship newRelationship = convertDocumentToRelationship(documentChange.getDocument());
+                                            relationship.setSender(newRelationship.getSender());
+                                            relationship.setRecipiant(newRelationship.getRecipiant());
+                                            relationship.setStatus(newRelationship.getStatus());
+                                        }
+                                    }
+                                }
+                                updateMoodEventsListenersFromDocument(documentChange.getDocument());
+                            } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
+                                // Find relationship in relationsCache and remove it.
+                                for (Relationship relationship: cachedRelationship){
+                                    if (relationship.getDocument() != null){
+                                        if (relationship.getDocument().getId().compareTo(documentChange.getDocument().getId()) == 0){
+                                            cachedRelationship.remove(relationship);
+                                        }
+                                    }
+                                }
+                                updateMoodEventsListenersFromDocument(documentChange.getDocument());
+                            }
+                        }
+                    } catch(Exception er){Log.w(TAG,"Registration update processing error" + er);}
+                }
+            });
+            relationshipsUpdateListeners.put(key, registration);
+
+        } catch (Exception e){
+            Log.d(TAG, "Failed to register relationships listener "+key);
+        }
+
+    }
+
     protected void pullRelationshipsFromRemotes()
     {
         /**
@@ -357,9 +516,10 @@ public class FireStoreHandler {
             String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
             Log.d(TAG, "DocumentSnapshot: attempting pull for " + currentUserName);
             // Clear current relationship cache because db is queried TODO
-            cachedRelationship = new ArrayList<Relationship>();
+            Query currentUserIsSender = relationsRef.whereEqualTo("a", currentUserName);
+            Query currentUserIsRecipiant = relationsRef.whereEqualTo("b", currentUserName);
             // Get all users where a is current user.
-            relationsRef.whereEqualTo("a", currentUserName).get()
+            currentUserIsSender.get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -367,13 +527,16 @@ public class FireStoreHandler {
                         }
                     });
             // Get all users where b is current user.
-            relationsRef.whereEqualTo("b", currentUserName).get()
+            currentUserIsRecipiant.get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             onCompleteRelationshipDocumentPull(task);
                         }
                     });
+            // Start listening for future updates on both queries.
+            registerRelationshipsUpdateListener("a", currentUserIsSender);
+            registerRelationshipsUpdateListener("b", currentUserIsRecipiant);
 
 //        cachedRelationship = (ArrayList<Relationship>) fst.cachedRelationship.clone();
         } catch(Exception e){
@@ -464,6 +627,8 @@ public class FireStoreHandler {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         moodEvent.onSuccess(documentReference);
+                        // Add this to cache
+
                         Log.d(TAG, "Mood Event uploaded to remote");
                     }
                 })
@@ -502,18 +667,22 @@ public class FireStoreHandler {
         fst.cachedRelationship = (ArrayList<Relationship>) cachedRelationship.clone();
     }
 
+    private void removeListenersFromHashMap(HashMap<String, ListenerRegistration> map){
+        Iterator hashMapIterator = map.entrySet().iterator();
+        // Iterate through hashmap and stop listening for updates
+        while (hashMapIterator.hasNext()) {
+            Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
+            ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
+            listener.remove();
+        }
+    }
+
     private void clearAllCachedLists(){
         cachedMoodEvents.clear();
         cachedUsers.clear();
         cachedRelationship.clear();
-        try {// Remove listener that updates cachedMoodEvents
-            Iterator hashMapIterator = userMoodEventsUpdateListeners.entrySet().iterator();
-            // Iterate through hashmap and stop listening for updates
-            while (hashMapIterator.hasNext()) {
-                Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
-                ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
-                listener.remove();
-            }
+        try {// Remove listeners that update cachedMoodEvents
+            removeListenersFromHashMap(userMoodEventsUpdateListeners);
         } catch (Exception e) {Log.w(TAG, "Could not de-register update listeners from cachedMoodEvents", e);}
 
         try {// Remove listener that updates cachedUsers
@@ -521,6 +690,10 @@ public class FireStoreHandler {
                 usersListListener.remove();
             }
         } catch (Exception e) {Log.w(TAG, "Could not de-register update listeners from cachedUsers", e);}
+
+        try {// Remove listeners that update cachedMoodEvents
+            removeListenersFromHashMap(relationshipsUpdateListeners);
+        } catch (Exception e) {Log.w(TAG, "Could not de-register update listeners from cachedRelationships", e);}
 
         userMoodEventsUpdateListeners.clear();
     }
