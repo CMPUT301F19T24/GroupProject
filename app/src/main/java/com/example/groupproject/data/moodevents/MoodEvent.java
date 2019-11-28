@@ -4,6 +4,7 @@ import android.media.Image;
 
 import java.util.ArrayList;
 
+import com.example.groupproject.data.firestorehandler.FireStoreHandler;
 import com.example.groupproject.data.relations.SocialSituation;
 import com.example.groupproject.ui.moodlists.SortingMethod;
 import com.example.groupproject.data.user.User;

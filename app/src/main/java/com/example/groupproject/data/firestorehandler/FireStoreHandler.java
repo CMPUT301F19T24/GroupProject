@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.groupproject.data.moods.Angry;
 import com.example.groupproject.data.moods.Anxious;
@@ -37,9 +38,14 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -54,6 +60,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -68,10 +75,16 @@ public class FireStoreHandler {
     protected ArrayList<MoodEvent> cachedMoodEvents;
     protected ArrayList<User> cachedUsers;
     protected ArrayList<Relationship> cachedRelationship;
+    protected HashMap<String, ListenerRegistration> userMoodEventsUpdateListeners;
+    protected Boolean cachesInitialized;
 
     public interface CustomFirebaseDocumentListener {
         void onSuccess(DocumentReference documentReference);
         void onFailure(Exception e);
+    }
+
+    static MoodEvent createBlankMoodEvent(){
+        return new MoodEvent(new Happy(),new GregorianCalendar(), new User(""), SocialSituation.NONE, "", null, new LatLng((double)0.0, (double)0.0));
     }
 
     public FireStoreHandler()
@@ -80,23 +93,132 @@ public class FireStoreHandler {
         cachedUsers = new ArrayList<>();
         cachedRelationship = new ArrayList<>();
         fst = new FirestoreTester();
+        userMoodEventsUpdateListeners = new HashMap<>();
+        cachesInitialized = false;
         updateAllCachedLists();
     }
     // Communicates with Remote
-    protected  void pullMoodEventsForUser(String userName){
+
+    protected void registerMoodEventsUpdateListenerForUser(String userName, Query query){
+        // Set a SnapshotListener for this query so all mood events in cache are updated if this event happens again.
+        ListenerRegistration registration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                try {
+                    if (e != null){ // Some error happened
+                        Log.w(TAG, "Error happened while listening :error", e.getCause());
+                    }
+                    for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()){
+                        if (documentChange.getType() == DocumentChange.Type.ADDED){
+                            // A new document was added = this user created a new mood. Add mood to cache
+                            MoodEvent newMoodEvent = createBlankMoodEvent();
+                            updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
+                            cachedMoodEvents.add(newMoodEvent);
+                            Log.d(TAG, "live Listener: new mood" + documentChange.getDocument().getData());
+                        } else if (documentChange.getType() == DocumentChange.Type.MODIFIED){ // Update user's mood event if in cache. otherwise create new one and add into cache.
+                            // A document from this user was modified. Update the mood event.
+                            MoodEvent moodEventInCache = findMoodEventFromCacheWithId(documentChange.getDocument().getId());
+                            if (moodEventInCache != null){
+                                updateMoodEventFromDocument(moodEventInCache, documentChange.getDocument());
+                            } else {
+                                // doesn't exist exist in cache. create new mood event, update it on document and add to cache.
+                                MoodEvent newMoodEvent = createBlankMoodEvent();
+                                updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
+                                cachedMoodEvents.add(newMoodEvent);
+                            }
+                        } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
+                            // User deleted a mood of their's. No need to keep it in cache.
+                            MoodEvent moodEventInCache = findMoodEventFromCacheWithId(documentChange.getDocument().getId());
+                            if (moodEventInCache != null){ // If it exists in local cache, delete it!
+                                cachedMoodEvents.remove(moodEventInCache);
+                            }
+                        }
+                    }
+                } catch (Exception ex){
+                    Log.w(TAG, "listen:error", e);
+                }
+            }
+        });
+        userMoodEventsUpdateListeners.put(userName, registration);
+    }
+
+    protected  Query pullMoodEventsForUserIntoCache(String userName){
         /**
          * Fetch all mood events form a single user
+         * Set cache to auto update // Implemented.. Remove on relationship severed.
          */
+        CollectionReference moodEventsRef = fbFireStore.collection("moodEvents");
+        Query query = moodEventsRef.whereEqualTo("owner", userName);
 
+        // Immediately get results of query and populate mood events into cache.
+        query.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot document: task.getResult()){
+                                MoodEvent newMoodEvent = createBlankMoodEvent();
+                                updateMoodEventFromDocument(createBlankMoodEvent(), document);
+                                cachedMoodEvents.add(newMoodEvent);
+                            }
+                        }
+                    }
+                });
+        return query;
+    }
+
+    protected MoodEvent findMoodEventFromCacheWithId(String id){
+        // Iterate through all cached mood events and return mood event which matches
+        for (MoodEvent currentMoodEvent: cachedMoodEvents){
+            if (currentMoodEvent.getDocumentReference().getId().compareTo(id) == 0){
+                // This is the mood in question.
+                return currentMoodEvent;
+            }
+        }
+        return null;
     }
 
     protected void pullMoodEventListFromRemote()
     {
         /**
-         * Populate the local cache with values from remote
+         * Looks at relations and gets all mood events accessible to.
+         * Determining which users' mood events to pull
+         * me, me -> FOLLOWING -> another user, me -> VISIBLE -> another user
          */
-        // TODO
-        cachedMoodEvents = (ArrayList<MoodEvent>) fst.cachedMoodEvents.clone();
+        // Clear the current cache
+        try {
+            cachedMoodEvents = new ArrayList<MoodEvent>();
+            String currentUsername = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail()); // Currently authenticated user.
+            HashMap<String, RelationshipStatus> usersToGetMoodEventsFrom = new HashMap<>();
+            // Relationship status with self.. is visible
+            usersToGetMoodEventsFrom.put(currentUsername, RelationshipStatus.VISIBLE);
+            // Populate cache with mood events from all users related to this user.
+            for (Relationship relationship : cachedRelationship) {
+                if (relationship.getSender().getUserName().compareTo(currentUsername) == 0){ // User a is involved in this relationship
+                    RelationshipStatus relationshipStatus = relationship.getStatus();
+                    if (relationshipStatus == RelationshipStatus.VISIBLE || relationshipStatus == RelationshipStatus.FOLLOWING){
+                        // Add this user to the list of users whose mood events I can view.
+                        // Prevent duplicate queries. Like a dictionary whose key is user
+                        if (usersToGetMoodEventsFrom.get(relationship.getRecipiant().getUserName()) != null ){
+                            usersToGetMoodEventsFrom.put(relationship.getRecipiant().getUserName(), relationshipStatus);
+                        }
+                    }
+                }
+            }
+            // Iterate through hashmap to begin querying firebase for mood events form specified users.
+            Iterator hashMapIterator = usersToGetMoodEventsFrom.entrySet().iterator();
+            // Iterate through hashmap
+            while (hashMapIterator.hasNext()){
+                Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
+                String userName = (String)mapElement.getKey();
+                RelationshipStatus relationshipToUser = (RelationshipStatus)mapElement.getValue();
+
+                Query query = pullMoodEventsForUserIntoCache(userName);
+                registerMoodEventsUpdateListenerForUser(userName, query); // Start listening for mood event updates by this user.
+            }
+        } catch (Exception e){
+            Log.d(TAG, "pulling mood events list form Remote: failed" + e);
+        }
     }
 
     protected void pullUserListFromRemote()
@@ -198,16 +320,16 @@ public class FireStoreHandler {
         return moodData;
     }
 
-    private MoodEvent loadMoodEventFromDocument(QueryDocumentSnapshot document){
-        // Loads a data into a mood object
-        MoodEvent moodEvent = null;
+    private void updateMoodEventFromDocument(MoodEvent moodEvent, QueryDocumentSnapshot document){
+        // Loads a data from firestore document into a mood object
+        // Used to create a new mood event or update existing one.
         try{
             Map<String, Object> moodData = document.getData();
-            String owner = moodData.get("owner").toString();
-            Calendar timeStamp = new GregorianCalendar();
-            timeStamp.setTime((Date)moodData.get("timeStamp"));
+            String owner = (moodData.get("owner") == null)? "" : moodData.get("owner").toString();
+            Calendar dateTime = new GregorianCalendar();
+            dateTime.setTime((moodData.get("timeStamp") == null) ? new Date(): document.getTimestamp("timeStamp").toDate());
             Mood mood;
-            String moodString = moodData.get("string").toString();
+            String moodString = (moodData.get("mood") == null) ? "Happy": moodData.get("mood").toString(); // By default happy
             if (moodString.compareTo("Happy") == 0){mood = new Happy();}
             else if (moodString.compareTo("Sad") == 0) {mood = new Sad();}
             else if (moodString.compareTo("Disgusted") == 0) { mood = new Disgusted();}
@@ -237,13 +359,19 @@ public class FireStoreHandler {
             }
             // TODO image load
             Image reasonImage = null;
-            moodEvent =  new MoodEvent(mood, timeStamp, new User(owner),socialSituation, reasonText, reasonImage, latlng);
+
+            // Update all data fields in mood event
+            moodEvent.setMood(mood);
+            moodEvent.setTimeStamp(dateTime);
+            moodEvent.setOwner(new User(owner));
+            moodEvent.setSocialSituation(socialSituation);
+            moodEvent.setReasonText(reasonText);
+            moodEvent.setReasonImage(reasonImage);
             moodEvent.setDocumentReference(document.getReference());
 
         } catch (Exception e){
             Log.d(TAG, "pull Mood Event from firebase: failed to convert hash map to mood event" + e);
         }
-        return moodEvent;
     }
 
     private void pushAttachedImageToRemote(MoodEvent moodEvent){
@@ -303,19 +431,41 @@ public class FireStoreHandler {
         fst.cachedRelationship = (ArrayList<Relationship>) cachedRelationship.clone();
     }
 
-    private void updateAllCachedLists()
-    {
-        /**
-         * Clear, and update everything from remote
-         * Just clear, don't push/pull from remote
-         */
+    private void clearAllCachedLists(){
         cachedMoodEvents.clear();
         cachedUsers.clear();
         cachedRelationship.clear();
+        // Also remove any listeners if they exist
+        Iterator hashMapIterator = userMoodEventsUpdateListeners.entrySet().iterator();
+        // Iterate through hashmap and stop listening for updates
+        while (hashMapIterator.hasNext()){
+            Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
+            ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
+            listener.remove();
+        }
+        userMoodEventsUpdateListeners.clear();
+    }
 
-        pullMoodEventListFromRemote();
+    public void initializeAllCachedLists(){
+        /**
+         * Pull fresh data from remote into all caches.
+         */
+        clearAllCachedLists();
+
         pullUserListFromRemote();
         pullRelationshipsFromRemotes();
+        pullMoodEventListFromRemote();
+    }
+
+    private void updateAllCachedLists()
+    {
+        /**
+         * If any of the caches are empty, pull new data from remote.
+         * Just clear, don't push/pull from remote
+         */
+        if (cachedMoodEvents.size() == 0 || cachedMoodEvents.size() == 0){ // TODO add cachedUsers.size() == 0 ||
+            initializeAllCachedLists();
+        }
     }
 
     public ArrayList<MoodEvent> getMoodEventsByUsername(String username)
@@ -326,7 +476,7 @@ public class FireStoreHandler {
          * @param username - Exact string representing a unique User object
          * @return - Arraylist of MoodEvents fitting the criteria
          */
-        updateAllCachedLists();
+//        updateAllCachedLists();
         ArrayList<MoodEvent> arr = new ArrayList<>();
         for(MoodEvent i : cachedMoodEvents)
         {
@@ -569,7 +719,7 @@ public class FireStoreHandler {
             }
         }
     }
-    public void deleteMoodEvent(MoodEvent me)
+    public void deleteMoodEvent(MoodEvent moodEvent)
     {
         /**
          * Delete the Moodevent that has the same key from the remote
@@ -578,16 +728,32 @@ public class FireStoreHandler {
          * @param me - MoodEvent object to be deleted
          *
          */
-        for(MoodEvent i : cachedMoodEvents)
-        {
-            if(i.getTimeStamp().compareTo(me.getTimeStamp()) == 0 && i.getOwner().getUserName().compareTo(me.getOwner().getUserName()) == 0)
-            {
-                cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
 
-                // del here..
-                break;
+        try{
+            String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
+            if (moodEvent.getOwner().getUserName().compareTo(currentUserName) == 0){ // verify ownership and permission to delete.
+                if (moodEvent.getDocumentReference() != null){// Verify this moodEvent was pulled from the database. DocumentReference will exist
+                    DocumentReference documentReference = moodEvent.getDocumentReference();
+                    String documentId = documentReference.getId();
+                    if (documentId != null){
+                        fbFireStore.collection("moodEvents").document(documentId)
+                                .delete(); // Registered Listener will catch deletion and remove this mood from local cache.
+                    }
+                }
             }
+        } catch (Exception e){
+            Log.d(TAG, "delete mood event: failed " + e);
         }
+//        for(MoodEvent i : cachedMoodEvents)
+//        {
+//            if(i.getTimeStamp().compareTo(moodEvent.getTimeStamp()) == 0 && i.getOwner().getUserName().compareTo(moodEvent.getOwner().getUserName()) == 0)
+//            {
+//                cachedMoodEvents.remove(cachedMoodEvents.indexOf(i));
+//
+//                // del here..
+//                break;
+//            }
+//        }
     }
 
 
@@ -651,6 +817,7 @@ public class FireStoreHandler {
         fbAuth.signOut();
         Intent intent = new Intent(view.getRootView().getContext(), Login.class);
         view.getRootView().getContext().startActivity(intent);
+        // TODO clear caches on logout.
     }
 
     public void createNewUser(String username, String password, final View view, final Dialog dialog) {
@@ -707,10 +874,10 @@ public class FireStoreHandler {
             truncatedName = truncatedName.substring(0, truncatedName.length() - 23);
         }
         return truncatedName;
-
     }
     public String getCurrentUser(){
         String fetchedUser = fbAuth.getCurrentUser().getDisplayName().toString();
+        Log.d(TAG, "current loogged in user is: " + fetchedUser);
         fetchedUser = fetchedUser.substring(0, fetchedUser.length()-21);
         return  (fetchedUser);
     }
