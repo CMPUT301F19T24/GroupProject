@@ -46,19 +46,21 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="14sp"
             android:text="Reason For Mood:"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/moodReason"
-            android:layout_width="0dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left|center_vertical"
             android:text="REASON HERE"
             android:textSize="16sp" />
     </LinearLayout>
@@ -83,20 +85,23 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="35dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left|center_vertical"
+            android:paddingStart="14sp"
             android:text="Social Situation:"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/moodSocialSituation"
-            android:layout_width="0dp"
+            android:layout_width="110dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="TextView" />
+            android:gravity="left|center_vertical"
+            android:text="TextView"
+            android:textSize="16sp" />
     </LinearLayout>
 
 </LinearLayout>
