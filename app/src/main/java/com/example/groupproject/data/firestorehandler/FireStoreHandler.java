@@ -282,12 +282,12 @@ public class FireStoreHandler {
             String currentUsername = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail()); // Currently authenticated user.
             HashMap<String, RelationshipStatus> usersToGetMoodEventsFrom = new HashMap<>();
             // Relationship status with self.. is visible
-            usersToGetMoodEventsFrom.put(currentUsername, RelationshipStatus.VISIBLE);
+            usersToGetMoodEventsFrom.put(currentUsername, RelationshipStatus.FOLLOWING);
             // Populate cache with mood events from all users related to this user.
             for (Relationship relationship : cachedRelationship) {
                 if (relationship.getSender().getUserName().compareTo(currentUsername) == 0){ // User a is involved in this relationship
                     RelationshipStatus relationshipStatus = relationship.getStatus();
-                    if (relationshipStatus == RelationshipStatus.VISIBLE || relationshipStatus == RelationshipStatus.FOLLOWING){
+                    if (relationshipStatus == RelationshipStatus.FOLLOWING){
                         // Add this user to the list of users whose mood events I can view.
                         // Prevent duplicate queries. Like a dictionary whose key is user
                         if (usersToGetMoodEventsFrom.get(relationship.getRecipiant().getUserName()) != null ){
@@ -442,14 +442,14 @@ public class FireStoreHandler {
             if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0 || newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){
                 // Do we need to track new mood events from this relationship?'
                 if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0){ // I am the sender..
-                    if (newRelationship.getStatus() == RelationshipStatus.VISIBLE || newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
+                    if (newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
                         // me -> VISIBLE -> another, me -> FOLLOWING -> another. Load mood events from another user.
                         String anotherUser = newRelationship.getRecipiant().getUserName();
                         startTrackingMoodEventsForUser(anotherUser);
                     }
                 } else if (newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){// I am the recipient
                     // Somebody else said I can't see their mood events any more
-                    if (newRelationship.getStatus() != RelationshipStatus.VISIBLE || newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
+                    if (newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
                         String anotherUser = newRelationship.getSender().getUserName();
                         stopTrackingMoodEventsForUser(anotherUser);
                     }

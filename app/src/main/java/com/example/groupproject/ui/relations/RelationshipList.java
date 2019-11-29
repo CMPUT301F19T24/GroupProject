@@ -85,13 +85,13 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
             b_forward.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    relationship.setStatus(RelationshipStatus.PENDING_VISIBLE);
+                    relationship.setStatus(RelationshipStatus.PENDING);
                     FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                     notifyDataSetChanged();
                 }
             });
         }
-        else if(rs == RelationshipStatus.PENDING_VISIBLE)
+        else if(rs == RelationshipStatus.PENDING)
         {
             b_back.setText("Cancel");
             b_forward.setVisibility(View.GONE);
@@ -105,7 +105,7 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
                 }
             });
         }
-        else if(rs == RelationshipStatus.VISIBLE)
+        else if(rs == RelationshipStatus.FOLLOWING)
         {
             b_back.setText("Hide Posts");
             b_forward.setText("Follow");
@@ -119,42 +119,6 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
             });
             b_forward.setVisibility(View.GONE);
 
-//            b_forward.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.PENDING_FOLLOWING);
-//                    notifyDataSetChanged();
-//                }
-//            });
-        }
-        else if(rs == RelationshipStatus.PENDING_FOLLOWING)
-        {
-            // Depricated
-            b_back.setText("Cancel");
-            b_forward.setVisibility(View.GONE);
-
-
-            b_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.VISIBLE);
-                    notifyDataSetChanged();
-                }
-            });
-        }
-        else if(rs == RelationshipStatus.FOLLOWING)
-        {
-            // Depricated
-            b_back.setText("Unfollow");
-            b_forward.setVisibility(View.GONE);
-
-            b_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.VISIBLE);
-                    notifyDataSetChanged();
-                }
-            });
         }
         return view;
     }

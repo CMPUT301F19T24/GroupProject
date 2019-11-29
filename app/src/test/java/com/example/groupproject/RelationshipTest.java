@@ -18,9 +18,7 @@ public class RelationshipTest {
     public void test_isVisible()
     {
         assertTrue(new Relationship(null, null, RelationshipStatus.INVISIBLE).isVisible() == false);
-        assertTrue(new Relationship(null, null, RelationshipStatus.PENDING_VISIBLE).isVisible() == false);
-        assertTrue(new Relationship(null, null, RelationshipStatus.VISIBLE).isVisible() == true);
-        assertTrue(new Relationship(null, null, RelationshipStatus.PENDING_FOLLOWING).isVisible() == true);
+        assertTrue(new Relationship(null, null, RelationshipStatus.PENDING).isVisible() == false);
         assertTrue(new Relationship(null, null, RelationshipStatus.FOLLOWING).isVisible() == true);
 
     }

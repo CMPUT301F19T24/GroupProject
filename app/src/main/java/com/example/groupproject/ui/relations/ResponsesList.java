@@ -68,7 +68,7 @@ public class ResponsesList extends ArrayAdapter<Relationship> {
             final Button b_decline = view.findViewById(R.id.b_responses_decline);
 
             // DO NOT USE A SWITCH CASE
-            if (rs == RelationshipStatus.PENDING_VISIBLE) {
+            if (rs == RelationshipStatus.PENDING) {
                 status.setText("Requesting to view");
                 status.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -81,7 +81,7 @@ public class ResponsesList extends ArrayAdapter<Relationship> {
                 b_accept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        relationship.setStatus(RelationshipStatus.VISIBLE);
+                        relationship.setStatus(RelationshipStatus.FOLLOWING);
                         FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                         status.setText("Visible");
                         b_accept.setVisibility(View.GONE);
@@ -94,35 +94,6 @@ public class ResponsesList extends ArrayAdapter<Relationship> {
                         relationship.setStatus(RelationshipStatus.INVISIBLE);
                         FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                         status.setText("Invisible");
-                        b_accept.setVisibility(View.GONE);
-                        b_decline.setVisibility(View.GONE);
-                    }
-                });
-            } else if (rs == RelationshipStatus.PENDING_FOLLOWING) {
-
-                // Depricated
-                status.setText("Requesting to Follow");
-                status.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context.getApplicationContext(), "This user is requesting to be able to subscribe the posts that you've made", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                b_accept.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.FOLLOWING);
-                        status.setText("Following");
-                        b_accept.setVisibility(View.GONE);
-                        b_decline.setVisibility(View.GONE);
-                    }
-                });
-                b_decline.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.VISIBLE);
-                        status.setText("Visible");
                         b_accept.setVisibility(View.GONE);
                         b_decline.setVisibility(View.GONE);
                     }
