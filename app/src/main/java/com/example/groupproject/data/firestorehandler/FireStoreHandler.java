@@ -260,13 +260,15 @@ public class FireStoreHandler {
     }
 
     protected MoodEvent findMoodEventInCacheWithDocumentId(String id){
+        MoodEvent foundMoodEvent = null;
         // Iterate through all cached mood events and return mood event which matches
         for (MoodEvent currentMoodEvent: cachedMoodEvents){
             if (currentMoodEvent.getDocumentReference().getId().compareTo(id) == 0){// This is the mood in question.
-                return currentMoodEvent;
+                foundMoodEvent = currentMoodEvent;
+                break;
             }
         }
-        return null;
+        return foundMoodEvent;
     }
 
     protected void pullMoodEventListFromRemote()
@@ -375,13 +377,17 @@ public class FireStoreHandler {
          */
         try {
             Relationship newRelationship = convertDocumentToRelationship(document);
+            Relationship foundRelationship = null;
             // Duplicate protect
             for (Relationship relationship: cachedRelationship){
                 if (relationship.getDocumentId().compareTo(newRelationship.getDocumentId()) == 0){
                     // Remove from cache
-                    cachedRelationship.remove(relationship);
+                    foundRelationship = relationship;
                     break;
                 }
+            }
+            if (foundRelationship != null){
+                cachedRelationship.remove(foundRelationship);
             }
             cachedRelationship.add(newRelationship); // No duplicates in cache are guaranteed.
             Log.d(TAG, "relation document parse: successfully parsed" + document.getData());
@@ -496,13 +502,18 @@ public class FireStoreHandler {
                                 }
                                 updateMoodEventsListenersFromDocument(documentChange.getDocument());
                             } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
+                                Relationship foundRelationship = null;
                                 // Find relationship in relationsCache and remove it.
                                 for (Relationship relationship: cachedRelationship){
                                     if (relationship.getDocument() != null){
                                         if (relationship.getDocument().getId().compareTo(documentChange.getDocument().getId()) == 0){
-                                            cachedRelationship.remove(relationship);
+                                            foundRelationship = relationship;
+                                            break;
                                         }
                                     }
+                                }
+                                if (foundRelationship != null){
+                                    cachedRelationship.remove(foundRelationship);
                                 }
                                 updateMoodEventsListenersFromDocument(documentChange.getDocument());
                             }
@@ -684,13 +695,15 @@ public class FireStoreHandler {
     }
 
     private void removeListenersFromHashMap(HashMap<String, ListenerRegistration> map){
-        Iterator hashMapIterator = map.entrySet().iterator();
-        // Iterate through hashmap and stop listening for updates
-        while (hashMapIterator.hasNext()) {
-            Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
-            ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
-            listener.remove();
-        }
+        try {
+            Iterator hashMapIterator = map.entrySet().iterator();
+            // Iterate through hashmap and stop listening for updates
+            while (hashMapIterator.hasNext()) {
+                Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
+                ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
+                listener.remove();
+            }
+        } catch (Exception e){Log.w(TAG,"Failed to clear hash map", e);}
     }
 
     private void clearAllCachedLists(){
@@ -1072,6 +1085,7 @@ public class FireStoreHandler {
         Intent intent = new Intent(view.getRootView().getContext(), Login.class);
         view.getRootView().getContext().startActivity(intent);
         // TODO clear caches on logout.
+        clearAllCachedLists();
     }
 
     public void createNewUser(String username, String password, final View view, final Dialog dialog) {
