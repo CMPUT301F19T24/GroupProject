@@ -92,7 +92,7 @@ public class FireStoreHandler {
     }
 
     static MoodEvent createBlankMoodEvent(){
-        return new MoodEvent(new Happy(),new GregorianCalendar(), new User(""), SocialSituation.NONE, "", null, null);
+        return new MoodEvent(new Happy(),new GregorianCalendar(), new User("blankUser"), SocialSituation.NONE, "", null, null);
     }
 
     public FireStoreHandler()
@@ -100,8 +100,8 @@ public class FireStoreHandler {
         cachedMoodEvents = new ArrayList<>();
         cachedUsers = new ArrayList<>();
         cachedRelationship = new ArrayList<>();
-        fst = new FirestoreTester();
         userMoodEventsUpdateListeners = new HashMap<>();
+        relationshipsUpdateListeners = new HashMap<>();
         cachesInitialized = false;
         updateAllCachedLists();
 
@@ -146,6 +146,7 @@ public class FireStoreHandler {
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     if (e != null){Log.w(TAG, "Error while listening to users collection :error", e);}
                     for (DocumentChange documentChange: queryDocumentSnapshots.getDocumentChanges()){
+                        Log.d(TAG, "Users collection listener: " + documentChange.getType().toString() + " detected!");
                         if (documentChange.getType() == DocumentChange.Type.ADDED){
                             // New user was added -- Directly append to local cache
                             String userName = documentChange.getDocument().getId();
@@ -193,27 +194,30 @@ public class FireStoreHandler {
                     if (e != null){Log.w(TAG, "Error while listening : ", e);}
 
                     for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()){
+                        Log.d(TAG, "MoodEvents collection listener: " + documentChange.getType().toString() + " detected!");
                         if (documentChange.getType() == DocumentChange.Type.ADDED){
-                            MoodEvent newMoodEvent = createBlankMoodEvent();// A new document was added = this user created a new mood. Add mood to cache
-                            updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
-                            if (newMoodEvent.getDocumentReference() != null){
-                                // We know blank mood was filled in correctly
-                                cachedMoodEvents.add(newMoodEvent);
-                            }
-                            Log.d(TAG, "live Listener: new mood" + documentChange.getDocument().getData());
+                            parseMoodEventDocumentIntoCache(documentChange.getDocument()); // Duplicate protected
+//                            MoodEvent newMoodEvent = createBlankMoodEvent();// A new document was added = this user created a new mood. Add mood to cache
+//                            updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
+//                            if (newMoodEvent.getDocumentReference() != null){
+//                                // We know blank mood was filled in correctly
+//                                cachedMoodEvents.add(newMoodEvent);
+//                            }
+//                            Log.d(TAG, "live Listener: new mood" + documentChange.getDocument().getData());
                         } else if (documentChange.getType() == DocumentChange.Type.MODIFIED){ // Update user's mood event if in cache. otherwise create new one and add into cache.
-                            // A document from this user was modified. Update the mood event.
-                            MoodEvent moodEventInCache = findMoodEventInCacheWithDocumentId(documentChange.getDocument().getId());
-                            if (moodEventInCache != null){
-                                updateMoodEventFromDocument(moodEventInCache, documentChange.getDocument());
-                            } else {
-                                // doesn't exist exist in cache. create new mood event, update it on document and add to cache.
-                                MoodEvent newMoodEvent = createBlankMoodEvent();
-                                updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
-                                if (newMoodEvent.getDocumentReference() != null){
-                                    cachedMoodEvents.add(newMoodEvent);
-                                }
-                            }
+                            parseMoodEventDocumentIntoCache(documentChange.getDocument()); // Duplicate protected
+//                            // A document from this user was modified. Update the mood event.
+//                            MoodEvent moodEventInCache = findMoodEventInCacheWithDocumentId(documentChange.getDocument().getId());
+//                            if (moodEventInCache != null){
+//                                updateMoodEventFromDocument(moodEventInCache, documentChange.getDocument());
+//                            } else {
+//                                // doesn't exist exist in cache. create new mood event, update it on document and add to cache.
+//                                MoodEvent newMoodEvent = createBlankMoodEvent();
+//                                updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
+//                                if (newMoodEvent.getDocumentReference() != null){
+//                                    cachedMoodEvents.add(newMoodEvent);
+//                                }
+//                            }
                         } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
                             // User deleted a mood of their's. No need to keep it in cache.
                             MoodEvent moodEventInCache = findMoodEventInCacheWithDocumentId(documentChange.getDocument().getId());
@@ -291,38 +295,55 @@ public class FireStoreHandler {
          */
         // Clear the current cache
         try {
-            cachedMoodEvents = new ArrayList<MoodEvent>();
+
             String currentUsername = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail()); // Currently authenticated user.
             HashMap<String, RelationshipStatus> usersToGetMoodEventsFrom = new HashMap<>();
             // Relationship status with self.. is visible
-            usersToGetMoodEventsFrom.put(currentUsername, RelationshipStatus.FOLLOWING);
-            // Populate cache with mood events from all users related to this user.
-            for (Relationship relationship : cachedRelationship) {
-                if (relationship.getSender().getUserName().compareTo(currentUsername) == 0){ // User a is involved in this relationship
-                    RelationshipStatus relationshipStatus = relationship.getStatus();
-                    if (relationshipStatus == RelationshipStatus.FOLLOWING){
-                        // Add this user to the list of users whose mood events I can view.
-                        // Prevent duplicate queries. Like a dictionary whose key is user
-                        if (usersToGetMoodEventsFrom.get(relationship.getRecipiant().getUserName()) != null ){
-                            usersToGetMoodEventsFrom.put(relationship.getRecipiant().getUserName(), relationshipStatus);
+            startTrackingMoodEventsForUser(currentUsername);
+
+            // Go through relationships and determine which users' mood events to follow
+            for (Relationship relationship: cachedRelationship){
+                if (relationship.getSender().getUserName().compareTo(currentUsername) == 0){ // I'm the sender of this relationship
+                    RelationshipStatus rs = relationship.getStatus();
+                    if (rs == RelationshipStatus.FOLLOWING){ // I'm following this user
+                        String anotherUser = relationship.getRecipiant().getUserName();
+                        if (anotherUser.compareTo(currentUsername) != 0){ // I'm not the other user
+                            startTrackingMoodEventsForUser(anotherUser); // Listen to this user's mood events!
+                            Log.d(TAG,"new user's mood tracking, a: " + relationship.getSender().getUserName() + " b: " +
+                                    relationship.getRecipiant() + " status: " + relationship.getStatus() + " justifies listening for their mood");
                         }
                     }
                 }
             }
-            // Iterate through hashmap to begin querying firebase for mood events form specified users.
-            Iterator hashMapIterator = usersToGetMoodEventsFrom.entrySet().iterator();
-            // Iterate through hashmap
-            while (hashMapIterator.hasNext()){
-                Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
-                String userName = (String)mapElement.getKey();
-                RelationshipStatus relationshipToUser = (RelationshipStatus)mapElement.getValue();
 
-//                Query query = pullMoodEventsForUserIntoCache(userName);
-                Query query = fbFireStore.collection("moodEvents").whereEqualTo("owner", userName);
-                registerMoodEventsUpdateListenerForUser(userName, query); // Start listening for mood event updates by this user.
-            }
+
+
+
+//            usersToGetMoodEventsFrom.put(currentUsername, RelationshipStatus.FOLLOWING);
+//            // Populate cache with mood events from all users related to this user.
+//            for (Relationship relationship : cachedRelationship) {
+//                if (relationship.getSender().getUserName().compareTo(currentUsername) == 0){ // User a is involved in this relationship
+//                    RelationshipStatus relationshipStatus = relationship.getStatus();
+//                    if (relationshipStatus == RelationshipStatus.FOLLOWING){
+//                        startTrackingMoodEventsForUser();
+//
+//                    }
+//                }
+//            }
+//            // Iterate through hashmap to begin querying firebase for mood events form specified users.
+//            Iterator hashMapIterator = usersToGetMoodEventsFrom.entrySet().iterator();
+//            // Iterate through hashmap
+//            while (hashMapIterator.hasNext()){
+//                Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
+//                String userName = (String)mapElement.getKey();
+//                RelationshipStatus relationshipToUser = (RelationshipStatus)mapElement.getValue();
+//
+////                Query query = pullMoodEventsForUserIntoCache(userName);
+//                Query query = fbFireStore.collection("moodEvents").whereEqualTo("owner", userName);
+//                registerMoodEventsUpdateListenerForUser(userName, query); // Start listening for mood event updates by this user.
+//            }
         } catch (Exception e){
-            Log.d(TAG, "pulling mood events list form Remote: failed" + e);
+            Log.d(TAG, "pulling mood events list form Remote: failed", e);
         }
     }
 
@@ -368,7 +389,6 @@ public class FireStoreHandler {
             String user_a_String = (data.get("a") == null) ? "Unknown_user" : data.get("a").toString();
             String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
             // Set appropriate relationship status
-            Log.d(TAG, "STATUS IS: " + statusString);
             RelationshipStatus relationshipStatus = RelationshipStatus.INVISIBLE;
             if (statusString.compareTo("Pending") == 0){
                 relationshipStatus = RelationshipStatus.PENDING;
@@ -383,6 +403,73 @@ public class FireStoreHandler {
 
     }
 
+    private MoodEvent convertDocumentToMoodEvent(QueryDocumentSnapshot document){
+        try {
+            MoodEvent newMoodEvent = createBlankMoodEvent();
+            Map<String, Object> moodData = document.getData();
+            String owner = (((String) moodData.get("owner")).isEmpty()) ? "unknown" : (String) moodData.get("owner");
+            Calendar dateTime = new GregorianCalendar();
+            dateTime.setTime((moodData.get("timeStamp") == null) ? new Date(): document.getTimestamp("timeStamp").toDate());
+            Mood mood;
+            String moodString = (moodData.get("mood") == null) ? "Happy": moodData.get("mood").toString(); // By default happy
+            if (moodString.compareTo("Happy") == 0){mood = new Happy();}
+            else if (moodString.compareTo("Sad") == 0) {mood = new Sad();}
+            else if (moodString.compareTo("Disgusted") == 0) { mood = new Disgusted();}
+            else if (moodString.compareTo("Anxious") == 0) { mood = new Anxious();}
+            else if (moodString.compareTo("Angry") == 0) { mood = new Angry();}
+            else {mood = new Happy();}
+            LatLng latlng = null;
+            if (moodData.get("location") != null){
+                GeoPoint savedLocation = (GeoPoint)moodData.get("location");
+                double lat = savedLocation.getLatitude();
+                double lng = savedLocation.getLongitude();
+                latlng = new LatLng(lat, lng);
+            }
+            String reasonText = null;
+            if (moodData.get("reasonText") != null){
+                reasonText = moodData.get("reasonText").toString();
+            }
+            SocialSituation socialSituation = SocialSituation.NONE;
+            if (moodData.get("socialSituation") != null){
+                String sitString = moodData.get("socialSituation").toString();
+                socialSituation = SocialSituation.fromString(sitString);
+            }
+            // TODO image load
+            Image reasonImage = null;
+
+            // Update all data fields in mood event
+            newMoodEvent.setMood(mood);
+            newMoodEvent.setTimeStamp(dateTime);
+            newMoodEvent.setOwner(new User(owner));
+            newMoodEvent.setSocialSituation(socialSituation);
+            newMoodEvent.setReasonText(reasonText);
+            newMoodEvent.setReasonImage(reasonImage);
+            newMoodEvent.setDocumentReference(document.getReference());
+
+            Log.d(TAG, "MoodEvent created by user: " + newMoodEvent.getOwner().getUserName() + " with documentID: " + document.getReference().getId());
+            return newMoodEvent;
+        } catch (Exception e) {Log.w(TAG, "Failed to convert document into MoodEvent", e);}
+        return null;
+    }
+
+    private void parseMoodEventDocumentIntoCache(QueryDocumentSnapshot document){ // Duplicate protection
+        /**
+         * Convert a FireStore document into mood event object and populates the local cache
+         */
+        try{
+            MoodEvent newMoodEvent = convertDocumentToMoodEvent(document);
+
+            // Duplicate protect
+            MoodEvent foundMoodEvent = findMoodEventInCacheWithDocumentId(newMoodEvent.getDocumentReference().getId());
+            if (foundMoodEvent != null){
+                cachedMoodEvents.remove(foundMoodEvent);
+            }
+            cachedMoodEvents.add(newMoodEvent);
+            Log.d(TAG, "mood event parse: successfully parsed" + document.getData());
+
+        } catch (Exception e){Log.d(TAG, "mood event document parse: failed", e);}
+    }
+
     private void parseRelationshipDocumentIntoCache(QueryDocumentSnapshot document){
         /**
          * Convert a FireStore document into relationship object and populates the local cache
@@ -395,8 +482,7 @@ public class FireStoreHandler {
             // Duplicate protect
             for (Relationship relationship: cachedRelationship){
                 if (relationship.getDocumentId().compareTo(newRelationship.getDocumentId()) == 0){
-                    // Remove from cache
-                    foundRelationship = relationship;
+                    foundRelationship = relationship; // Found in cache - mark to delete
                     break;
                 }
             }
@@ -440,46 +526,88 @@ public class FireStoreHandler {
         // If already tracked.
         ListenerRegistration listeningToUsersMoodEvents = userMoodEventsUpdateListeners.get(userName);
         if (listeningToUsersMoodEvents == null){ // Not listening for this user's mood events
-            Query query = pullMoodEventsForUserIntoCache(userName); // Does duplicate protection
-            registerMoodEventsUpdateListenerForUser(userName, query);
+            Query query = fbFireStore.collection("moodEvents").whereEqualTo("owner", userName); // Create query for user
+            registerMoodEventsUpdateListenerForUser(userName, query); // Start listening to this user's mood events.
             Log.d(TAG, "Now tracking mood events for "+ userName);
         }
 
     }
 
     private void stopTrackingMoodEventsForUser(String userName){
-        removeAllCachedMoodEventsFromUser(userName);
         ListenerRegistration listeningToUsersMoodEvents = userMoodEventsUpdateListeners.get(userName);
         if (listeningToUsersMoodEvents != null){ // Un-register mood event listener.
+            removeAllCachedMoodEventsFromUser(userName);// Since listening is the only way to fetch new mood events.
             listeningToUsersMoodEvents.remove();
+            Log.d(TAG, "Stopped tracking mood events for " + userName);
         }
-        Log.d(TAG, "Stopped tracking mood events for " + userName);
+
     }
 
     private void updateMoodEventsListenersFromDocument(QueryDocumentSnapshot documentSnapshot){
         /**
          * Determines if this updated relationship needs to be tracked for mood events from this user or not.
          * If a relationship is updated, we don't want to see mood events from that user.
+         *  a -> b : FOLLOWING, Am I sender (a)? YES: Track (b)
+         *  a -> b : INVISIBLE, Am I sender (a)? YES: Stop tracking (b)
+         *  a -> b : PENDING, Am I sender (a)? YES: Stop tracking (b)
          */
         try {
             Relationship newRelationship = convertDocumentToRelationship(documentSnapshot);
-            String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
-
-            if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0 || newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){
-                // Do we need to track new mood events from this relationship?'
-                if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0){ // I am the sender..
-                    if (newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
-                        //me -> FOLLOWING -> another. I'm following another user, start listening for their mood events
-                        String anotherUser = newRelationship.getRecipiant().getUserName();
-                        startTrackingMoodEventsForUser(anotherUser);
-                    }
-                } else if (newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){// I am the recipient
-                    // Somebody else said I can't see their mood events any more
-                    if (newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
-                        String anotherUser = newRelationship.getSender().getUserName();
-                        stopTrackingMoodEventsForUser(anotherUser);
+            String myUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail());
+            String sender = newRelationship.getSender().getUserName();
+            // Am I involved in this relationship?
+            if (newRelationship.getSender().getUserName().compareTo(myUserName) == 0 || newRelationship.getRecipiant().getUserName().compareTo(myUserName) == 0){
+                if (newRelationship.getStatus().toString().compareTo(RelationshipStatus.FOLLOWING.toString()) == 0) {
+                    // This is a following relationship
+                    if (sender.compareTo(myUserName) == 0) {
+                        // I am the person following somebody, start tracking their mood events
+                        // donald -> mustafa -> FOLLOWING => means donald tracks mustafa's mood events
+                        startTrackingMoodEventsForUser(newRelationship.getRecipiant().getUserName());
+                    } else if (newRelationship.getStatus().toString().compareTo(RelationshipStatus.INVISIBLE.toString()) == 0){
+                        // I was the person sending this request but now its invisible! Don't track this user.
+                        if (sender.compareTo(myUserName) == 0) {
+                            stopTrackingMoodEventsForUser(newRelationship.getRecipiant().getUserName());
+                        }
+                    } else if (newRelationship.getStatus().toString().compareTo(RelationshipStatus.PENDING.toString()) == 0){
+                        if (sender.compareTo(myUserName) == 0){
+                            stopTrackingMoodEventsForUser(newRelationship.getRecipiant().getUserName());
+                        }
                     }
                 }
+
+//                // If the relationship isn't following
+//                if (newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
+//                    // Un - register all mood events associated to the other user.
+//                    if (newRelationship.getSender().getUserName().compareTo(myUserName) == 0){
+//                        // I'm the sender so other user is the recipient
+//                        stopTrackingMoodEventsForUser(newRelationship.getRecipiant().getUserName());
+//                    } else {
+//                        // I'm the recipient so other user is the sender
+//                        stopTrackingMoodEventsForUser(newRelationship.getSender().getUserName());
+//                    }
+//                } else {
+//                    if (newRelationship.getSender().getUserName().compareTo(myUserName) == 0){
+//                        // vivek (a; me; sender) -> donald (b; recipient) -> following
+//                        // means start listening for any mood events form recipient (donald)
+//                        startTrackingMoodEventsForUser(newRelationship.getRecipiant().getUserName());
+//                    }
+//                }
+
+//
+//                // Do we need to track new mood events from this relationship?'
+//                if (newRelationship.getSender().getUserName().compareTo(myUserName) == 0){ // I am the sender..
+//                    if (newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
+//                        //me -> FOLLOWING -> another. I'm following another user, start listening for their mood events
+//                        String anotherUser = newRelationship.getRecipiant().getUserName();
+//                        startTrackingMoodEventsForUser(anotherUser);
+//                    }
+//                } else if (newRelationship.getRecipiant().getUserName().compareTo(myUserName) == 0){// I am the recipient
+//                    // Somebody else said I can't see their mood events any more
+//                    if (newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
+//                        String anotherUser = newRelationship.getRecipiant().getUserName();
+//                        stopTrackingMoodEventsForUser(anotherUser);
+//                    }
+//                }
             }
 
         } catch (Exception e){Log.w(TAG,"update mood events update listeners: Failed " + e);}
@@ -500,28 +628,30 @@ public class FireStoreHandler {
                         if (e != null){Log.w(TAG, "Error while listening to relationships : ", e);}
 
                         for (DocumentChange documentChange: queryDocumentSnapshots.getDocumentChanges()){
+                            Log.d(TAG, "Relationships collection listener: " + documentChange.getType().toString() + " detected!");
                             if (documentChange.getType() == DocumentChange.Type.ADDED){
                                 // New relationship with user was added
                                 parseRelationshipDocumentIntoCache(documentChange.getDocument());
                                 updateMoodEventsListenersFromDocument(documentChange.getDocument());
                             } else if(documentChange.getType() == DocumentChange.Type.MODIFIED){
                                 // Find relationship in relationsCache and update it.
-                                Relationship foundRelationship = null;
-                                for (Relationship relationship: cachedRelationship){
-                                    if (relationship.getDocument() != null){
-                                        if (relationship.getDocument().getId().compareTo(documentChange.getDocument().getId()) == 0){
-                                            foundRelationship = relationship;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (foundRelationship!= null){//TODO
-                                    cachedRelationship.remove(foundRelationship);
-                                }
-
-                                Relationship newRelationship = convertDocumentToRelationship(documentChange.getDocument());
-                                cachedRelationship.add(newRelationship);
-                                updateMoodEventsListenersFromDocument(documentChange.getDocument());
+                                parseRelationshipDocumentIntoCache(documentChange.getDocument());
+//                                Relationship foundRelationship = null;
+//                                for (Relationship relationship: cachedRelationship){
+//                                    if (relationship.getDocument() != null){
+//                                        if (relationship.getDocument().getId().compareTo(documentChange.getDocument().getId()) == 0){
+//                                            foundRelationship = relationship;
+//                                            break;
+//                                        }
+//                                    }
+//                                }
+//                                if (foundRelationship!= null){
+//                                    cachedRelationship.remove(foundRelationship);
+//                                }
+//
+//                                Relationship newRelationship = convertDocumentToRelationship(documentChange.getDocument());
+//                                cachedRelationship.add(newRelationship);
+//                                updateMoodEventsListenersFromDocument(documentChange.getDocument());
                             } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
                                 Relationship foundRelationship = null;
                                 // Find relationship in relationsCache and remove it.
@@ -543,9 +673,10 @@ public class FireStoreHandler {
                 }
             });
             relationshipsUpdateListeners.put(key, registration);
+            Log.d(TAG, "registration listeners: registered listener where user is :" + key + registration);
 
         } catch (Exception e){
-            Log.d(TAG, "Failed to register relationships listener "+key);
+            Log.d(TAG, "Failed to register relationships listener "+key, e);
         }
 
     }
@@ -726,6 +857,7 @@ public class FireStoreHandler {
                     Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
                     ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
                     listener.remove();
+                    Log.d(TAG, "removed listener: " + mapElement.getKey());
                 }
             }
 
@@ -1205,7 +1337,7 @@ public class FireStoreHandler {
     public ArrayList<MoodEvent> getAllCachedMoodEvents(){
         Log.d(TAG, "qqias Requesting all users: printing out cache mood events");
         for (MoodEvent i: cachedMoodEvents){
-            Log.d(TAG, "Cached moodEvent: " + i.toString());
+            Log.d(TAG, "Cached moodEvent: " + i.toString() + i.getDocumentReference().get());
         }
         return cachedMoodEvents;
     }
