@@ -332,7 +332,9 @@ public class MoodEventListActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
 //                    imageView.setImageURI(imageUri);
+
                     FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
+
 
 //                    try {
 //                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
