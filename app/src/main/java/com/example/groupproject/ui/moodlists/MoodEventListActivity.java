@@ -84,6 +84,13 @@ public class MoodEventListActivity extends AppCompatActivity {
 
         moodEventAdapter.addAll(populateFromRemote());
 
+        for(MoodEvent a: moodEventDataList){
+            System.out.println(a.getReasonText());
+            System.out.println(a.getTimeStamp().toString());
+            System.out.println("");
+
+        }
+
     }
 
     private void setupSorting()
@@ -223,7 +230,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                 tv_moodName.setText(curMoodEvent.getMood().getName());
                 tv_timeStamp.setText(String.format("%d-%d-%d",
                         curMoodEvent.getTimeStamp().get(Calendar.DATE),
-                        curMoodEvent.getTimeStamp().get(Calendar.MONTH),
+                        curMoodEvent.getTimeStamp().get(Calendar.MONTH)+1,
                         curMoodEvent.getTimeStamp().get(Calendar.YEAR)));
 
                 // Setup spinner

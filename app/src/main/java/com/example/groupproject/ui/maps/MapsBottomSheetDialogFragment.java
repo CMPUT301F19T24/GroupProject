@@ -23,8 +23,6 @@ import java.util.HashMap;
 
 public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
-    Integer[] images = {R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
-    ArrayList<String> moodNames = new ArrayList<>();
     HashMap<String, Integer> iconMap;
 
     public static MapsBottomSheetDialogFragment newInstance(){
@@ -39,7 +37,6 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        System.out.println("New NEW NEW NEW NEW NRWEONROWNEIRWENROIEWN");
         View view = inflater.inflate(R.layout.activity_maps_bottom_sheet_dialog, container,false);
         iconMap = new HashMap<>();
         iconMap.put("Happy", R.drawable.emot_happy_small);
@@ -75,7 +72,6 @@ public class MapsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         moodSocialSituationView.setText((moodEvent.getSocialSituation() != null ? moodEvent.getSocialSituation().toString() : ""));
 
         moodBarView.setBackgroundColor(moodEvent.getMood().getColor());
-//        System.out.println(moodEvent.getReasonImage() != null);
         if(moodEvent.getReasonImage() == null){
             moodImageTextView.setVisibility(View.GONE);
             moodImageView.setVisibility(View.GONE);

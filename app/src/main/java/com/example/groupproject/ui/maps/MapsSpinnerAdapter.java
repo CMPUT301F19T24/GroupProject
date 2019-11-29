@@ -14,12 +14,18 @@ import com.example.groupproject.R;
 
 public class MapsSpinnerAdapter extends ArrayAdapter {
 
-    Integer[] images = {0, R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
-    String[] moodNames = {"Show All", "Happy", "Sad", "Angry", "Anxious", "Disgusted"};
-    Integer[] colors = {0xfff0f0f0, 0x5bffff00, 0x5b0090ff, 0x5bff0000, 0x5bC997ff, 0x5b00ff00};
+    Integer[] images;
+//            = {0, R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
+    String[] moodNames;
+//            = {"Show All", "Happy", "Sad", "Angry", "Anxious", "Disgusted"};
+    Integer[] colors;
+//        = {0xfff0f0f0, 0x5bffff00, 0x5b0090ff, 0x5bff0000, 0x5bC997ff, 0x5b00ff00};
 
-    public MapsSpinnerAdapter(Context context, int textViewResourceId, String[] names){
+    public MapsSpinnerAdapter(Context context, int textViewResourceId, String[] names, Integer[] images, Integer[] colors){
         super(context, textViewResourceId, names);
+        this.images = images;
+        this.moodNames = names;
+        this.colors = colors;
     }
 
     public View getCustomView (int position, View convertView, ViewGroup parent){
@@ -32,11 +38,8 @@ public class MapsSpinnerAdapter extends ArrayAdapter {
         ImageView imageView = layout.findViewById(R.id.mapSpinnerImage);
         imageView.setImageResource(images[position]);
 
-
         TextView textView = layout.findViewById(R.id.mapSpinnerText);
         textView.setText(moodNames[position]);
-
-
 
         return layout;
     }
