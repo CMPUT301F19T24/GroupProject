@@ -156,7 +156,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
     // Deprecated
     private void initializeTextViews() {
         String year = Integer.toString(Calendar.getInstance().getTime().getYear() + 1900);
-        int monthInt = Calendar.getInstance().getTime().getMonth();
+        int monthInt = Calendar.getInstance().getTime().getMonth() + 1;
         String month = (monthInt >= 10) ? Integer.toString(monthInt) : String.format("0%s",Integer.toString(monthInt));
         int dayInt = Calendar.getInstance().getTime().getDate();
         String day = (dayInt >= 10) ? Integer.toString(dayInt) : String.format("0%s",Integer.toString(dayInt));
