@@ -38,6 +38,7 @@ public class FragmentMyRelationToOthers extends Fragment {
         userListView.setAdapter(relationshipContainer);
 
         userListView.setEmptyView(root.findViewById(R.id.tv_empty_my_relation_to_others));
+        relationshipContainer.notifyDataSetChanged();
         return root;
     }
 
@@ -50,8 +51,6 @@ public class FragmentMyRelationToOthers extends Fragment {
 
         for(User i : FSH_INSTANCE.getInstance().fsh.getAllUsers())
         {
-            System.out.println("DEBUGGER Username " + i.getUserName());
-
             newUsers.add(i.getUserName());
         }
         newUsers.remove(USER_INSTANCE.getUserName());

@@ -53,61 +53,15 @@ public class ListViewUsersFollowingMe extends ArrayAdapter<Relationship> {
         View view = convertView;
         final Relationship relationship = this.relations.get(position);
         final String sender = relationship.getSender().getUserName();
+
         final String receiver = relationship.getRecipiant().getUserName();
         final RelationshipStatus rs = relationship.getStatus();
 
-        view = LayoutInflater.from(context).inflate(R.layout.e_my_relation_to_others, parent, false);
+        view = LayoutInflater.from(context).inflate(R.layout.e_users_following_me, parent, false);
         TextView username = view.findViewById(R.id.tv_users_following_me_username);
 
-        username.setText(receiver);
+        username.setText(sender);
 
-        Button b_back = view.findViewById(R.id.b_relationship_back);
-        Button b_forward = view.findViewById(R.id.b_relationship_forward);
-
-        // DO NOT USE A SWITCH CASE
-        if(rs == RelationshipStatus.INVISIBLE)
-        {
-            b_back.setVisibility(View.GONE);
-            b_forward.setText("Request Permission to View Mood Events");
-
-            b_forward.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    relationship.setStatus(RelationshipStatus.PENDING);
-                    FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
-                    notifyDataSetChanged();
-                }
-            });
-        }
-        else if(rs == RelationshipStatus.PENDING)
-        {
-            b_back.setText("Cancel");
-            b_forward.setVisibility(View.GONE);
-
-            b_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    relationship.setStatus(RelationshipStatus.INVISIBLE);
-                    FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
-                    notifyDataSetChanged();
-                }
-            });
-        }
-        else if(rs == RelationshipStatus.FOLLOWING)
-        {
-            b_back.setText("Hide Posts");
-            b_forward.setText("Follow");
-
-            b_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    relationship.setStatus(RelationshipStatus.INVISIBLE);
-                    FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);                    notifyDataSetChanged();
-                }
-            });
-            b_forward.setVisibility(View.GONE);
-
-        }
         return view;
     }
 }

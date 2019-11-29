@@ -37,6 +37,7 @@ public class FragmentUsersFollowingMe extends Fragment {
         userListView.setAdapter(relationshipContainer);
 
         userListView.setEmptyView(root.findViewById(R.id.tv_empty_users_following_me));
+        relationshipContainer.notifyDataSetChanged();
         return root;
     }
 
@@ -53,6 +54,12 @@ public class FragmentUsersFollowingMe extends Fragment {
             }
         }
 
+        for(Relationship i : rc)
+        {
+            System.out.println("ABC");
+            System.out.println(i.getSender().getUserName());
+            System.out.println(i.getRecipiant().getUserName());
+        }
         return rc;
     }
 }

@@ -37,6 +37,8 @@ public class FragmentMyPendingResponses extends Fragment {
         userListView.setAdapter(relationshipContainer);
 
         userListView.setEmptyView(root.findViewById(R.id.tv_empty_my_pending_responses));
+
+        relationshipContainer.notifyDataSetChanged();
         return root;
     }
 

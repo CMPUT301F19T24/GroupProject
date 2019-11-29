@@ -1185,6 +1185,10 @@ public class FireStoreHandler {
     }
 
     public ArrayList<MoodEvent> getAllCachedMoodEvents(){
+        for(MoodEvent i : cachedMoodEvents)
+        {
+            System.out.println("ABCD " + i.getDocumentReference().getId());
+        }
         return cachedMoodEvents;
     }
 
