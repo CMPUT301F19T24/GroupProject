@@ -103,7 +103,7 @@ public class Login extends AppCompatActivity {
 
         if (validPassword && validUsername) {
             fbAuth.login(username, password, view);
-            MainActivity.USER_INSTANCE = new User(username);
+
         }
     }
 

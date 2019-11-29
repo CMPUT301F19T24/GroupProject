@@ -24,8 +24,11 @@
             android:layout_marginEnd="30dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
+            android:fontFamily="@font/quicksand"
             android:text="Detailed Mood View"
-            android:textSize="22sp" />
+            android:textAllCaps="true"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,8 +41,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:fontFamily="@font/quicksand"
                 android:gravity="center"
-                android:text="@string/DetailedMoodName" />
+                android:text="@string/DetailedMoodName"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="0dp"
@@ -53,8 +58,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:fontFamily="@font/quicksand"
                 android:gravity="center"
-                android:text="@string/detailTimestamp" />
+                android:text="@string/detailTimestamp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -66,8 +73,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand"
                 android:gravity="center"
-                android:text="Social Situation" />
+                android:text="Social Situation"
+                android:textStyle="bold" />
 
             <Spinner
                 android:id="@+id/s_details_social_situation"
@@ -87,13 +96,16 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
+                android:fontFamily="@font/quicksand"
                 android:gravity="center"
-                android:text="Description" />
+                android:text="Description"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/tv_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/quicksand"
                 android:gravity="center"
                 android:hint="(Optional)"
                 android:textSize="14sp" />
@@ -111,8 +123,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:fontFamily="@font/quicksand"
                 android:gravity="center"
-                android:text="Image Description:" />
+                android:text="Image Description:"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/iv_img_desc"
@@ -134,14 +148,22 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
-                    android:text="Add Image From Camera" />
+                    android:backgroundTint="#364964"
+                    android:fontFamily="@font/quicksand"
+                    android:text="Add Image From Camera"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/b_add_from_photo"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
-                    android:text="Add Image From Photos" />
+                    android:backgroundTint="#364964"
+                    android:fontFamily="@font/quicksand_light"
+                    android:text="Add Image From Photos"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
@@ -176,14 +198,22 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="Apply" />
+                android:backgroundTint="#4CAF50"
+                android:fontFamily="@font/quicksand"
+                android:text="Apply"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/b_delete"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="Delete" />
+                android:backgroundTint="#F43636"
+                android:fontFamily="@font/quicksand"
+                android:text="Delete"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

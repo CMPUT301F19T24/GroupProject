@@ -2,7 +2,11 @@ package com.example.groupproject.ui.moodlists;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,6 +30,7 @@ import com.example.groupproject.data.relations.Relationship;
 import com.example.groupproject.data.relations.SocialSituation;
 import com.example.groupproject.data.user.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -44,16 +49,29 @@ public class MoodEventListActivity extends AppCompatActivity {
     // Defines
     private static final SortingMethod DEFAULT_SORTING_METHOD = SortingMethod.DATE_NTOO;
 
+    private static final int PICK_IMAGE = 0;
+    private static final int CAMERA_PIC_REQUEST = 1;
+
+    Uri imageUri;
+    Bitmap bitmap;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println("MoodEventListActivity");
         setContentView(R.layout.v_list_mood_events);
+
+        TextView tv_currentUserName = findViewById(R.id.tv_user_name);
+        tv_currentUserName.setText(USER_INSTANCE.getUserName());
+
         initialize();
     }
 
     private void initialize()
     {
+//        ImageView iv_desc = findViewById(R.id.iv_img_desc);
         /**
          * Initializes the private variables of this class & View elements
          */
@@ -66,11 +84,15 @@ public class MoodEventListActivity extends AppCompatActivity {
         setupSorting();
         setupSearching();
 
-        TextView tv_currentUserName = findViewById(R.id.tv_user_name);
-        tv_currentUserName.setText(USER_INSTANCE.getUserName());
-
         moodEventAdapter.addAll(populateFromRemote());
         moodEventAdapter.notifyDataSetChanged();
+
+        for(MoodEvent a: moodEventDataList){
+            System.out.println(a.getReasonText());
+            System.out.println(a.getTimeStamp().toString());
+            System.out.println("");
+
+        }
 
     }
 
@@ -211,7 +233,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                 tv_moodName.setText(curMoodEvent.getMood().getName());
                 tv_timeStamp.setText(String.format("%d-%d-%d",
                         curMoodEvent.getTimeStamp().get(Calendar.DATE),
-                        curMoodEvent.getTimeStamp().get(Calendar.MONTH),
+                        curMoodEvent.getTimeStamp().get(Calendar.MONTH)+1,
                         curMoodEvent.getTimeStamp().get(Calendar.YEAR)));
 
                 // Setup spinner
@@ -232,6 +254,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         // TODO
+                        openCamera();
 
                     }
                 });
@@ -240,6 +263,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         // TODO
+                        openGallery();
 
                     }
                 });
@@ -254,7 +278,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                         curMoodEvent.setReasonText(et_desc.getText().toString());
 
                         // TODO: Add me
-//                        curMoodEvent.setReasonImage();
+                        curMoodEvent.setReasonImage(bitmap);
 //                        curMoodEvent.setLocation();
                         curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
 
@@ -281,6 +305,50 @@ public class MoodEventListActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void openGallery(){
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, PICK_IMAGE);
+    }
+
+    private void openCamera(){
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case PICK_IMAGE:
+                if(resultCode == RESULT_OK){
+                    imageUri = data.getData();
+//                    imageView.setImageURI(imageUri);
+
+                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
+
+
+//                    try {
+//                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+                }
+
+                break;
+            case CAMERA_PIC_REQUEST:
+                if(resultCode == RESULT_OK){
+                    imageUri = data.getData();
+//                    imageView.setImageURI(imageUri);
+                    Bundle extras = data.getExtras();
+                    bitmap = (Bitmap) extras.get("data");
+                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
+//                    imageView.setImageBitmap(bitmap);
+                }
+                break;
+        }
     }
 
     private ArrayList<MoodEvent> populateFromRemote()

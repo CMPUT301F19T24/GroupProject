@@ -1,7 +1,9 @@
 package com.example.groupproject.data.moodevents;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.example.groupproject.data.firestorehandler.FireStoreHandler;
@@ -16,12 +18,12 @@ import java.util.Calendar;
 
 import static com.example.groupproject.ui.moodlists.SortingMethod.*;
 
-public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDocumentListener {
+public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDocumentListener, Serializable {
     private Mood mood;
     private Calendar timeStamp;
     private SocialSituation socialSituation;
     private String reasonText;
-    private Image reasonImage;
+    private Bitmap reasonImage;
 //    private Location location;
     private LatLng latlng;
     private User owner;
@@ -34,7 +36,7 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
                                User owner,
                                SocialSituation socialSituation,
                                String reasonText,
-                               Image reasonImage,
+                               Bitmap reasonImage,
 //              Location location
                                LatLng latlng
               )
@@ -88,7 +90,7 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
         return this.reasonText;
     }
 
-    public Image getReasonImage()
+    public Bitmap getReasonImage()
     {
         return this.reasonImage;
     }
@@ -125,7 +127,7 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
         this.reasonText = reasonText;
     }
 
-    public void setReasonImage(Image reasonImage)
+    public void setReasonImage(Bitmap reasonImage)
     {
         this.reasonImage = reasonImage;
     }

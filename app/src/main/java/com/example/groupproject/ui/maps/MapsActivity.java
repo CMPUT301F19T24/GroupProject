@@ -5,14 +5,22 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.groupproject.R;
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,14 +29,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import static com.example.groupproject.MainActivity.FSH_INSTANCE;
 import static com.example.groupproject.MainActivity.USER_INSTANCE;
+
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -36,20 +48,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted;
     private FusedLocationProviderClient fusedLocationClient;
     public static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1;
+
     ArrayList<LatLng> randomLatLng = new ArrayList<>();
 
-    //====
+    private LocationRequest locationRequest;
+    MapsBottomSheetDialogFragment mapsBottomSheetDialogFragment;
+
+    Spinner mSpinner;
+
+    Integer[] images = {0, R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
+    String[] moodNames = {"Show ALL", "Happy", "Sad", "Angry", "Anxious", "Disgusted"};
+    Integer[] colors = {0xfff0f0f0, 0x5bffff00, 0x5b0090ff, 0x5bff0000, 0x5bC997ff, 0x5b00ff00};
+
+    ArrayList<MoodEvent> moodEvents;
+    ArrayList<Marker> markerArray;
+
+    private HashMap<Marker, MoodEvent> markerHashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        mSpinner = findViewById(R.id.mapHistorySpinner);
+        markerArray = new ArrayList<>();
+        moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
+        markerHashMap = new HashMap<>();
+
+        TextView curUserName = findViewById(R.id.currentUser);
+        curUserName.setText(USER_INSTANCE.getUserName());
+
+//        ArrayAdapter adapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, moodNames);
+        MapsSpinnerAdapter mapsSpinnerAdapter = new MapsSpinnerAdapter(MapsActivity.this, R.layout.activity_maps_spinner, moodNames, images, colors);
+        mSpinner.setAdapter(mapsSpinnerAdapter);
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i==0) fetchAllMoods(moodEvents);
+                else fetchSpecificMood(moodEvents, moodNames[i]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                System.out.println("Nothing Selected");
+            }
+        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mapsBottomSheetDialogFragment = MapsBottomSheetDialogFragment.newInstance();
 
+        System.out.println("111");
+        System.out.println(moodEvents);
     }
 
     /**
@@ -63,9 +115,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getApplicationContext(), "MapReady", Toast.LENGTH_LONG).show();
-
+        Toast.makeText(getApplicationContext(),"MAP READY", Toast.LENGTH_LONG);
         mMap = googleMap;
+        getCurrentLocation();
         updateCurrentLocation();
         // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(-34, 151);
@@ -78,26 +130,134 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        prePopulateData();
 //        setUpMapIfNeeded();
 
-        for(final MoodEvent moodEvent : FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName()))
+        fetchAllMoods(moodEvents);
+
+    }
+
+    public void getCurrentLocation(){
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20 * 1000);
+
+        if (checkLocationPermission()) {
+            LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+
+                }
+
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+
+                }
+            });
+
+            if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) == null) {
+                Toast.makeText(getApplicationContext(), "GPS Signal not found", Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Success!", Toast.LENGTH_LONG).show();
+//                rc = new LatLng(myLocation[0].getLatitude(), myLocation[0].getLongitude());
+            }
+        }
+        else
         {
-            System.out.println(moodEvent.getInfo());
-            fetchLocations(moodEvent);
+            Toast.makeText(getApplicationContext(), "GPS Permission Issue", Toast.LENGTH_LONG).show();
 
         }
     }
 
-    public void fetchLocations(MoodEvent moodEvent){
+    public void resetMapMarkers(){
+//        if(markerArray != null) {
+        for (Marker m: markerArray) {
+            m.remove();
+//            }
+        }
+    }
+
+    private boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void fetchAllMoods(ArrayList<MoodEvent> moodEvent){
+        resetMapMarkers();
+        for(final MoodEvent m : moodEvent)
+        {
+            System.out.println(m.getInfo());
+            fetchLocations(m);
+        }
+    }
+
+    public void fetchSpecificMood(ArrayList<MoodEvent> moodEvent, String moodName){
+        resetMapMarkers();
+        for(final MoodEvent m: moodEvent){
+            if(m.getMood().getName() == moodName) {
+                fetchLocations(m);
+            }
+        }
+    }
+
+    public void fetchLocations(final MoodEvent moodEvent){
+
         if(moodEvent.getLatLng() != null)
         {
             MarkerOptions op = new MarkerOptions();
             BitmapDescriptor bitmapMarker = BitmapDescriptorFactory.fromResource(moodEvent.getMood().getImageSmall());
             op.position(moodEvent.getLatLng())
-                    .title(moodEvent.getMood().getName())
+//                    .title(moodEvent.getMood().getName())
                     .icon(bitmapMarker)
                     .draggable(false);
-            mMap.addMarker(op);
+
+            Marker marker = mMap.addMarker(op);
+            markerHashMap.put(marker, moodEvent);
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    MoodEvent event = markerHashMap.get(marker);
+                    System.out.println(event.getMood().getName());
+                    System.out.println(event.getInfo());
+
+//                    Bundle bundle = createMoodEventBundle(moodEvent);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("moodEvent", event);
+//                    String moodIconName = bundle.getString("moodIcon");
+//                    System.out.println("Bundle Name: " +moodIconName);
+
+                    mapsBottomSheetDialogFragment.setArguments(bundle);
+                    mapsBottomSheetDialogFragment.show(getSupportFragmentManager(),"show_mood_history_dialog_fragment");
+                    return false;
+                }
+            });
+
+            markerArray.add(marker);
         }
     }
+
+//    private Bundle createMoodEventBundle(MoodEvent moodEvent){
+//        Bundle bundle = new Bundle();
+//        bundle.putString("moodIcon", moodEvent.getMood().getName());
+//        if(moodEvent.getTimeStamp() != null) bundle.putString("moodDate", moodEvent.getTimeStamp().toString());
+//        if(moodEvent.getReasonText() != null) bundle.putString("moodReason", moodEvent.getReasonText());
+//        if(moodEvent.getReasonImage() != null) bundle.putString("moodImage", moodEvent.getReasonImage().toString());
+//        if(moodEvent.getSocialSituation() != null) bundle.putString("moodSocialSituation", moodEvent.getSocialSituation().toString());
+//        return bundle;
+//    }
 
     private void createRandomLatLng(){
         float lat = 53.545883f;
@@ -116,16 +276,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    /*
     public void prePopulateData(){
         createRandomLatLng();
-//        Location locationWestEd = new Location("");
-//        locationWestEd.setLatitude(53.5225);
-//        locationWestEd.setLongitude(-113.6242);
+        Location locationWestEd = new Location("");
+        locationWestEd.setLatitude(53.5225);
+        locationWestEd.setLongitude(-113.6242);
         LatLng lWestEd = new LatLng(53.5225, -113.6242);
 
-//        Location locationSouthgate = new Location("");
-//        locationSouthgate.setLatitude(53.4855);
-//        locationSouthgate.setLongitude(-113.5137);
+        Location locationSouthgate = new Location("");
+        locationSouthgate.setLatitude(53.4855);
+        locationSouthgate.setLongitude(-113.5137);
         LatLng lSG = new LatLng(53.4855, -113.5137);
 
         Location locationCityHall = new Location("");
@@ -133,31 +294,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationCityHall.setLongitude(-113.490112);
         LatLng lCH = new LatLng(53.545883, -113.490112);
 
-//        cachedMoodEvents.
-//                add(new MoodEvent(new Happy(),
-//                        new GregorianCalendar(2001,01,01),
-//                        new User(UN_LUKE), ALONE, "Womp-rats", null, randomLatLng.get(0)));
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_LUKE), WITH_SOMEONE, "Lost Hand", null, randomLatLng.get(1)));
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2003,01,01), new User(UN_LUKE), NONE, "Hans + Leia", null, randomLatLng.get(2)));
-//        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,01,01), new User(UN_LUKE), WITH_SEVERAL, "Death Star", null, randomLatLng.get(3)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User(UN_LEIA), CROWD, "Capture", null, randomLatLng.get(4)));
-//        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2002,01,01), new User(UN_LEIA), CROWD, "Death Star", null, randomLatLng.get(5)));
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2004,01,01), new User(UN_LEIA), WITH_SOMEONE, "Jabba", null, randomLatLng.get(6)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_HANS), ALONE, "Carbonite", null, randomLatLng.get(7)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2001,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "Qui-Gon", null, randomLatLng.get(8)));
-//        cachedMoodEvents.add(new MoodEvent(new Anxious(), new GregorianCalendar(2002,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "High Ground", null, randomLatLng.get(9)));
-//
-//        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2001,1,1), new User(UN_DARTH_VADER), ALONE, "Shimi", null, randomLatLng.get(10)));
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2002,1,1), new User(UN_DARTH_VADER), CROWD, "Men, Women, Children", null, randomLatLng.get(11)));
-//        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2003,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "High Ground", null, randomLatLng.get(12)));
-//        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,1,1), new User(UN_DARTH_VADER), WITH_SEVERAL, "Killing Palpatine", null, randomLatLng.get(13)));
-//        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2005,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "Dieing", null, randomLatLng.get(14)));
+        cachedMoodEvents.
+                add(new MoodEvent(new Happy(),
+                        new GregorianCalendar(2001,01,01),
+                        new User(UN_LUKE), ALONE, "Womp-rats", null, randomLatLng.get(0)));
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_LUKE), WITH_SOMEONE, "Lost Hand", null, randomLatLng.get(1)));
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2003,01,01), new User(UN_LUKE), NONE, "Hans + Leia", null, randomLatLng.get(2)));
+        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,01,01), new User(UN_LUKE), WITH_SEVERAL, "Death Star", null, randomLatLng.get(3)));
+
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User(UN_LEIA), CROWD, "Capture", null, randomLatLng.get(4)));
+        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2002,01,01), new User(UN_LEIA), CROWD, "Death Star", null, randomLatLng.get(5)));
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2004,01,01), new User(UN_LEIA), WITH_SOMEONE, "Jabba", null, randomLatLng.get(6)));
+
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_HANS), ALONE, "Carbonite", null, randomLatLng.get(7)));
+
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2001,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "Qui-Gon", null, randomLatLng.get(8)));
+        cachedMoodEvents.add(new MoodEvent(new Anxious(), new GregorianCalendar(2002,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "High Ground", null, randomLatLng.get(9)));
+
+        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2001,1,1), new User(UN_DARTH_VADER), ALONE, "Shimi", null, randomLatLng.get(10)));
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2002,1,1), new User(UN_DARTH_VADER), CROWD, "Men, Women, Children", null, randomLatLng.get(11)));
+        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2003,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "High Ground", null, randomLatLng.get(12)));
+        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,1,1), new User(UN_DARTH_VADER), WITH_SEVERAL, "Killing Palpatine", null, randomLatLng.get(13)));
+        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2005,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "Dieing", null, randomLatLng.get(14)));
 
 
-    }
+    }*/
 
 
 

@@ -9,6 +9,7 @@
         android:id="@+id/tv_empty_my_relation_to_others"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="No Other Users in the System" />
 

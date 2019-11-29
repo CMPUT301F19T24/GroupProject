@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Moody</string>
+    <string name="app_name">GroupProject</string>
     <string name="add_mood">
         <font size="20"> "ADD MOOD EVENT"</font>
         <font size="13">\n"Add a new mood event to your history</font>
@@ -25,8 +25,8 @@
     <string name="DetailedMoodName">DetailedMoodName</string>
     <string name="socialSituation">N/A</string>
 
-<!--    Adding all hardcoded string values here.-->
-<!--    layout: login_screen.xml-->
+    <!--    Adding all hardcoded string values here.-->
+    <!--    layout: login_screen.xml-->
     <string name="app_title">   MOODY</string>
     <string name="subtitle">    Tell me how you really feel</string>
     <string name="username_field_hint"> Username</string>
@@ -34,6 +34,8 @@
     <string name="sign_in_btn"> SIGN IN</string>
     <string name="no_account_lbl">Don\'t have an account</string>
     <string name="create_new_account_btn">Create one</string>
+    <string name="credentialMessage">Invalid username or password</string>
+    <string name="help">HELP</string>
 
     <!--    layout: v_user_list_layout.xml-->
     <string name="placeholder_follower">Luke Skywalker</string>
@@ -48,10 +50,14 @@
     <string name="accept_button">ACCEPT</string>
     <string name="reject_button">REJECT</string>
 
+    <string name="tab_text_following">Following</string>
+    <string name="tab_text_followers">Followers</string>
+    <string name="tab_text_requests">Requests</string>
+    <string name="confirm_button">CONFIRM</string>
+    <string name="delete_button">DELETE</string>
 
     <string name="register_confirm">REGISTER</string>
     <string name="tab_text_my_relations">Relations</string>
     <string name="tab_text_my_responses">Responses</string>
     <string name="tab_text_followers">Followers</string>
 </resources>
-
