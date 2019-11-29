@@ -46,6 +46,11 @@ public class FragmentMyRelationToOthers extends Fragment {
 
     private ArrayList<Relationship> getRelationships()
     {
+        /**
+         * @author - Donald
+         * @return - Returns a list of Relationship that I'm a sender of + Relationships of those who are new to me
+         */
+
         ArrayList<Relationship> rc = new ArrayList<>();
         ArrayList<String> foundUsername = new ArrayList<>();
 
@@ -54,7 +59,6 @@ public class FragmentMyRelationToOthers extends Fragment {
         {
             if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0)
             {
-                System.out.println("ABC" + i.toString());
                 foundUsername.add(i.getRecipiant().getUserName());
                 rc.add(i);
             }
@@ -64,8 +68,6 @@ public class FragmentMyRelationToOthers extends Fragment {
 
         for(User i : FSH_INSTANCE.getInstance().fsh.getAllUsers() )
         {
-            System.out.println(!foundUsername.contains(i.getUserName()));
-
             if(!foundUsername.contains(i.getUserName()) && i.getUserName().compareTo(USER_INSTANCE.getUserName()) != 0)
             {
                 rc.add(new Relationship(USER_INSTANCE, i, RelationshipStatus.INVISIBLE));

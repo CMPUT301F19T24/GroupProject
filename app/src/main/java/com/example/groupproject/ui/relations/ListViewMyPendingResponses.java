@@ -43,6 +43,12 @@ public class ListViewMyPendingResponses extends ArrayAdapter<Relationship> {
     @Override
     // Specify which view the user list will use: In this case Following/Requests
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
+        /**
+         * Return the fragment view of pending requests
+         * @author - Donald
+         * @param - See parent class
+         * @return - See parent class
+         */
         View view = convertView;
 
         final Relationship rs = this.relations.get(position);
@@ -60,6 +66,11 @@ public class ListViewMyPendingResponses extends ArrayAdapter<Relationship> {
         b_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /**
+                 * On click, set the status to following
+                 *
+                 * @author - Donald
+                 */
                 rs.setStatus(RelationshipStatus.FOLLOWING);
 
                 FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);
@@ -72,6 +83,11 @@ public class ListViewMyPendingResponses extends ArrayAdapter<Relationship> {
         b_decline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /**
+                 * On click, set the status to invisible
+                 *
+                 * @author - Donald
+                 */
                 rs.setStatus(RelationshipStatus.INVISIBLE);
 
                 FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);

@@ -45,7 +45,8 @@ public class ListViewUsersFollowingMe extends ArrayAdapter<Relationship> {
     // Specify which view the user list will use: In this case Following/Requests
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         /**
-         * Builds a view with respect to user in a list.
+         * Display a list of people who are allowed to follow you
+         *
          * @param position Item in user list to be displayed to view
          * @param convertView Previously existing view, Nullable
          * @return view View item modelled after position of list.

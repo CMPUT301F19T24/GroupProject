@@ -29,9 +29,7 @@ import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
 import com.example.groupproject.data.relations.Relationship;
 import com.example.groupproject.data.relations.SocialSituation;
-import com.example.groupproject.data.user.User;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -80,7 +78,6 @@ public class MoodEventListActivity extends AppCompatActivity {
 
     private void initialize()
     {
-//        ImageView iv_desc = findViewById(R.id.iv_img_desc);
         /**
          * Initializes the private variables of this class & View elements
          */
@@ -219,10 +216,6 @@ public class MoodEventListActivity extends AppCompatActivity {
                 final EditText et_desc = popupView.findViewById(R.id.tv_desc);
                 ImageView iv_desc = popupView.findViewById(R.id.iv_img_desc);
 
-                // TODO: Renable me
-//                LinearLayout ll_detailedMap = popupView.findViewById(R.id.ll_detailed_map);
-//                MapView mv_map = popupView.findViewById(R.id.mv_detail_map_view);
-
                 Button b_apply = popupView.findViewById(R.id.b_apply);
                 Button b_delete = popupView.findViewById(R.id.b_delete);
                 Button b_image_from_camera = popupView.findViewById(R.id.b_add_from_camera);
@@ -249,13 +242,6 @@ public class MoodEventListActivity extends AppCompatActivity {
                 // Setup spinner
                 s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, SocialSituation.getNames()));
                 s_socialSituation.setSelection(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
-
-
-                if(curMoodEvent.getLatLng() == null)
-                {
-                    // TODO: Renable me
-//                    ll_detailedMap.setVisibility(View.GONE);
-                }
 
                 et_desc.setText(curMoodEvent.getReasonText());
 
@@ -355,29 +341,14 @@ public class MoodEventListActivity extends AppCompatActivity {
                     if (moodEventDataList.get(curPosition) != null){
                         System.out.println("HERE!!");
                     }
-
-
-//                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
-//                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri); // TODO
-
-
-//                    try {
-//                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
                 }
 
                 break;
             case CAMERA_PIC_REQUEST:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
-//                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
-//                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
-//                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap, );
-//                    imageView.setImageBitmap(bitmap);
                 }
                 break;
         }

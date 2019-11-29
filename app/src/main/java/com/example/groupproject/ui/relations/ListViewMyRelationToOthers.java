@@ -46,6 +46,7 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         /**
          * Builds a view with respect to user in a list.
+         *
          * @param position Item in user list to be displayed to view
          * @param convertView Previously existing view, Nullable
          * @return view View item modelled after position of list.
@@ -76,22 +77,32 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
         final Button b_back = view.findViewById(R.id.b_relationship_back);
         final Button b_forward = view.findViewById(R.id.b_relationship_forward);
 
-
-
         if(rss == RelationshipStatus.INVISIBLE)
         {
+            /**
+             * Back - NA
+             * Forward - Go to pending
+            **/
             b_back.setVisibility(View.GONE);
             b_forward.setText("Request");
         }
 
         else if(rss == RelationshipStatus.PENDING)
         {
+            /**
+             * Back - Go to invisible
+             * Forward - NA (Waiting for response from other user)
+             **/
             b_back.setText("Cancel Request");
             b_forward.setVisibility(View.GONE);
         }
 
         else if(rss == RelationshipStatus.FOLLOWING)
         {
+            /**
+             * Back - Go to invisible
+             * Forward - NA
+             **/
             b_back.setText("Unfollow");
             b_forward.setVisibility(View.GONE);
         }
@@ -107,18 +118,25 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
 
                 else if(rss == RelationshipStatus.PENDING)
                 {
+                    /**
+                     * Go to Invisible
+                     */
                     rs.setStatus(RelationshipStatus.INVISIBLE);
 
                     b_back.setVisibility(View.GONE);
 
                     b_forward.setVisibility(View.VISIBLE);
-                    b_forward.setText("Request Permission");
+                    b_forward.setText("Request");
 
                     FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);
                 }
 
                 else if(rss == RelationshipStatus.FOLLOWING)
                 {
+                    /**
+                     * Go to Invisible
+                    **/
+
                     rs.setStatus(RelationshipStatus.INVISIBLE);
 
                     b_back.setVisibility(View.VISIBLE);
@@ -139,6 +157,9 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
         b_forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /**
+                 * Go to Pending
+                 **/
                 if(rss == RelationshipStatus.INVISIBLE)
                 {
                     rs.setStatus(RelationshipStatus.PENDING);

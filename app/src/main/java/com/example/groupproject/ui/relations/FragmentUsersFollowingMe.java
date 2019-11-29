@@ -45,6 +45,10 @@ public class FragmentUsersFollowingMe extends Fragment {
 
     private ArrayList<Relationship> getRelationships()
     {
+        /**
+         * @author - Donald
+         * @return - Returns a list of Relationship that I'm a recipient of
+         */
         ArrayList<Relationship> rc = new ArrayList<>();
 
         for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())

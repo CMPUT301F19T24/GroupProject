@@ -44,6 +44,10 @@ public class FragmentMyPendingResponses extends Fragment {
 
     private ArrayList<Relationship> getRelationships()
     {
+        /**
+         * @author - Donald
+         * @return - Returns a list of Relationship that are waiting for my responses
+         */
         ArrayList<Relationship> rc = new ArrayList<>();
 
         for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())
