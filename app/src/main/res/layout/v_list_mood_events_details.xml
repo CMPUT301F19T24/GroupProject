@@ -152,7 +152,8 @@
                     android:fontFamily="@font/quicksand"
                     android:text="Add Image From Camera"
                     android:textColor="#FFFFFF"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/b_add_from_photo"
@@ -163,7 +164,8 @@
                     android:fontFamily="@font/quicksand_light"
                     android:text="Add Image From Photos"
                     android:textColor="#FFFFFF"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>
