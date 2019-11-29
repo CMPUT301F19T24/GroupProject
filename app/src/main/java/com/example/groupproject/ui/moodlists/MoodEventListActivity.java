@@ -347,7 +347,8 @@ public class MoodEventListActivity extends AppCompatActivity {
                     imageUri = data.getData();
 //                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
-//                    bitmap = (Bitmap) extras.get("data");
+                    bitmap = (Bitmap) extras.get("data");
+                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
 //                    imageView.setImageBitmap(bitmap);
                 }
                 break;
