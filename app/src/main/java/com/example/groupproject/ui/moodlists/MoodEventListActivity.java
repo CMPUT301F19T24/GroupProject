@@ -2,6 +2,8 @@ package com.example.groupproject.ui.moodlists;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -9,13 +11,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,12 +25,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
 import com.example.groupproject.data.relations.SocialSituation;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -53,6 +55,9 @@ public class MoodEventListActivity extends AppCompatActivity {
     Uri imageUri;
     Bitmap bitmap;
 
+    Button dateButton;
+    Button timeButton;
+
 
     /**
      * Function that is called when the view is created.
@@ -68,8 +73,46 @@ public class MoodEventListActivity extends AppCompatActivity {
         TextView tv_currentUserName = findViewById(R.id.tv_user_name);
         tv_currentUserName.setText(USER_INSTANCE.getUserName());
 
+
         initialize();
+
+//        initializeTextViews();
+//        initializeDateTime();
     }
+
+//    private void initializeDateTime() {
+//
+//        dateButton.setOnClickListener(new View.OnClickListener() {
+//            Calendar calendar = Calendar.getInstance();
+//
+//            @Override
+//            public void onClick(View view) {
+//                DatePickerDialog datePickerDialog = new DatePickerDialog(MoodEventListActivity.this, new DatePickerDialog.OnDateSetListener(){
+//                    @Override
+//                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+//                        // Month from 0 - 11 so add 1
+//                        dateButton.setText(String.format("%04d-%02d-%02d", year, month + 1, day));
+//                    }
+//                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH) );
+//                datePickerDialog.show();
+//            }
+//        });
+
+//        timeButton.setOnClickListener(new View.OnClickListener() {
+//            Calendar calendar = Calendar.getInstance();
+//
+//            @Override
+//            public void onClick(View view) {
+//                TimePickerDialog timePickerDialog = new TimePickerDialog(MoodEventListActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, new TimePickerDialog.OnTimeSetListener(){
+//                    @Override
+//                    public void onTimeSet(TimePicker timePicker, int hour, int minutes){
+//                        timeButton.setText(String.format("%02d:%02d", hour, minutes));
+//                    }
+//                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+//                timePickerDialog.show();
+//            }
+//        });
+//    }
 
     /**
      * An initialization function to initialize views, popups, setup sorting and searching.
@@ -226,7 +269,8 @@ public class MoodEventListActivity extends AppCompatActivity {
 
                 LinearLayout ll_header = popupView.findViewById(R.id.ll_detail_header);
                 TextView tv_moodName = popupView.findViewById(R.id.tv_mood_name_details);
-                TextView tv_timeStamp = popupView.findViewById(R.id.tv_time_stamp_details);
+//                final Button editDateTimeButton = popupView.findViewById(R.id.dateButton);
+//                TextView tv_timeStamp = popupView.findViewById(R.id.tv_time_stamp_details);
                 final Spinner s_socialSituation = popupView.findViewById(R.id.s_details_social_situation);
                 final EditText et_desc = popupView.findViewById(R.id.tv_desc);
                 ImageView iv_desc = popupView.findViewById(R.id.iv_img_desc);
@@ -240,6 +284,56 @@ public class MoodEventListActivity extends AppCompatActivity {
                 Button b_image_from_camera = popupView.findViewById(R.id.b_add_from_camera);
                 Button b_image_from_photos = popupView.findViewById(R.id.b_add_from_photo);
 
+                final Button dateButton = popupView.findViewById(R.id.dateButton);
+                final Button timeButton = popupView.findViewById(R.id.timeButton);
+
+//                dateButton.setClickable(false);
+//                timeButton.setClickable(false);
+//                if(USER_INSTANCE.getUserName() != (curMoodEvent.getOwner().getUserName())){
+//                    dateButton.setClickable(false);
+//                    timeButton.setClickable(false);
+//                }
+
+                initializeTextViews(dateButton, timeButton, curMoodEvent.getTimeStamp());
+
+//                System.out.println("123123123")
+//                System.out.println(USER_INSTANCE.getUserName());
+//                System.out.println((curMoodEvent.getOwner().getUserName()));
+//                System.out.println(USER_INSTANCE.getUserName() == (curMoodEvent.getOwner().getUserName()));
+
+                dateButton.setOnClickListener(new View.OnClickListener() {
+                    Calendar calendar = Calendar.getInstance();
+                    @Override
+                    public void onClick(View view) {
+                        if(USER_INSTANCE.getUserName().compareTo(curMoodEvent.getOwner().getUserName()) == 0) {
+                            DatePickerDialog datePickerDialog = new DatePickerDialog(MoodEventListActivity.this, new DatePickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    // Month from 0 - 11 so add 1
+                                    dateButton.setText(String.format("%04d-%02d-%02d", year, month + 1, day));
+                                }
+                            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                            datePickerDialog.show();
+                        }
+                    }
+                });
+
+                timeButton.setOnClickListener(new View.OnClickListener() {
+                    Calendar calendar = Calendar.getInstance();
+                    @Override
+                    public void onClick(View view) {
+                        if(USER_INSTANCE.getUserName().compareTo(curMoodEvent.getOwner().getUserName()) == 0) {
+                            TimePickerDialog timePickerDialog = new TimePickerDialog(MoodEventListActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, new TimePickerDialog.OnTimeSetListener() {
+                                @Override
+                                public void onTimeSet(TimePicker timePicker, int hour, int minutes) {
+                                    timeButton.setText(String.format("%02d:%02d", hour, minutes));
+                                }
+                            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                            timePickerDialog.show();
+                        }
+                    }
+                });
+
                 if(curMoodEvent.getOwner().getUserName() != USER_INSTANCE.getUserName())
                 {
                     // Disable features if this mood event is not owned by the current user
@@ -250,13 +344,28 @@ public class MoodEventListActivity extends AppCompatActivity {
                     b_image_from_photos.setVisibility(View.GONE);
                 }
 
+
+
                 // Populate display
                 ll_header.setBackgroundColor(curMoodEvent.getMood().getColor());
                 tv_moodName.setText(curMoodEvent.getMood().getName());
-                tv_timeStamp.setText(String.format("%d-%d-%d",
-                        curMoodEvent.getTimeStamp().get(Calendar.DATE),
-                        curMoodEvent.getTimeStamp().get(Calendar.MONTH)+1,
-                        curMoodEvent.getTimeStamp().get(Calendar.YEAR)));
+//                editDateTimeButton.setText(String.format("%d-%d-%d",
+//                        curMoodEvent.getTimeStamp().get(Calendar.DATE),
+//                        curMoodEvent.getTimeStamp().get(Calendar.MONTH)+1,
+//                        curMoodEvent.getTimeStamp().get(Calendar.YEAR)));
+
+//                editDateTimeButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        EditDateTimeDialog editDateTimeDialog = new EditDateTimeDialog(MoodEventListActivity.this);
+//                        editDateTimeDialog.setContentView(R.layout.v_list_mood_event_edit_datetime);
+//                        editDateTimeDialog.show();
+//                    }
+//                });
+//                tv_timeStamp.setText(String.format("%d-%d-%d",
+//                        curMoodEvent.getTimeStamp().get(Calendar.DATE),
+//                        curMoodEvent.getTimeStamp().get(Calendar.MONTH)+1,
+//                        curMoodEvent.getTimeStamp().get(Calendar.YEAR)));
 
                 // Setup spinner
                 s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, SocialSituation.getNames()));
@@ -269,6 +378,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                     b_delete.setVisibility(View.GONE);
                     b_image_from_camera.setVisibility(View.GONE);
                     b_image_from_photos.setVisibility(View.GONE);
+
 
                 }
 
@@ -403,6 +513,24 @@ public class MoodEventListActivity extends AppCompatActivity {
          * Fetches all mood events the current user is allowed to see from the remote.
          */
         return FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
+    }
+
+    private void initializeTextViews(Button dateButton, Button timeButton, Calendar currTime) {
+        String year = Integer.toString(currTime.getTime().getYear() + 1900);
+        int monthInt = currTime.getTime().getMonth();
+        String month = (monthInt >= 10) ? Integer.toString(monthInt) : String.format("0%s",Integer.toString(monthInt));
+        int dayInt = currTime.getTime().getDate();
+        String day = (dayInt >= 10) ? Integer.toString(dayInt) : String.format("0%s",Integer.toString(dayInt));
+
+        dateButton.setText(year + "-" + month + "-" + day);
+
+        int hoursInt = currTime.getTime().getHours();
+        String hours = (hoursInt >= 10) ? Integer.toString(hoursInt) : String.format("0%s",Integer.toString(hoursInt));
+
+        int minutesInt = currTime.getTime().getMinutes();
+        String minutes = (minutesInt >=10) ? Integer.toString(minutesInt) : String.format("0%s",Integer.toString(minutesInt));
+
+        timeButton.setText(hours + ":" + minutes);
     }
 
 }
