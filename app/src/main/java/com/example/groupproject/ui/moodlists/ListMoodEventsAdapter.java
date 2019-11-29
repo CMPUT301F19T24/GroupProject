@@ -62,7 +62,7 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
         ImageView emoticon = listItem.findViewById(R.id.e_img_emoticon);
 
         String moodNameStr = curMood.getName();
-        String curTimeStampStr = String.format("%d-%d-%d", curTimeStamp.get(Calendar.DATE), curTimeStamp.get(Calendar.MONTH), curTimeStamp.get(Calendar.YEAR));
+        String curTimeStampStr = String.format("%d-%d-%d", curTimeStamp.get(Calendar.DATE), curTimeStamp.get(Calendar.MONTH)+1, curTimeStamp.get(Calendar.YEAR));
         String usernameStr = curOwner.getUserName();
 
         // Populate the fields
