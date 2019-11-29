@@ -83,6 +83,12 @@ public class LoginTest {
         solo.assertCurrentActivity("Must still be on login", Login.class);
     }
 
+    @Test
+    public void SignInEmptyField(){
+        solo.clickOnButton("SIGN IN");
+        assertTrue(solo.waitForLogMessage("loginUserWithEmail:failed"));
+    }
+
     /**
      * Close activity after each test
      * @throws Exception

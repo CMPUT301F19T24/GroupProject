@@ -38,6 +38,8 @@ public class AccountCreationTest {
     String mockPassword = "password";
     String domainToAppend = "@cmput301-c6741.web.app";
 
+    String existingUser = "andrew";
+
     FirebaseAuth.AuthStateListener mAuth;
 
     @Rule
@@ -61,6 +63,17 @@ public class AccountCreationTest {
                     }
                 });
         FirebaseAuth.getInstance().signOut();
+    }
+
+    @Test
+    public void ExistingAccountCreationTest(){
+        solo.clickOnText("Create one");
+        solo.waitForDialogToOpen();
+        solo.enterText((EditText) solo.getView(R.id.new_username), existingUser);
+        solo.enterText((EditText) solo.getView(R.id.new_password), mockPassword);
+        solo.enterText((EditText) solo.getView(R.id.confirm_password), mockPassword);
+        solo.clickOnButton("REGISTER");
+        solo.assertCurrentActivity("Not in main screen", Login.class);
     }
 
     @Test
