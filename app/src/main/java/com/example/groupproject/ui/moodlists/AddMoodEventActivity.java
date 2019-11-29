@@ -257,6 +257,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
                 openGallery();
 
+
             }
         });
 

@@ -27,6 +27,7 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
 //    private Location location;
     private LatLng latlng;
     private User owner;
+    private String reasonImageURI;
     private DocumentReference documentReference;
     private FireStoreHandler.CustomFirebaseDocumentListener customFirebaseDocumentListener;
 
@@ -48,6 +49,7 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
         this.socialSituation = socialSituation; // Optional
         this.reasonText = reasonText; // Optional
         this.reasonImage = reasonImage; // Optional
+        this.reasonImageURI = reasonImageURI; // Optional
 //        this.setLocation(location); // Optional
         this.setLatLng(latlng);
 
@@ -99,6 +101,13 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
 //    {
 //        return this.location;
 //    }
+    public String getReasonImageURI() {
+        return reasonImageURI;
+    }
+
+    public void setReasonImageURI(String reasonImageURI) {
+        this.reasonImageURI = reasonImageURI;
+    }
 
     public LatLng getLatLng() {return this.latlng;}
 
