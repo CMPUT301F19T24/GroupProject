@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +51,7 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
         View view = convertView;
 
         final Relationship rs = this.relations.get(position);
-        final String username = rs.getSender().getUserName();
+        final String username = rs.getRecipiant().getUserName();
         final String status = rs.getStatus().toString();
         final RelationshipStatus rss = rs.getStatus();
 
@@ -60,11 +61,40 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
 
         tv_username.setText(username);
         tv_status.setText(status);
+        tv_status.setClickable(true);
+
+        tv_status.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), rss.getDesc(), Toast.LENGTH_LONG);
+
+            }
+        });
 
         final Button b_back = view.findViewById(R.id.b_relationship_back);
         final Button b_forward = view.findViewById(R.id.b_relationship_forward);
 
 
+
+        if(rss == RelationshipStatus.INVISIBLE)
+        {
+            b_back.setVisibility(View.GONE);
+            b_forward.setText("Request");
+        }
+
+        else if(rss == RelationshipStatus.PENDING)
+        {
+            b_back.setText("Cancel Request");
+            b_forward.setVisibility(View.GONE);
+        }
+
+        else if(rss == RelationshipStatus.FOLLOWING)
+        {
+            b_back.setText("Unfollow");
+            b_forward.setVisibility(View.GONE);
+        }
+
+        else{}
         b_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,9 +125,13 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
                     b_forward.setVisibility(View.GONE);
 
                     // TODO UPDATE REMOTE
+
+
                 }
 
                 else{}
+
+                notifyDataSetChanged();
             }
         });
 
@@ -128,6 +162,8 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
                 }
 
                 else{}
+
+                notifyDataSetChanged();
             }
         });
         return view;

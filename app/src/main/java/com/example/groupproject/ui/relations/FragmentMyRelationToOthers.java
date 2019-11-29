@@ -50,16 +50,20 @@ public class FragmentMyRelationToOthers extends Fragment {
 
         for(User i : FSH_INSTANCE.getInstance().fsh.getAllUsers())
         {
+            System.out.println("DEBUGGER Username " + i.getUserName());
+
             newUsers.add(i.getUserName());
         }
 
-        ArrayList<Relationship> tempRelationships = FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
-        Log.d("lala", "length of relationships cache: " + tempRelationships.size());
-
         for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())
         {
+
+
             if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0)
             {
+                System.out.println("DEBUGGER pen " + i.getSender().getUserName());
+                System.out.println("DEBUGGER pen " + i.getRecipiant().getUserName());
+
                 foundUsers.add(i.getRecipiant().getUserName());
                 rc.add(i);
             }
@@ -68,9 +72,16 @@ public class FragmentMyRelationToOthers extends Fragment {
         newUsers.removeAll(foundUsers);
         for(String i : newUsers)
         {
+            System.out.println("DEBUGGER Adding as invisible" + i);
             rc.add(new Relationship(USER_INSTANCE, new User(i), RelationshipStatus.INVISIBLE));
         }
 
+        for(Relationship i : rc)
+        {
+
+            System.out.println("DEBUGGER Final " + i.getSender().getUserName());
+            System.out.println("DEBUGGER Final " + i.getRecipiant().getUserName());
+        }
         return rc;
     }
 }
