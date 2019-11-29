@@ -80,7 +80,7 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
         if(rs == RelationshipStatus.INVISIBLE)
         {
             b_back.setVisibility(View.GONE);
-            b_forward.setText("Request Permission to View Mood Events");
+            b_forward.setText("Request to Follow");
 
             b_forward.setOnClickListener(new View.OnClickListener() {
                 @Override
