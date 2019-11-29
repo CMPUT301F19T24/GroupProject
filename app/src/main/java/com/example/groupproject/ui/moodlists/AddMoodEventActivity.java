@@ -357,9 +357,9 @@ public class AddMoodEventActivity extends AppCompatActivity {
                     imageUri = data.getData();
 //                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
-//                    bitmap = (Bitmap) extras.get("data");
+                    bitmap = (Bitmap) extras.get("data");
 //                    imageView.setImageBitmap(bitmap);
-//                    FSH_INSTANCE.getInstance().fsh.uploadImage(bitmap);
+                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
 
 
 
