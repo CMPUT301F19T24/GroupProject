@@ -17,6 +17,8 @@ import com.example.groupproject.data.relations.RelationshipStatus;
 
 import java.util.List;
 
+import static com.example.groupproject.MainActivity.FSH_INSTANCE;
+
 public class ListViewMyPendingResponses extends ArrayAdapter<Relationship> {
     /**
      * Implements a custom Array adapter for viewing users in a list.
@@ -60,7 +62,7 @@ public class ListViewMyPendingResponses extends ArrayAdapter<Relationship> {
             public void onClick(View view) {
                 rs.setStatus(RelationshipStatus.FOLLOWING);
 
-                // TODO : Update FSH
+                FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);
 
                 b_accept.setVisibility(View.GONE);
                 b_decline.setVisibility(View.GONE);
@@ -72,8 +74,7 @@ public class ListViewMyPendingResponses extends ArrayAdapter<Relationship> {
             public void onClick(View view) {
                 rs.setStatus(RelationshipStatus.INVISIBLE);
 
-                // TODO : Update FSH
-
+                FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);
                 b_accept.setVisibility(View.GONE);
                 b_decline.setVisibility(View.GONE);
             }
