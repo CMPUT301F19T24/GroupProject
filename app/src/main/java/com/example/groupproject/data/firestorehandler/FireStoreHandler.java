@@ -1181,11 +1181,11 @@ public class FireStoreHandler {
     }
 
     public ArrayList<Relationship> getAllCachedRelationships(){
-        return (ArrayList<Relationship>)cachedRelationship.clone();
+        return cachedRelationship;
     }
 
     public ArrayList<MoodEvent> getAllCachedMoodEvents(){
-        return (ArrayList<MoodEvent>)cachedMoodEvents.clone();
+        return cachedMoodEvents;
     }
 
     public ArrayList<User> getAllUsers(){
