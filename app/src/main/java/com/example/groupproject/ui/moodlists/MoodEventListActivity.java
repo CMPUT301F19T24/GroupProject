@@ -54,7 +54,11 @@ public class MoodEventListActivity extends AppCompatActivity {
     Bitmap bitmap;
 
 
-
+    /**
+     * Function that is called when the view is created.
+     *
+     * @author donald
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +71,13 @@ public class MoodEventListActivity extends AppCompatActivity {
         initialize();
     }
 
+    /**
+     * An initialization function to initialize views, popups, setup sorting and searching.
+     *
+     * @author donald
+     */
     private void initialize()
     {
-//        ImageView iv_desc = findViewById(R.id.iv_img_desc);
         /**
          * Initializes the private variables of this class & View elements
          */
@@ -93,6 +101,12 @@ public class MoodEventListActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Function to setup sorting of moodEvents.
+     * It searches and sorts moodEvents by MoodType, Date, and Owner.
+     *
+     * @author donald
+     */
     private void setupSorting()
     {
         /**
@@ -117,6 +131,12 @@ public class MoodEventListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Function to setup searching of moodEvents.
+     * Searches for criteria in date, moodName as well as the name of the owner.
+     *
+     * @author donald
+     */
     private void setupSearching()
     {
         /**
@@ -181,6 +201,11 @@ public class MoodEventListActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Function to setup the popup menu of moodEvents detailed description.
+     *
+     * @author donald
+     */
     private void setupPopUpMenu()
     {
         /**
@@ -313,15 +338,24 @@ public class MoodEventListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Function to open the photo gallery
+     *
+     * @author mustafa
+     */
     private void openGallery(){
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    /**
+     * Function to open the camera
+     *
+     * @author mustafa
+     */
     private void openCamera(){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
-
     }
 
     @Override
@@ -357,6 +391,12 @@ public class MoodEventListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function to get the data from the cache.
+     *
+     * @author donald
+     * @return ArrayList<MoodEvent>
+     */
     private ArrayList<MoodEvent> populateFromRemote()
     {
         /**

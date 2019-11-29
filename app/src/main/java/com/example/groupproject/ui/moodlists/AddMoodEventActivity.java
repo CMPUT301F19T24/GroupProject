@@ -44,13 +44,10 @@ import com.example.groupproject.data.moods.Disgusted;
 import com.example.groupproject.data.moods.Happy;
 import com.example.groupproject.data.moods.Mood;
 import com.example.groupproject.data.moods.Sad;
-import com.example.groupproject.ui.maps.MapsActivity;
 import com.example.groupproject.ui.maps.MapsSpinnerAdapter;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.IOException;
-//import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,7 +85,13 @@ public class AddMoodEventActivity extends AppCompatActivity {
     // GPS Stuff
     private LocationRequest locationRequest;
 
-
+    /**
+     * This is a function thats called when the view is created.
+     * Some initialiaztions are done here.
+     *
+     * @author
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +104,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
         initialize();
     }
 
+    /**
+     * Initialization function.
+     * Initializes all views, behaviors, and listeners.
+     *
+     * @author
+     */
     private void initialize() {
         s_select_mood = findViewById(R.id.s_select_mood);
         s_social_sit = findViewById(R.id.s_social_sit);
@@ -151,7 +160,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
         });
     }
 
-    // Deprecated
+    /**
+     * Initialization the date button / time button.
+     * Uptdates the date / time buttons' text with current date / time
+     *
+     * @author andrew,
+     */
     private void initializeTextViews() {
         String year = Integer.toString(Calendar.getInstance().getTime().getYear() + 1900);
         int monthInt = Calendar.getInstance().getTime().getMonth();
@@ -163,13 +177,18 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
         int hoursInt = Calendar.getInstance().getTime().getHours();
         String hours = (hoursInt >= 10) ? Integer.toString(hoursInt) : String.format("0%s",Integer.toString(hoursInt));
-//
+
         int minutesInt = Calendar.getInstance().getTime().getMinutes();
         String minutes = (minutesInt >=10) ? Integer.toString(minutesInt) : String.format("0%s",Integer.toString(minutesInt));
 
         ride_time_picker_button.setText(hours + ":" + minutes);
     }
 
+    /**
+     * Initializes spinner for choosing a mood.
+     *
+     * @author andrew,
+     */
     private void initializeSpinner() {
         Integer[] images = {R.drawable.emot_happy_small, R.drawable.emot_sad_small, R.drawable.emot_angry_small, R.drawable.emot_anxious_small, R.drawable.emot_disgusted_small};
         String[] moodNames = {"Happy", "Sad", "Angry", "Anxious", "Disgusted"};
@@ -200,6 +219,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes buttons:
+     * add from camera button, add from photo button and submit button
+     *
+     * @author
+     */
     private void initializeButtons() {
         b_add_from_camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -236,6 +261,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * requests permission to access storage:
+     * add from camera button, add from photo button and submit button
+     *
+     * @author
+     */
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -264,6 +295,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function that firstly checks for camera permission
+     * then opens the camera if permission is granted
+     *
+     * @author mustafa
+     */
     private void activeTakePhoto() {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
@@ -293,11 +330,21 @@ public class AddMoodEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function to open gallery
+     *
+     * @author mustafa
+     */
     private void openGallery(){
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    /**
+     * Function to open camera
+     *
+     * @author mustafa
+     */
     private void openCamera(){
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAMERA_PIC_REQUEST);
@@ -340,6 +387,11 @@ public class AddMoodEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function to add the mood from the view to cache
+     *
+     * @author
+     */
     private void addMoodToCache() {
         try {
             Mood newMood = validMoods.get(s_select_mood.getSelectedItemPosition());
@@ -378,6 +430,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function to check if location permission is granted
+     *
+     * @author andrew
+     * @return true if permission is granted, false otherwise.
+     */
     private boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
@@ -386,6 +444,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Function to get the current location
+     *
+     * @author andrew
+     * @return LatLng value of the current location.
+     */
     public LatLng getCurrentLocation() throws Exception {
         LatLng rc = null;
         final Location[] myLocation = {null};
@@ -423,13 +487,14 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "GPS Signal not found", Toast.LENGTH_LONG).show();
             }
             else {
-                Toast.makeText(getApplicationContext(), "Success! Lat: " + myLocation[0].getLatitude() + ", Lon: " + myLocation[0].getLongitude(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Success! Got current location.", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Success! Lat: " + myLocation[0].getLatitude() + ", Lon: " + myLocation[0].getLongitude(), Toast.LENGTH_LONG).show();
                 rc = new LatLng(myLocation[0].getLatitude(), myLocation[0].getLongitude());
             }
         }
         else
         {
-//            Toast.makeText(getApplicationContext(), "GPS Permission Issue", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Failed to get Location Permission", Toast.LENGTH_LONG).show();
             throw new Exception("GPS Permission Issue");
         }
         return rc;

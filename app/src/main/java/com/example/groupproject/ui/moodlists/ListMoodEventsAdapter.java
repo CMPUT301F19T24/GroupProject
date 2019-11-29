@@ -26,6 +26,15 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
     private ArrayList<MoodEvent> moodEventArrayList;
     SortingMethod sm;
 
+    /**
+     * Constructor for ListMoodEventsAdapter.
+     * Initializes variables.
+     *
+     * @author donald
+     * @param context
+     * @param moodEventArrayList
+     * @param defaultSM
+     */
     public ListMoodEventsAdapter(@NonNull Context context, ArrayList<MoodEvent> moodEventArrayList, SortingMethod defaultSM) {
         super(context, 0, moodEventArrayList);
         this.context = context;
@@ -33,6 +42,16 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
         this.sm = defaultSM;
     }
 
+    /**
+     * Function that is called when this adapter is loaded on a view.
+     * View objects are initialized and set here
+     *
+     * @author donald
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return View
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -84,6 +103,13 @@ public class ListMoodEventsAdapter extends ArrayAdapter {
         return listItem;
     }
 
+    /**
+     * Function that sets the data with the sorting method.
+     * View objects are initialized and set here
+     *
+     * @author donald
+     * @param sm
+     */
     public void setSortingMethod(final SortingMethod sm)
     {
         /**
