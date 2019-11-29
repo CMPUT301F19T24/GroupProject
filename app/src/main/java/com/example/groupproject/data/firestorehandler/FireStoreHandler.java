@@ -347,11 +347,17 @@ public class FireStoreHandler {
             Map<String, Object> data = document.getData(); // FireStore data is in key,value format.
             String currentUserName = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail()); // Currently authenticated user.
             // Get values, otherwise set defaults
-            String statusString = (data.get("status") == null) ? "INVISIBLE" : data.get("status").toString();
+            String statusString = (data.get("status") == null) ? "Invisible" : data.get("status").toString();
             String user_a_String = (data.get("a") == null) ? "Unknown_user" : data.get("a").toString();
             String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
+            // Set appropriate relationship status
             Log.d(TAG, "STATUS IS: " + statusString);
-            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString);
+            RelationshipStatus relationshipStatus = RelationshipStatus.INVISIBLE;
+            if (statusString.compareTo("Pending") == 0){
+                relationshipStatus = RelationshipStatus.PENDING;
+            } else if (statusString.compareTo("Following") == 0){
+                relationshipStatus = RelationshipStatus.FOLLOWING;
+            }
             Relationship newRelationship = new Relationship(new User(user_a_String), new User(user_b_String), relationshipStatus);
             newRelationship.setDocument(document);
             return newRelationship;
