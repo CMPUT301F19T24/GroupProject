@@ -606,7 +606,7 @@ public class FireStoreHandler {
         // Used to create a new mood event or update existing one.
         try{
             Map<String, Object> moodData = document.getData();
-            String owner = (moodData.get("owner") == null)? "" : moodData.get("owner").toString();
+            String owner = (((String) moodData.get("owner")).isEmpty()) ? "unknown" : moodData.get("owner").toString();
             Calendar dateTime = new GregorianCalendar();
             dateTime.setTime((moodData.get("timeStamp") == null) ? new Date(): document.getTimestamp("timeStamp").toDate());
             Mood mood;
@@ -1192,10 +1192,6 @@ public class FireStoreHandler {
     }
 
     public ArrayList<MoodEvent> getAllCachedMoodEvents(){
-        for(MoodEvent i : cachedMoodEvents)
-        {
-            System.out.println("ABCD " + i.getDocumentReference().getId());
-        }
         return cachedMoodEvents;
     }
 

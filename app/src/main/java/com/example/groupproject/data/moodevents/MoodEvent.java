@@ -61,6 +61,10 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
             return ("Owner: " + this.owner + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString() + ", Social Situation: " + this.socialSituation + ", LatLng: null");
 
         }
+    }
+    @Override
+    public String toString(){
+        return ("Owner: " + this.owner.getUserName() + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString().toString() + ", Social Situation: " + this.socialSituation.toString());
 
     }
 

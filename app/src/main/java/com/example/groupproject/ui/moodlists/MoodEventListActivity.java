@@ -299,8 +299,12 @@ public class MoodEventListActivity extends AppCompatActivity {
             }
         }
 
+
+
         for(MoodEvent i : me)
         {
+            System.out.println("Debugger " + i.toString());
+
             if(user.contains(i.getOwner().getUserName()))
             {
                 rc.add(i);
