@@ -148,15 +148,21 @@ public class FireStoreHandler {
                     for (DocumentChange documentChange: queryDocumentSnapshots.getDocumentChanges()){
                         if (documentChange.getType() == DocumentChange.Type.ADDED){
                             // New user was added -- Directly append to local cache
+                            String userName = documentChange.getDocument().getId();
+                            User userInCache = findUserInCacheWithUserName(userName);
+                            if (userInCache != null){
+                                cachedUsers.remove(userInCache);
+                            }
                             cachedUsers.add(new User(documentChange.getDocument().getId()));
                         } else if (documentChange.getType() == DocumentChange.Type.MODIFIED){
                             String userName = documentChange.getDocument().getId();
-                            User userInCache = findUserInCacheWithUserName(userName);
+                            User userInCache = findUserInCacheWithUserName(userName); // Duplicate protected
                             cachedUsers.remove(userInCache);
                             cachedUsers.add(new User(userName));
                         } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
                             String userName = documentChange.getDocument().getId();
-                            User userInCache = findUserInCacheWithUserName(userName); cachedUsers.remove(userInCache);
+                            User userInCache = findUserInCacheWithUserName(userName); // Duplicate protected.
+                            cachedUsers.remove(userInCache);
                         }
                     }
                 }
@@ -1132,6 +1138,10 @@ public class FireStoreHandler {
     }
 
     public ArrayList<User> getAllUsers(){
+        Log.d(TAG, "qqias Requesting all users: printing out cache users");
+        for (User i: cachedUsers){
+            Log.d(TAG, "Cached user: " + i.getUserName());
+        }
         return (ArrayList<User>)cachedUsers.clone();
     }
 
