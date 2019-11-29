@@ -335,6 +335,11 @@ public class FireStoreHandler {
                             if (task.isSuccessful()){
                                 for (QueryDocumentSnapshot document: task.getResult()){
                                     if (document.getId() != null){
+                                        String userName = document.getId(); // Duplicate protected
+                                        User userInCache = findUserInCacheWithUserName(userName);
+                                        if (userInCache != null){
+                                            cachedUsers.remove(userInCache);
+                                        }
                                         cachedUsers.add(new User(document.getId()));
                                     }
                                 }
