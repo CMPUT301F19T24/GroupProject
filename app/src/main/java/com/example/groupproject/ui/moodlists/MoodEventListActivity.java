@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -345,6 +346,9 @@ public class MoodEventListActivity extends AppCompatActivity {
             case PICK_IMAGE:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
+                    ImageView iv_desc_view = findViewById(R.id.iv_img_desc);
+                    iv_desc_view.setImageURI(imageUri);
+
 
 //                    imageView.setImageURI(imageUri);
                     int curPosition = moodEventList.getSelectedItemPosition();
