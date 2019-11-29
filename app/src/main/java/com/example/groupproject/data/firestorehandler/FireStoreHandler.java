@@ -1113,11 +1113,11 @@ public class FireStoreHandler {
     }
 
     public ArrayList<Relationship> getAllCachedRelationships(){
-        return cachedRelationship;
+        return (ArrayList<Relationship>)cachedRelationship.clone();
     }
 
     public ArrayList<User> getAllUsers(){
-        return cachedUsers;
+        return (ArrayList<User>)cachedUsers.clone();
     }
 
     public void deleteUser(String username) {
