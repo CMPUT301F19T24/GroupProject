@@ -54,6 +54,7 @@ public class FragmentMyRelationToOthers extends Fragment {
 
             newUsers.add(i.getUserName());
         }
+        newUsers.remove(USER_INSTANCE.getUserName());
 
         for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())
         {
@@ -61,9 +62,6 @@ public class FragmentMyRelationToOthers extends Fragment {
 
             if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0)
             {
-                System.out.println("DEBUGGER pen " + i.getSender().getUserName());
-                System.out.println("DEBUGGER pen " + i.getRecipiant().getUserName());
-
                 foundUsers.add(i.getRecipiant().getUserName());
                 rc.add(i);
             }
@@ -72,16 +70,9 @@ public class FragmentMyRelationToOthers extends Fragment {
         newUsers.removeAll(foundUsers);
         for(String i : newUsers)
         {
-            System.out.println("DEBUGGER Adding as invisible" + i);
             rc.add(new Relationship(USER_INSTANCE, new User(i), RelationshipStatus.INVISIBLE));
         }
 
-        for(Relationship i : rc)
-        {
-
-            System.out.println("DEBUGGER Final " + i.getSender().getUserName());
-            System.out.println("DEBUGGER Final " + i.getRecipiant().getUserName());
-        }
         return rc;
     }
 }

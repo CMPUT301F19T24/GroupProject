@@ -1184,6 +1184,10 @@ public class FireStoreHandler {
         return (ArrayList<Relationship>)cachedRelationship.clone();
     }
 
+    public ArrayList<MoodEvent> getAllCachedMoodEvents(){
+        return (ArrayList<MoodEvent>)cachedMoodEvents.clone();
+    }
+
     public ArrayList<User> getAllUsers(){
         Log.d(TAG, "qqias Requesting all users: printing out cache users");
         for (User i: cachedUsers){

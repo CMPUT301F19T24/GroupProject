@@ -21,7 +21,9 @@ import android.widget.TextView;
 
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
+import com.example.groupproject.data.relations.Relationship;
 import com.example.groupproject.data.relations.SocialSituation;
+import com.example.groupproject.data.user.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -284,7 +286,28 @@ public class MoodEventListActivity extends AppCompatActivity {
         /**
          * Fetches all mood events the current user is allowed to see from the remote.
          */
-        return FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
+        ArrayList<MoodEvent > me = FSH_INSTANCE.getInstance().fsh.getAllCachedMoodEvents();
+        ArrayList<Relationship> rs = FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
+        ArrayList<String> user = new ArrayList<>();
+        ArrayList<MoodEvent > rc = new ArrayList<>();
+
+        for(Relationship i : rs)
+        {
+            if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0 && i.isVisible())
+            {
+                user.add(i.getRecipiant().getUserName());
+            }
+        }
+
+        for(MoodEvent i : me)
+        {
+            if(user.contains(i.getOwner().getUserName()))
+            {
+                rc.add(i);
+            }
+        }
+        return rc;
+
     }
 
 }
