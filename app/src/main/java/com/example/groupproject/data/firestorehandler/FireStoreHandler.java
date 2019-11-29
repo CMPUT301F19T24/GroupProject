@@ -436,6 +436,7 @@ public class FireStoreHandler {
         if (listeningToUsersMoodEvents == null){ // Not listening for this user's mood events
             Query query = pullMoodEventsForUserIntoCache(userName); // Does duplicate protection
             registerMoodEventsUpdateListenerForUser(userName, query);
+            Log.d(TAG, "Now tracking mood events for "+ userName);
         }
 
     }
@@ -446,6 +447,7 @@ public class FireStoreHandler {
         if (listeningToUsersMoodEvents != null){ // Un-register mood event listener.
             listeningToUsersMoodEvents.remove();
         }
+        Log.d(TAG, "Stopped tracking mood events for " + userName);
     }
 
     private void updateMoodEventsListenersFromDocument(QueryDocumentSnapshot documentSnapshot){
@@ -504,10 +506,6 @@ public class FireStoreHandler {
                                         if (relationship.getDocument().getId().compareTo(documentChange.getDocument().getId()) == 0){
                                             foundRelationship = relationship;
                                             break;
-//                                            Relationship newRelationship = convertDocumentToRelationship(documentChange.getDocument());
-//                                            relationship.setSender(newRelationship.getSender());
-//                                            relationship.setRecipiant(newRelationship.getRecipiant());
-//                                            relationship.setStatus(newRelationship.getStatus());
                                         }
                                     }
                                 }
@@ -516,11 +514,7 @@ public class FireStoreHandler {
                                 }
 
                                 Relationship newRelationship = convertDocumentToRelationship(documentChange.getDocument());
-                                newRelationship.setSender(newRelationship.getSender());
-                                newRelationship.setRecipiant(newRelationship.getRecipiant());
-                                newRelationship.setStatus(newRelationship.getStatus());
                                 cachedRelationship.add(newRelationship);
-
                                 updateMoodEventsListenersFromDocument(documentChange.getDocument());
                             } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
                                 Relationship foundRelationship = null;
