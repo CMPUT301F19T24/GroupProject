@@ -105,7 +105,11 @@ public class Login extends AppCompatActivity {
 
         if (validPassword && validUsername) {
             fbAuth.login(username, password, view);
+            MainActivity.FSH_INSTANCE.getInstance();
             MainActivity.USER_INSTANCE = new User(username);
+
+            android.os.SystemClock.sleep(500);
+
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }

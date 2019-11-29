@@ -67,9 +67,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     Spinner s_select_mood;
     Spinner s_social_sit;
-    TextView tv_year;
-    TextView tv_month;
-    TextView tv_day;
     TextView tv_desc;
     Button b_add_from_camera;
     Button b_add_from_photo;
@@ -109,9 +106,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
     private void initialize() {
         s_select_mood = findViewById(R.id.s_select_mood);
         s_social_sit = findViewById(R.id.s_social_sit);
-//        tv_year = findViewById(R.id.e_tv_year);
-//        tv_month = findViewById(R.id.e_tv_month);
-//        tv_day = findViewById(R.id.e_tv_day);
         tv_desc = findViewById(R.id.e_tv_new_desc);
         b_add_from_camera = findViewById(R.id.b_add_from_camera);
         b_add_from_photo = findViewById(R.id.b_add_from_photo);
@@ -121,7 +115,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
         ride_date_picker_button = findViewById(R.id.pickDateButton);
         ride_time_picker_button = findViewById(R.id.pickTimeButton);
 
-                imageView = findViewById(R.id.image_from_gallery);
+        imageView = findViewById(R.id.image_from_gallery);
 
         initializeTextViews();
         initializeSpinner();
@@ -161,20 +155,11 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     // Deprecated
     private void initializeTextViews() {
-//        System.out.println("Year: " + Calendar.YEAR);
-//        System.out.println("Month: " + Calendar.MONTH);
-//        System.out.println("Day: " + Calendar.DAY_OF_WEEK);
-//        Calendar.getInstance().getTime().
         String year = Integer.toString(Calendar.getInstance().getTime().getYear() + 1900);
         int monthInt = Calendar.getInstance().getTime().getMonth();
         String month = (monthInt >= 10) ? Integer.toString(monthInt) : String.format("0%s",Integer.toString(monthInt));
         int dayInt = Calendar.getInstance().getTime().getDate();
         String day = (dayInt >= 10) ? Integer.toString(dayInt) : String.format("0%s",Integer.toString(dayInt));
-
-
-//        String year = Integer.toString(Calendar.get(Calendar.YEAR);
-//        String month = Integer.toString(Calendar.MONTH);
-//        String day = Integer.toString(Calendar.DAY_OF_WEEK);
 
         ride_date_picker_button.setText(year + "-" + month + "-" + day);
 
@@ -204,14 +189,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
             validMoodStr.add(i.getName());
         }
 
-//        ArrayList<String> validMoodStr = new ArrayList<>();
-//        for (Mood i : validMoods) {
-//            validMoodStr.add(i.getName());
-//        }
-
-//        s_select_mood.setAdapter(new ArrayAdapter<>(AddMoodEventActivity.this, simple_spinner_item, validMoodStr));
-//        s_select_mood.setSelection(0); // Default
-//
         s_social_sit.setAdapter(new ArrayAdapter<String>(AddMoodEventActivity.this, simple_spinner_item, SocialSituation.getNames()));
         s_social_sit.setSelection(0); // Default;
 
@@ -221,8 +198,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
         s_select_mood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                if(i==0) fetchAllMoods(moodEvents);
-//                else fetchSpecificMood(moodEvents, moodNames[i]);
             }
 
             @Override
@@ -354,13 +329,13 @@ public class AddMoodEventActivity extends AppCompatActivity {
 //                    } catch (IOException e) {
 //                        e.printStackTrace();
 //                    }
+
                 }
 
                 break;
             case CAMERA_PIC_REQUEST:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
-//                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
                     imageView.setImageBitmap(bitmap);
@@ -384,13 +359,10 @@ public class AddMoodEventActivity extends AppCompatActivity {
             Date date;
             try {
                 date = dateFormat.parse(desiredDate);
-                Toast.makeText(getApplicationContext(), date.toString(), Toast.LENGTH_LONG).show();
 
             Calendar timestamp = new GregorianCalendar();
             timestamp.setTime(date);
 
-
-//           Calendar newTimestamp = new GregorianCalendar(newYear, newMonth, newDay);
             LatLng newLatLng = null;
 
             if (sw_include_location.isChecked()) {
@@ -403,9 +375,19 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
             } catch (Exception er) { Log.d("New Mood event: fail", "Failed bitmap converison", er);}
 
+            String desc = tv_desc.getText().toString();
+            if(desc.length() >= 20)
+            {
+                throw new Exception("Description must be 20 chars or less");
+            }
+
+            if(desc.length() - desc.replaceAll(" ", "").length() > 2)
+            {
+                throw new Exception("Description must be 3 words or less");
+            }
+
             MoodEvent newMoodEvent = new MoodEvent(newMood, timestamp, USER_INSTANCE, SocialSituation.values()[s_social_sit.getSelectedItemPosition()], tv_desc.getText().toString(), bitmap, newLatLng);
 
-//            FSH_INSTANCE.getInstance().fsh.addMoodEvent(newMoodEvent);
             FSH_INSTANCE.getInstance().fsh.pushNewMoodEventToRemote(newMoodEvent);
 
             Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
@@ -466,13 +448,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "GPS Signal not found", Toast.LENGTH_LONG).show();
             }
             else {
-                Toast.makeText(getApplicationContext(), "Success! Lat: " + myLocation[0].getLatitude() + ", Lon: " + myLocation[0].getLongitude(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Successfully got GPS location", Toast.LENGTH_LONG).show();
                 rc = new LatLng(myLocation[0].getLatitude(), myLocation[0].getLongitude());
             }
         }
         else
         {
-//            Toast.makeText(getApplicationContext(), "GPS Permission Issue", Toast.LENGTH_LONG).show();
             throw new Exception("GPS Permission Issue");
         }
         return rc;

@@ -14,6 +14,9 @@ public class RelationshipViewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /**
+         * Initialize the views and the fragments
+         **/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.v_relationship);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());

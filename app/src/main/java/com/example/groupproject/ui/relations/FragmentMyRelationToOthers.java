@@ -38,12 +38,19 @@ public class FragmentMyRelationToOthers extends Fragment {
         userListView.setAdapter(relationshipContainer);
 
         userListView.setEmptyView(root.findViewById(R.id.tv_empty_my_relation_to_others));
+        relationshipContainer = new ListViewMyRelationToOthers(this.getContext(), getRelationships());
+
         relationshipContainer.notifyDataSetChanged();
         return root;
     }
 
     private ArrayList<Relationship> getRelationships()
     {
+        /**
+         * @author - Donald
+         * @return - Returns a list of Relationship that I'm a sender of + Relationships of those who are new to me
+         */
+
         ArrayList<Relationship> rc = new ArrayList<>();
         ArrayList<String> foundUsername = new ArrayList<>();
 
@@ -57,24 +64,17 @@ public class FragmentMyRelationToOthers extends Fragment {
             }
         }
 
-        System.out.println("Found users " + foundUsername);
+        foundUsername.remove(USER_INSTANCE.getUserName());
+
         for(User i : FSH_INSTANCE.getInstance().fsh.getAllUsers() )
         {
-            System.out.println(!foundUsername.contains(i.getUserName()));
-
-            if(!foundUsername.contains(i.getUserName()))
+            if(!foundUsername.contains(i.getUserName()) && i.getUserName().compareTo(USER_INSTANCE.getUserName()) != 0)
             {
-                System.out.println("Adding " + i.getUserName());
                 rc.add(new Relationship(USER_INSTANCE, i, RelationshipStatus.INVISIBLE));
 
             }
         }
 
-        for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())
-        {
-            System.out.println("DEB " + i.toString());
-        }
-
-        return FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
+        return rc;
     }
 }

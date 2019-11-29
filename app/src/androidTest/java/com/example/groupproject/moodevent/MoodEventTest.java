@@ -1,4 +1,4 @@
-package com.example.groupproject;
+package com.example.groupproject.moodevent;
 
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.data.moods.Angry;
@@ -27,16 +27,26 @@ public class MoodEventTest {
         MoodEvent b = new MoodEvent(new Happy(), new GregorianCalendar(2002,01,01), new User("B"), NONE, " ", null, null);
         MoodEvent c = new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User("C"), NONE, " ", null, null);
 
-        assert(a.compareTo(b, SortingMethod.DATE) <= -1); // 2001 < 2002
+        assert(a.compareTo(b, SortingMethod.DATE_OTON) <= -1); // 2001 < 2002
+        assert(a.compareTo(b, SortingMethod.DATE_NTOO) >= 1); // 2002 > 2001
         assert(a.compareTo(b,SortingMethod.NAME) <= -1); // Angry < Happy
+        assert(a.compareTo(b,SortingMethod.OWNER) <= -1); // A < B
 
-        assert(b.compareTo(a,SortingMethod.DATE) >= 1); // 2002 > 2001
+
+        assert(b.compareTo(a,SortingMethod.DATE_OTON) >= 1); // 2002 > 2001
+        assert(b.compareTo(a,SortingMethod.DATE_NTOO) <= 1); // 2002 > 2001
         assert(b.compareTo(a,SortingMethod.NAME) >= 1); // Happy > Angry
+        assert(b.compareTo(a,SortingMethod.OWNER) >= 1); // B > A
 
-        assert(a.compareTo(c,SortingMethod.DATE) == 0); // 2001 == 2001
+
+        assert(a.compareTo(c,SortingMethod.DATE_OTON) == 0); // 2001 == 2001
+        assert(a.compareTo(c,SortingMethod.DATE_NTOO) == 0); // 2002 > 2001
         assert(a.compareTo(c,SortingMethod.NAME) <= -1); // Angry < Sad
+        assert(a.compareTo(a,SortingMethod.OWNER) == 0); // A == A
 
-        assert(c.compareTo(a,SortingMethod.DATE) == 0); // 2001 == 2001
+        assert(c.compareTo(a,SortingMethod.DATE_OTON) == 0); // 2001 == 2001
+        assert(a.compareTo(b, SortingMethod.DATE_NTOO) >= 1); // 2002 > 2001
+
         assert(c.compareTo(a,SortingMethod.NAME) >= 1); // Sad > Angry
     }
 
@@ -58,4 +68,5 @@ public class MoodEventTest {
         assert(me.contains("An Bo 20"));
 
     }
+
 }

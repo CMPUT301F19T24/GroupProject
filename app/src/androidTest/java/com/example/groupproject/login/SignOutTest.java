@@ -3,6 +3,7 @@ package com.example.groupproject;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.groupproject.data.user.User;
 import com.example.groupproject.ui.login.Login;
 import com.google.firebase.auth.FirebaseAuth;
 import com.robotium.solo.Solo;
@@ -39,6 +40,7 @@ public class SignOutTest {
 
     @Before
     public void setUp() throws Exception {
+        MainActivity.USER_INSTANCE = new User("Tester");
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
     }
 

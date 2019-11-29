@@ -24,14 +24,13 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
 import com.example.groupproject.data.relations.Relationship;
 import com.example.groupproject.data.relations.SocialSituation;
-import com.example.groupproject.data.user.User;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -71,9 +70,15 @@ public class MoodEventListActivity extends AppCompatActivity {
         initialize();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initialize();
+
+    }
+
     private void initialize()
     {
-//        ImageView iv_desc = findViewById(R.id.iv_img_desc);
         /**
          * Initializes the private variables of this class & View elements
          */
@@ -155,6 +160,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                 if (query.isEmpty())
                 {
                     moodEventAdapter.addAll(populateFromRemote());
+                    moodEventAdapter.notifyDataSetChanged();
                     moodEventAdapter.setSortingMethod(SortingMethod.values()[s_sortBy.getSelectedItemPosition()]);
 
                 }
@@ -247,18 +253,13 @@ public class MoodEventListActivity extends AppCompatActivity {
                 s_socialSituation.setAdapter(new ArrayAdapter<String>(MoodEventListActivity.this, simple_spinner_item, SocialSituation.getNames()));
                 s_socialSituation.setSelection(Arrays.asList(SocialSituation.values()).indexOf(curMoodEvent.getSocialSituation()));
 
-
-                if(curMoodEvent.getLatLng() == null)
-                {
-//                    ll_detailedMap.setVisibility(View.GONE);
-                }
-
                 et_desc.setText(curMoodEvent.getReasonText());
 
 
                 b_image_from_camera.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        // TODO
                         openCamera();
 
                     }
@@ -267,6 +268,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                 b_image_from_photos.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        // TODO
                         openGallery();
 
                     }
@@ -279,17 +281,31 @@ public class MoodEventListActivity extends AppCompatActivity {
                          * Replace the moodevent in the remote with the updated copy
                          * @@param - See base method for details
                          */
-                        curMoodEvent.setReasonText(et_desc.getText().toString());
 
-                        // TODO: Add me
-                        curMoodEvent.setReasonImage(bitmap);
-//                        curMoodEvent.setLocation();
-                        curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
+                        try
+                        {
+                            String desc = et_desc.getText().toString();
+                            if(desc.length() >= 20)
+                            {
+                                throw new Exception("Description must be 20 chars or less");
+                            }
 
-                        FSH_INSTANCE.getInstance().fsh.editMoodEvent(curMoodEvent);
-                        popupWindow.dismiss();
-                        moodEventAdapter.notifyDataSetChanged();
+                            if(desc.length() - desc.replaceAll(" ", "").length() > 2)
+                            {
+                                throw new Exception("Description must be 3 words or less");
+                            }
 
+                            curMoodEvent.setReasonText(desc);
+                            curMoodEvent.setReasonImage(bitmap);
+                            curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
+
+                            FSH_INSTANCE.getInstance().fsh.editMoodEvent(curMoodEvent);
+                            popupWindow.dismiss();
+                            moodEventAdapter.notifyDataSetChanged();
+
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Failed to modify: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -325,14 +341,12 @@ public class MoodEventListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-
         switch(requestCode) {
             case PICK_IMAGE:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
-                    ImageView iv_desc_view = findViewById(R.id.iv_img_desc);
-                    iv_desc_view.setImageURI(imageUri);
 
+//                    imageView.setImageURI(imageUri);
                     int curPosition = moodEventList.getSelectedItemPosition();
                     if (moodEventDataList.get(curPosition) != null) {
                         MoodEvent moodEvent = moodEventDataList.get(curPosition);
@@ -355,7 +369,6 @@ public class MoodEventListActivity extends AppCompatActivity {
             case CAMERA_PIC_REQUEST:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
-//                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
 
@@ -395,22 +408,13 @@ public class MoodEventListActivity extends AppCompatActivity {
         ArrayList<String> user = new ArrayList<>();
         ArrayList<MoodEvent > rc = new ArrayList<>();
 
-        Log.d("pfr debug mood event:", "list of cachedMoodEvents. size: " + me.size());
-        for (MoodEvent i: me){
-            Log.d("pfr debug mood event: ", i.toString());
-        }
-
-        Log.d("pfr debug relationship:", "list of cachedRelationships. size: " + rs.size());
-        for (Relationship i: rs){
-            Log.d("pfr debug mood event: ", "sender :" + i.getSender().getUserName() + " recipient: " +  i.getRecipiant().getUserName() + " status: " + i.getStatus().toString());
-        }
-
-        Log.d("pfr debug mood event:", "user's name is: " + USER_INSTANCE.getUserName());
         user.add(USER_INSTANCE.getUserName()); // Add myself to list of users.
         for(Relationship i : rs)
         {
             if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0 && i.isVisible())
             {
+                System.out.println("Adding " + i.toString());
+
                 user.add(i.getRecipiant().getUserName());
             }
         }

@@ -74,7 +74,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mSpinner = findViewById(R.id.mapHistorySpinner);
         markerArray = new ArrayList<>();
         moodEvents = populateFromRemote();
-        moodEvents = FSH_INSTANCE.getInstance().fsh.getAllCachedMoodEvents(); // TODO
+
+        System.out.println("MOODEVENT!!!!!!!");
+        for(MoodEvent a: moodEvents){
+            System.out.println(a);
+        }
+
+
         markerHashMap = new HashMap<>();
 
         TextView curUserName = findViewById(R.id.currentUser);
@@ -262,66 +268,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        return bundle;
 //    }
 
-    private void createRandomLatLng(){
-        float lat = 53.545883f;
-        float lon = -113.490112f;
-
-        for(int i=0; i<100; i++) {
-            Random random = new Random();
-            float newLat = lat+(random.nextFloat()-.5f)/3.5f;
-            float newLon = lon+(random.nextFloat()-.5f)/3.5f;
-//            System.out.println("newLat: " + newLat);
-//            System.out.println("newLon: " + newLon);
-            LatLng randLatLng = new LatLng(newLat, newLon);
-
-            randomLatLng.add(randLatLng);
-        }
-
-    }
-
-    /*
-    public void prePopulateData(){
-        createRandomLatLng();
-        Location locationWestEd = new Location("");
-        locationWestEd.setLatitude(53.5225);
-        locationWestEd.setLongitude(-113.6242);
-        LatLng lWestEd = new LatLng(53.5225, -113.6242);
-
-        Location locationSouthgate = new Location("");
-        locationSouthgate.setLatitude(53.4855);
-        locationSouthgate.setLongitude(-113.5137);
-        LatLng lSG = new LatLng(53.4855, -113.5137);
-
-        Location locationCityHall = new Location("");
-        locationCityHall.setLatitude(53.545883);
-        locationCityHall.setLongitude(-113.490112);
-        LatLng lCH = new LatLng(53.545883, -113.490112);
-
-        cachedMoodEvents.
-                add(new MoodEvent(new Happy(),
-                        new GregorianCalendar(2001,01,01),
-                        new User(UN_LUKE), ALONE, "Womp-rats", null, randomLatLng.get(0)));
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_LUKE), WITH_SOMEONE, "Lost Hand", null, randomLatLng.get(1)));
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2003,01,01), new User(UN_LUKE), NONE, "Hans + Leia", null, randomLatLng.get(2)));
-        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,01,01), new User(UN_LUKE), WITH_SEVERAL, "Death Star", null, randomLatLng.get(3)));
-
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2001,01,01), new User(UN_LEIA), CROWD, "Capture", null, randomLatLng.get(4)));
-        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2002,01,01), new User(UN_LEIA), CROWD, "Death Star", null, randomLatLng.get(5)));
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2004,01,01), new User(UN_LEIA), WITH_SOMEONE, "Jabba", null, randomLatLng.get(6)));
-
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2002,01,01), new User(UN_HANS), ALONE, "Carbonite", null, randomLatLng.get(7)));
-
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2001,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "Qui-Gon", null, randomLatLng.get(8)));
-        cachedMoodEvents.add(new MoodEvent(new Anxious(), new GregorianCalendar(2002,1,1), new User(UN_OBI_WAN), WITH_SOMEONE, "High Ground", null, randomLatLng.get(9)));
-
-        cachedMoodEvents.add(new MoodEvent(new Disgusted(), new GregorianCalendar(2001,1,1), new User(UN_DARTH_VADER), ALONE, "Shimi", null, randomLatLng.get(10)));
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2002,1,1), new User(UN_DARTH_VADER), CROWD, "Men, Women, Children", null, randomLatLng.get(11)));
-        cachedMoodEvents.add(new MoodEvent(new Angry(), new GregorianCalendar(2003,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "High Ground", null, randomLatLng.get(12)));
-        cachedMoodEvents.add(new MoodEvent(new Happy(), new GregorianCalendar(2004,1,1), new User(UN_DARTH_VADER), WITH_SEVERAL, "Killing Palpatine", null, randomLatLng.get(13)));
-        cachedMoodEvents.add(new MoodEvent(new Sad(), new GregorianCalendar(2005,1,1), new User(UN_DARTH_VADER), WITH_SOMEONE, "Dieing", null, randomLatLng.get(14)));
-
-
-    }*/
 
 
 
@@ -382,22 +328,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private ArrayList<MoodEvent> populateFromRemote()
     {
+        /**
+         * Fetches all mood events the current user is allowed to see from the remote.
+         */
         ArrayList<MoodEvent > me = FSH_INSTANCE.getInstance().fsh.getAllCachedMoodEvents();
         ArrayList<Relationship> rs = FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
         ArrayList<String> user = new ArrayList<>();
         ArrayList<MoodEvent > rc = new ArrayList<>();
 
-        Log.d("pfr debug mood event:", "list of cachedMoodEvents. size: " + me.size());
-        for (MoodEvent i: me){
-            Log.d("pfr debug mood event: ", i.toString());
-        }
-
-        Log.d("pfr debug mood event:", "list of cachedRelationships. size: " + rs.size());
-        for (Relationship i: rs){
-            Log.d("pfr debug mood event: ", "sender :" + i.getSender().getUserName() + " recipient: " +  i.getRecipiant().getUserName() + " status: " + i.getStatus().toString());
-        }
-
-        Log.d("pfr debug mood event:", "user's name is: " + USER_INSTANCE.getUserName());
         user.add(USER_INSTANCE.getUserName()); // Add myself to list of users.
         for(Relationship i : rs)
         {
@@ -406,13 +344,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 user.add(i.getRecipiant().getUserName());
             }
         }
-
+        System.out.println("PRINTING THISSSSS");
         for(MoodEvent i : me)
         {
-            System.out.println("Debugger " + i.toString());
-
-            if(user.contains(i.getOwner().getUserName()))
+//            System.out.println(i);
+            System.out.println(i.getInfo());
+            if(user.contains(i.getOwner().getUserName()) && i.hasLatLng())
             {
+                System.out.println("aaaa" + i.toString());
                 rc.add(i);
             }
         }

@@ -27,9 +27,6 @@ public class MainActivity extends AppCompatActivity {
     public MainActivity()
     {
         super();
-
-        FSH_INSTANCE.getInstance();
-//        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Leia Organa");
     }
 
     @Override
@@ -39,7 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
         /* For testing from main screen */
         TextView curUserName = findViewById(R.id.tv_curUsername);
-        curUserName.setText(USER_INSTANCE.getUserName());
+
+        if(USER_INSTANCE != null)
+        {
+            curUserName.setText(USER_INSTANCE.getUserName());
+        }
+
     }
 
 

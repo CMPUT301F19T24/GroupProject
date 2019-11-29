@@ -37,13 +37,17 @@ public class FragmentMyPendingResponses extends Fragment {
         userListView.setAdapter(relationshipContainer);
 
         userListView.setEmptyView(root.findViewById(R.id.tv_empty_my_pending_responses));
-
+        relationshipContainer = new ListViewMyPendingResponses(this.getContext(), getRelationships());
         relationshipContainer.notifyDataSetChanged();
         return root;
     }
 
     private ArrayList<Relationship> getRelationships()
     {
+        /**
+         * @author - Donald
+         * @return - Returns a list of Relationship that are waiting for my responses
+         */
         ArrayList<Relationship> rc = new ArrayList<>();
 
         for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())

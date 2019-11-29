@@ -1,4 +1,4 @@
-package com.example.groupproject;
+package com.example.groupproject.relationship;
 
 import com.example.groupproject.data.relations.Relationship;
 import com.example.groupproject.data.relations.RelationshipStatus;
@@ -20,6 +20,13 @@ public class RelationshipTest {
         assertTrue(new Relationship(null, null, RelationshipStatus.INVISIBLE).isVisible() == false);
         assertTrue(new Relationship(null, null, RelationshipStatus.PENDING).isVisible() == false);
         assertTrue(new Relationship(null, null, RelationshipStatus.FOLLOWING).isVisible() == true);
+    }
 
+    @Test
+    public void test_isPending()
+    {
+        assertTrue(new Relationship(null, null, RelationshipStatus.INVISIBLE).isPending() == false);
+        assertTrue(new Relationship(null, null, RelationshipStatus.PENDING).isPending() == true);
+        assertTrue(new Relationship(null, null, RelationshipStatus.FOLLOWING).isPending() == false);
     }
 }
