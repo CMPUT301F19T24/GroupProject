@@ -1,6 +1,7 @@
 package com.example.groupproject.ui.relations;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,9 @@ public class FragmentMyRelationToOthers extends Fragment {
         {
             newUsers.add(i.getUserName());
         }
+
+        ArrayList<Relationship> tempRelationships = FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
+        Log.d("lala", "length of relationships cache: " + tempRelationships.size());
 
         for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())
         {

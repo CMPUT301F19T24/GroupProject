@@ -349,20 +349,11 @@ public class FireStoreHandler {
             String user_a_String = (data.get("a") == null) ? "Unknown_user" : data.get("a").toString();
             String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
             Log.d(TAG, "STATUS IS: " + statusString);
-            if (statusString.compareTo("request") == 0) {
-                if (user_a_String.compareTo(currentUserName) == 0) { // Current user sent the request
-                    statusString = "PENDING_VISIBLE";
-                } else if (user_b_String.compareTo(currentUserName) == 0) { // Current user is the one receiving request
-                    statusString = "PENDING_FOLLOWING";
-                } else {
-                    Log.w(TAG, "fatal error: unknown relationship status" + data);
-                }
-            }
-            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString.toString());
+            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString);
             Relationship newRelationship = new Relationship(new User(user_a_String), new User(user_b_String), relationshipStatus);
             newRelationship.setDocument(document);
             return newRelationship;
-        } catch (Exception e) { Log.w(TAG, "failed to convert document into relationship" + e);}
+        } catch (Exception e) { Log.w(TAG, "failed to convert document into relationship", e);}
         return null;
 
     }
