@@ -23,6 +23,11 @@ public class Relationship implements Comparable{
         return 0;
     }
 
+    @Override
+    public String toString()
+    {
+        return "Sender: " + this.getSender().getUserName() + "\nReceiver: " + this.getRecipiant().getUserName() + "\nStatus: " + this.getStatus().toString();
+    }
     public User getSender()
     {
         return this.sender;

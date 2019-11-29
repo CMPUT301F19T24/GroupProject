@@ -327,7 +327,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                     imageUri = data.getData();
 //                    imageView.setImageURI(imageUri);
 
-                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
+//                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
 
 
 //                    try {
@@ -344,7 +344,7 @@ public class MoodEventListActivity extends AppCompatActivity {
 //                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
-                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
+//                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
 //                    imageView.setImageBitmap(bitmap);
                 }
                 break;
@@ -380,8 +380,6 @@ public class MoodEventListActivity extends AppCompatActivity {
                 user.add(i.getRecipiant().getUserName());
             }
         }
-
-
 
         for(MoodEvent i : me)
         {

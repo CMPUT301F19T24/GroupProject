@@ -54,12 +54,6 @@ public class FragmentUsersFollowingMe extends Fragment {
             }
         }
 
-        for(Relationship i : rc)
-        {
-            System.out.println("ABC");
-            System.out.println(i.getSender().getUserName());
-            System.out.println(i.getRecipiant().getUserName());
-        }
         return rc;
     }
 }

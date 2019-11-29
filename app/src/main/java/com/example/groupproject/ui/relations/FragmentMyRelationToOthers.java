@@ -45,33 +45,36 @@ public class FragmentMyRelationToOthers extends Fragment {
     private ArrayList<Relationship> getRelationships()
     {
         ArrayList<Relationship> rc = new ArrayList<>();
-        ArrayList<String> newUsers = new ArrayList<>();
-        ArrayList<String> foundUsers = new ArrayList<>();
+        ArrayList<String> foundUsername = new ArrayList<>();
 
-
-        for(User i : FSH_INSTANCE.getInstance().fsh.getAllUsers())
-        {
-            newUsers.add(i.getUserName());
-        }
-        newUsers.remove(USER_INSTANCE.getUserName());
 
         for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())
         {
-
-
             if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0)
             {
-                foundUsers.add(i.getRecipiant().getUserName());
+                foundUsername.add(i.getRecipiant().getUserName());
                 rc.add(i);
             }
         }
 
-        newUsers.removeAll(foundUsers);
-        for(String i : newUsers)
+        System.out.println("Found users " + foundUsername);
+        for(User i : FSH_INSTANCE.getInstance().fsh.getAllUsers() )
         {
-            rc.add(new Relationship(USER_INSTANCE, new User(i), RelationshipStatus.INVISIBLE));
+            System.out.println(!foundUsername.contains(i.getUserName()));
+
+            if(!foundUsername.contains(i.getUserName()))
+            {
+                System.out.println("Adding " + i.getUserName());
+                rc.add(new Relationship(USER_INSTANCE, i, RelationshipStatus.INVISIBLE));
+
+            }
         }
 
-        return rc;
+        for(Relationship i : FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships())
+        {
+            System.out.println("DEB " + i.toString());
+        }
+
+        return FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
     }
 }

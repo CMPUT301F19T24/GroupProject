@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.groupproject.R;
 import com.example.groupproject.data.moodevents.MoodEvent;
+import com.example.groupproject.data.relations.Relationship;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -71,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         mSpinner = findViewById(R.id.mapHistorySpinner);
         markerArray = new ArrayList<>();
-        moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName()); // TODO
+        moodEvents = populateFromRemote();
         markerHashMap = new HashMap<>();
 
         TextView curUserName = findViewById(R.id.currentUser);
@@ -375,5 +377,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        }
 
 //        return myLocation[0];
+    }
+
+    private ArrayList<MoodEvent> populateFromRemote()
+    {
+        ArrayList<MoodEvent > me = FSH_INSTANCE.getInstance().fsh.getAllCachedMoodEvents();
+        ArrayList<Relationship> rs = FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
+        ArrayList<String> user = new ArrayList<>();
+        ArrayList<MoodEvent > rc = new ArrayList<>();
+
+        Log.d("pfr debug mood event:", "list of cachedMoodEvents. size: " + me.size());
+        for (MoodEvent i: me){
+            Log.d("pfr debug mood event: ", i.toString());
+        }
+
+        Log.d("pfr debug mood event:", "list of cachedRelationships. size: " + rs.size());
+        for (Relationship i: rs){
+            Log.d("pfr debug mood event: ", "sender :" + i.getSender().getUserName() + " recipient: " +  i.getRecipiant().getUserName() + " status: " + i.getStatus().toString());
+        }
+
+        Log.d("pfr debug mood event:", "user's name is: " + USER_INSTANCE.getUserName());
+        user.add(USER_INSTANCE.getUserName()); // Add myself to list of users.
+        for(Relationship i : rs)
+        {
+            if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0 && i.isVisible())
+            {
+                user.add(i.getRecipiant().getUserName());
+            }
+        }
+
+        for(MoodEvent i : me)
+        {
+            System.out.println("Debugger " + i.toString());
+
+            if(user.contains(i.getOwner().getUserName()))
+            {
+                rc.add(i);
+            }
+        }
+        return rc;
+
     }
 }
