@@ -20,7 +20,7 @@ import java.util.List;
 
 import static com.example.groupproject.MainActivity.FSH_INSTANCE;
 
-public class RelationshipList extends ArrayAdapter<Relationship> {
+public class ListViewUsersFollowingMe extends ArrayAdapter<Relationship> {
     /**
      * Implements a custom Array adapter for viewing users in a list.
      * @author Vivek, Donald
@@ -30,7 +30,7 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
     private Context context;
 
 
-    public RelationshipList(Context context, List<Relationship> relations){
+    public ListViewUsersFollowingMe(Context context, List<Relationship> relations){
         /**
          * @param context
          * @param users List of users to be displayed
@@ -56,22 +56,10 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
         final String receiver = relationship.getRecipiant().getUserName();
         final RelationshipStatus rs = relationship.getStatus();
 
-        view = LayoutInflater.from(context).inflate(R.layout.e_list_relationship, parent, false);
-        TextView username = view.findViewById(R.id.e_tv_relationship_username);
-        TextView status = view.findViewById(R.id.e_tv_relationship_status);
+        view = LayoutInflater.from(context).inflate(R.layout.e_my_relation_to_others, parent, false);
+        TextView username = view.findViewById(R.id.tv_users_following_me_username);
 
         username.setText(receiver);
-
-        status.setText(rs.toString());
-
-        status.setClickable(true);
-        status.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context.getApplicationContext(), rs.getDesc(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
         Button b_back = view.findViewById(R.id.b_relationship_back);
         Button b_forward = view.findViewById(R.id.b_relationship_forward);
@@ -85,13 +73,13 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
             b_forward.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    relationship.setStatus(RelationshipStatus.PENDING_VISIBLE);
+                    relationship.setStatus(RelationshipStatus.PENDING);
                     FSH_INSTANCE.getInstance().fsh.editRelationship(relationship);
                     notifyDataSetChanged();
                 }
             });
         }
-        else if(rs == RelationshipStatus.PENDING_VISIBLE)
+        else if(rs == RelationshipStatus.PENDING)
         {
             b_back.setText("Cancel");
             b_forward.setVisibility(View.GONE);
@@ -105,7 +93,7 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
                 }
             });
         }
-        else if(rs == RelationshipStatus.VISIBLE)
+        else if(rs == RelationshipStatus.FOLLOWING)
         {
             b_back.setText("Hide Posts");
             b_forward.setText("Follow");
@@ -119,42 +107,6 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
             });
             b_forward.setVisibility(View.GONE);
 
-//            b_forward.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.PENDING_FOLLOWING);
-//                    notifyDataSetChanged();
-//                }
-//            });
-        }
-        else if(rs == RelationshipStatus.PENDING_FOLLOWING)
-        {
-            // Depricated
-            b_back.setText("Cancel");
-            b_forward.setVisibility(View.GONE);
-
-
-            b_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.VISIBLE);
-                    notifyDataSetChanged();
-                }
-            });
-        }
-        else if(rs == RelationshipStatus.FOLLOWING)
-        {
-            // Depricated
-            b_back.setText("Unfollow");
-            b_forward.setVisibility(View.GONE);
-
-            b_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FSH_INSTANCE.getInstance().fsh.setRelationship(sender, receiver, RelationshipStatus.VISIBLE);
-                    notifyDataSetChanged();
-                }
-            });
         }
         return view;
     }

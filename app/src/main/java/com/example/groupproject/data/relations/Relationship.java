@@ -15,7 +15,7 @@ public class Relationship implements Comparable{
     {
         this.sender = sender;
         this.recipiant = recipiant;
-        this.status = (status == null) ? RelationshipStatus.VISIBLE : status;
+        this.status = (status == null) ? RelationshipStatus.INVISIBLE : status;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Relationship implements Comparable{
         /**
          * See RelationshipStatus for details.
          */
-        return this.status.compareTo(RelationshipStatus.VISIBLE) >= 0;
+        return this.status.compareTo(RelationshipStatus.FOLLOWING) >= 0;
     };
 
     public boolean isPending()
@@ -64,7 +64,7 @@ public class Relationship implements Comparable{
         /**
          * See RelationshipStatus for details.
          */
-        return (this.status == RelationshipStatus.PENDING_FOLLOWING || this.status == RelationshipStatus.PENDING_VISIBLE);
+        return (this.status == RelationshipStatus.PENDING);
     };
 
     public String getDocumentId() {

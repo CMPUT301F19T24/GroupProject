@@ -284,12 +284,12 @@ public class FireStoreHandler {
             String currentUsername = truncateEmailFromUsername(fbAuth.getCurrentUser().getEmail()); // Currently authenticated user.
             HashMap<String, RelationshipStatus> usersToGetMoodEventsFrom = new HashMap<>();
             // Relationship status with self.. is visible
-            usersToGetMoodEventsFrom.put(currentUsername, RelationshipStatus.VISIBLE);
+            usersToGetMoodEventsFrom.put(currentUsername, RelationshipStatus.FOLLOWING);
             // Populate cache with mood events from all users related to this user.
             for (Relationship relationship : cachedRelationship) {
                 if (relationship.getSender().getUserName().compareTo(currentUsername) == 0){ // User a is involved in this relationship
                     RelationshipStatus relationshipStatus = relationship.getStatus();
-                    if (relationshipStatus == RelationshipStatus.VISIBLE || relationshipStatus == RelationshipStatus.FOLLOWING){
+                    if (relationshipStatus == RelationshipStatus.FOLLOWING){
                         // Add this user to the list of users whose mood events I can view.
                         // Prevent duplicate queries. Like a dictionary whose key is user
                         if (usersToGetMoodEventsFrom.get(relationship.getRecipiant().getUserName()) != null ){
@@ -351,20 +351,11 @@ public class FireStoreHandler {
             String user_a_String = (data.get("a") == null) ? "Unknown_user" : data.get("a").toString();
             String user_b_String = (data.get("b") == null) ? "Unknown_user" : data.get("b").toString();
             Log.d(TAG, "STATUS IS: " + statusString);
-            if (statusString.compareTo("request") == 0) {
-                if (user_a_String.compareTo(currentUserName) == 0) { // Current user sent the request
-                    statusString = "PENDING_VISIBLE";
-                } else if (user_b_String.compareTo(currentUserName) == 0) { // Current user is the one receiving request
-                    statusString = "PENDING_FOLLOWING";
-                } else {
-                    Log.w(TAG, "fatal error: unknown relationship status" + data);
-                }
-            }
-            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString.toString());
+            RelationshipStatus relationshipStatus = RelationshipStatus.valueOf(statusString);
             Relationship newRelationship = new Relationship(new User(user_a_String), new User(user_b_String), relationshipStatus);
             newRelationship.setDocument(document);
             return newRelationship;
-        } catch (Exception e) { Log.w(TAG, "failed to convert document into relationship" + e);}
+        } catch (Exception e) { Log.w(TAG, "failed to convert document into relationship", e);}
         return null;
 
     }
@@ -452,14 +443,14 @@ public class FireStoreHandler {
             if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0 || newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){
                 // Do we need to track new mood events from this relationship?'
                 if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0){ // I am the sender..
-                    if (newRelationship.getStatus() == RelationshipStatus.VISIBLE || newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
+                    if (newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
                         // me -> VISIBLE -> another, me -> FOLLOWING -> another. Load mood events from another user.
                         String anotherUser = newRelationship.getRecipiant().getUserName();
                         startTrackingMoodEventsForUser(anotherUser);
                     }
                 } else if (newRelationship.getRecipiant().getUserName().compareTo(currentUserName) == 0){// I am the recipient
                     // Somebody else said I can't see their mood events any more
-                    if (newRelationship.getStatus() != RelationshipStatus.VISIBLE || newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
+                    if (newRelationship.getStatus() != RelationshipStatus.FOLLOWING){
                         String anotherUser = newRelationship.getSender().getUserName();
                         stopTrackingMoodEventsForUser(anotherUser);
                     }
@@ -1130,6 +1121,13 @@ public class FireStoreHandler {
                 });
     }
 
+    public ArrayList<Relationship> getAllCachedRelationships(){
+        return (ArrayList<Relationship>)cachedRelationship.clone();
+    }
+
+    public ArrayList<User> getAllUsers(){
+        return (ArrayList<User>)cachedUsers.clone();
+    }
 
     public void deleteUser(String username) {
         username = username + "@cmput301-c6741.web.app";

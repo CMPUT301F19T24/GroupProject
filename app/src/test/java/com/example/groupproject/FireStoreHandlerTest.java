@@ -119,28 +119,28 @@ public class FireStoreHandlerTest {
         arr_u.add(new User(UN_DARTH_VADER));
         arr_u.add(new User(UN_OBI_WAN));
 
-        arr_rs.add(new Relationship(new User(UN_LUKE), new User(UN_LEIA), RelationshipStatus.VISIBLE));
-        arr_rs.add(new Relationship(new User(UN_LUKE), new User(UN_HANS), RelationshipStatus.PENDING_VISIBLE));
+        arr_rs.add(new Relationship(new User(UN_LUKE), new User(UN_LEIA), RelationshipStatus.FOLLOWING));
+        arr_rs.add(new Relationship(new User(UN_LUKE), new User(UN_HANS), RelationshipStatus.PENDING));
         arr_rs.add(new Relationship(new User(UN_LUKE), new User(UN_OBI_WAN), RelationshipStatus.FOLLOWING));
         arr_rs.add(new Relationship(new User(UN_LUKE), new User(UN_DARTH_VADER), RelationshipStatus.INVISIBLE));
 
-        arr_rs.add(new Relationship(new User(UN_LEIA), new User(UN_LUKE), RelationshipStatus.VISIBLE));
+        arr_rs.add(new Relationship(new User(UN_LEIA), new User(UN_LUKE), RelationshipStatus.FOLLOWING));
         arr_rs.add(new Relationship(new User(UN_LEIA), new User(UN_DARTH_VADER), RelationshipStatus.FOLLOWING));
         arr_rs.add(new Relationship(new User(UN_LEIA), new User(UN_HANS), RelationshipStatus.FOLLOWING));
         // Leia -> Obi-Wan left out
 
-        arr_rs.add(new Relationship(new User(UN_HANS), new User(UN_LEIA), RelationshipStatus.PENDING_FOLLOWING));
-        arr_rs.add(new Relationship(new User(UN_HANS), new User(UN_LUKE), RelationshipStatus.VISIBLE));
+        arr_rs.add(new Relationship(new User(UN_HANS), new User(UN_LEIA), RelationshipStatus.FOLLOWING));
+        arr_rs.add(new Relationship(new User(UN_HANS), new User(UN_LUKE), RelationshipStatus.FOLLOWING));
         // Hans -> Obi-Wan left out
         // Hans-> Darth Vader left out
 
         arr_rs.add(new Relationship(new User(UN_OBI_WAN), new User(UN_LUKE), RelationshipStatus.FOLLOWING));
-        arr_rs.add(new Relationship(new User(UN_OBI_WAN), new User(UN_LEIA), RelationshipStatus.VISIBLE));
+        arr_rs.add(new Relationship(new User(UN_OBI_WAN), new User(UN_LEIA), RelationshipStatus.FOLLOWING));
         arr_rs.add(new Relationship(new User(UN_OBI_WAN), new User(UN_HANS), RelationshipStatus.INVISIBLE));
         arr_rs.add(new Relationship(new User(UN_OBI_WAN), new User(UN_DARTH_VADER), RelationshipStatus.FOLLOWING));
 
-        arr_rs.add(new Relationship(new User(UN_DARTH_VADER), new User(UN_LUKE), RelationshipStatus.PENDING_FOLLOWING));
-        arr_rs.add(new Relationship(new User(UN_DARTH_VADER), new User(UN_LEIA), RelationshipStatus.PENDING_VISIBLE));
+        arr_rs.add(new Relationship(new User(UN_DARTH_VADER), new User(UN_LUKE), RelationshipStatus.FOLLOWING));
+        arr_rs.add(new Relationship(new User(UN_DARTH_VADER), new User(UN_LEIA), RelationshipStatus.PENDING));
         // Darth Vader -> Hans left out
         arr_rs.add(new Relationship(new User(UN_DARTH_VADER), new User(UN_OBI_WAN), RelationshipStatus.INVISIBLE));
 
@@ -167,10 +167,10 @@ public class FireStoreHandlerTest {
         arr_u.add(new User(UN_MR_NO_SEEING_OTHERS));
 
         arr_rs.add(new Relationship(new User(UN_MR_I_HAVE_NO_MOOD_HISTORY), new User(UN_MR_NO_ONE_CAN_SEE_ME), RelationshipStatus.INVISIBLE));
-        arr_rs.add(new Relationship(new User(UN_MR_I_HAVE_NO_MOOD_HISTORY), new User(UN_MR_NO_SEEING_OTHERS), RelationshipStatus.VISIBLE));
+        arr_rs.add(new Relationship(new User(UN_MR_I_HAVE_NO_MOOD_HISTORY), new User(UN_MR_NO_SEEING_OTHERS), RelationshipStatus.FOLLOWING));
 
-        arr_rs.add(new Relationship(new User(UN_MR_NO_ONE_CAN_SEE_ME), new User(UN_MR_I_HAVE_NO_MOOD_HISTORY), RelationshipStatus.VISIBLE));
-        arr_rs.add(new Relationship(new User(UN_MR_NO_ONE_CAN_SEE_ME), new User(UN_MR_NO_SEEING_OTHERS), RelationshipStatus.VISIBLE));
+        arr_rs.add(new Relationship(new User(UN_MR_NO_ONE_CAN_SEE_ME), new User(UN_MR_I_HAVE_NO_MOOD_HISTORY), RelationshipStatus.FOLLOWING));
+        arr_rs.add(new Relationship(new User(UN_MR_NO_ONE_CAN_SEE_ME), new User(UN_MR_NO_SEEING_OTHERS), RelationshipStatus.FOLLOWING));
 
         arr_rs.add(new Relationship(new User(UN_MR_NO_SEEING_OTHERS), new User(UN_MR_I_HAVE_NO_MOOD_HISTORY), RelationshipStatus.INVISIBLE));
         arr_rs.add(new Relationship(new User(UN_MR_NO_SEEING_OTHERS), new User(UN_MR_NO_ONE_CAN_SEE_ME), RelationshipStatus.INVISIBLE));

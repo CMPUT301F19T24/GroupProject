@@ -18,7 +18,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/e_tv_relationship_username"
+            android:id="@+id/e_tv_my_relation_to_others_username"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5"
@@ -28,7 +28,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/e_tv_relationship_status"
+            android:id="@+id/e_tv_my_relation_to_others_status"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5"
