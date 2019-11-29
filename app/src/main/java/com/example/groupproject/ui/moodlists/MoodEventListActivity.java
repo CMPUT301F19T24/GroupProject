@@ -52,6 +52,7 @@ public class MoodEventListActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 0;
     private static final int CAMERA_PIC_REQUEST = 1;
 
+
     Uri imageUri;
     Bitmap bitmap;
 
@@ -325,9 +326,15 @@ public class MoodEventListActivity extends AppCompatActivity {
             case PICK_IMAGE:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
-//                    imageView.setImageURI(imageUri);
 
-                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
+//                    imageView.setImageURI(imageUri);
+                    int curPosition = moodEventList.getSelectedItemPosition();
+                    if (moodEventDataList.get(curPosition) != null){
+                        System.out.println("HERE!!");
+                    }
+
+
+                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri); // TODO
 
 
 //                    try {
@@ -344,7 +351,7 @@ public class MoodEventListActivity extends AppCompatActivity {
 //                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
-                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
+                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap, );
 //                    imageView.setImageBitmap(bitmap);
                 }
                 break;
