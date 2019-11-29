@@ -8,7 +8,8 @@
         android:id="@+id/guideline8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        android:timePickerMode="spinner"/>
 
     <TextView
         android:id="@+id/addMoodUser"
@@ -82,40 +83,60 @@
         android:text="Timestamp"
         android:textSize="18sp" />
 
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="horizontal">-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/e_tv_year"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:ems="10"-->
+<!--            android:gravity="center"-->
+<!--            android:hint="Year"-->
+<!--            android:inputType="date" />-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/e_tv_month"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:ems="10"-->
+<!--            android:gravity="center"-->
+<!--            android:hint="Month"-->
+<!--            android:inputType="date" />-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/e_tv_day"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:ems="10"-->
+<!--            android:gravity="center"-->
+<!--            android:hint="Day"-->
+<!--            android:inputType="date" />-->
+<!--    </LinearLayout>-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/e_tv_year"
+        <Button
+            android:id="@+id/pickDateButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="Year"
-            android:inputType="date" />
+            android:text="Date" />
 
-        <EditText
-            android:id="@+id/e_tv_month"
+        <Button
+            android:id="@+id/pickTimeButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="Month"
-            android:inputType="date" />
-
-        <EditText
-            android:id="@+id/e_tv_day"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="Day"
-            android:inputType="date" />
+            android:text="Time" />
     </LinearLayout>
 
     <EditText
