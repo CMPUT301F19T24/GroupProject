@@ -351,7 +351,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                             }
 
                             curMoodEvent.setReasonText(desc);
-//                            curMoodEvent.setReasonImage(bitmap);
+                            curMoodEvent.setReasonImage(bitmap);
                             curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
 
                             FSH_INSTANCE.getInstance().fsh.editMoodEvent(curMoodEvent);
