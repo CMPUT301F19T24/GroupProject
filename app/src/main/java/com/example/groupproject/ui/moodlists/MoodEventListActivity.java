@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.R;
@@ -285,17 +286,30 @@ public class MoodEventListActivity extends AppCompatActivity {
                          * @@param - See base method for details
                          */
 
-                        curMoodEvent.setReasonText(et_desc.getText().toString());
+                        try
+                        {
+                            String desc = et_desc.getText().toString();
+                            if(desc.length() >= 20)
+                            {
+                                throw new Exception("Description must be 20 chars or less");
+                            }
 
-                        // TODO: Add me
-                        curMoodEvent.setReasonImage(bitmap);
-//                        curMoodEvent.setLocation();
-                        curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
+                            if(desc.length() - desc.replaceAll(" ", "").length() > 2)
+                            {
+                                throw new Exception("Description must be 3 words or less");
+                            }
 
-                        FSH_INSTANCE.getInstance().fsh.editMoodEvent(curMoodEvent);
-                        popupWindow.dismiss();
-                        moodEventAdapter.notifyDataSetChanged();
+                            curMoodEvent.setReasonText(desc);
+                            curMoodEvent.setReasonImage(bitmap);
+                            curMoodEvent.setSocialSituation(SocialSituation.values()[s_socialSituation.getSelectedItemPosition()]);
 
+                            FSH_INSTANCE.getInstance().fsh.editMoodEvent(curMoodEvent);
+                            popupWindow.dismiss();
+                            moodEventAdapter.notifyDataSetChanged();
+
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Failed to modify: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 

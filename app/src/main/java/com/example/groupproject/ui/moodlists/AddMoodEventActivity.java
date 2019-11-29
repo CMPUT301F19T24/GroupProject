@@ -202,14 +202,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
             validMoodStr.add(i.getName());
         }
 
-//        ArrayList<String> validMoodStr = new ArrayList<>();
-//        for (Mood i : validMoods) {
-//            validMoodStr.add(i.getName());
-//        }
-
-//        s_select_mood.setAdapter(new ArrayAdapter<>(AddMoodEventActivity.this, simple_spinner_item, validMoodStr));
-//        s_select_mood.setSelection(0); // Default
-//
         s_social_sit.setAdapter(new ArrayAdapter<String>(AddMoodEventActivity.this, simple_spinner_item, SocialSituation.getNames()));
         s_social_sit.setSelection(0); // Default;
 
@@ -345,15 +337,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
                     imageView.setImageURI(imageUri);
-//                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
-
-//                    try {
-//                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
-
 
                 }
 
@@ -361,15 +344,8 @@ public class AddMoodEventActivity extends AppCompatActivity {
             case CAMERA_PIC_REQUEST:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
-//                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
-//                    imageView.setImageBitmap(bitmap);
-//                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
-
-
-
-
                 }
                 break;
         }
@@ -385,37 +361,25 @@ public class AddMoodEventActivity extends AppCompatActivity {
             Date date;
             try {
                 date = dateFormat.parse(desiredDate);
-                Toast.makeText(getApplicationContext(), date.toString(), Toast.LENGTH_LONG).show();
 
             Calendar timestamp = new GregorianCalendar();
             timestamp.setTime(date);
 
-
-//            if (tv_year.getText().toString().isEmpty() || tv_month.getText().toString().isEmpty() || tv_day.getText().toString().isEmpty()) {
-//                throw new Exception("A value in the timestamp is empty");
-//            }
-
-//            Integer newYear = Integer.valueOf(tv_year.getText().toString());
-//            Integer newMonth = Integer.valueOf(tv_month.getText().toString());
-//            Integer newDay = Integer.valueOf(tv_day.getText().toString());
-
-//            if (newYear < 0) {
-//                throw new Exception("Year is out of bound");
-//            }
-//
-//            if (newMonth < 0 || newMonth > 12) {
-//                throw new Exception("Month is out of bound");
-//            }
-//
-//            if (newDay < 0 || newDay > 31) {
-//                throw new Exception("Day is out of bound");
-//            }
-
-//            Calendar newTimestamp = new GregorianCalendar(newYear, newMonth, newDay);
             LatLng newLatLng = null;
 
             if (sw_include_location.isChecked()) {
                 newLatLng = getCurrentLocation();
+            }
+
+            String desc = tv_desc.getText().toString();
+            if(desc.length() >= 20)
+            {
+                throw new Exception("Description must be 20 chars or less");
+            }
+
+            if(desc.length() - desc.replaceAll(" ", "").length() > 2)
+            {
+                throw new Exception("Description must be 3 words or less");
             }
 
             MoodEvent newMoodEvent = new MoodEvent(newMood, timestamp, USER_INSTANCE, SocialSituation.values()[s_social_sit.getSelectedItemPosition()], tv_desc.getText().toString(), bitmap, newLatLng);
