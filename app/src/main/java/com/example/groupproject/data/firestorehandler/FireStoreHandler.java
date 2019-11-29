@@ -1112,6 +1112,13 @@ public class FireStoreHandler {
                 });
     }
 
+    public ArrayList<Relationship> getAllCachedRelationships(){
+        return cachedRelationship;
+    }
+
+    public ArrayList<User> getAllUsers(){
+        return cachedUsers;
+    }
 
     public void deleteUser(String username) {
         username = username + "@cmput301-c6741.web.app";
