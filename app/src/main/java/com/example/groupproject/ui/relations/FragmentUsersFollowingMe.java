@@ -37,6 +37,8 @@ public class FragmentUsersFollowingMe extends Fragment {
         userListView.setAdapter(relationshipContainer);
 
         userListView.setEmptyView(root.findViewById(R.id.tv_empty_users_following_me));
+        relationshipContainer = new ListViewUsersFollowingMe(this.getContext(), getRelationships());
+
         relationshipContainer.notifyDataSetChanged();
         return root;
     }

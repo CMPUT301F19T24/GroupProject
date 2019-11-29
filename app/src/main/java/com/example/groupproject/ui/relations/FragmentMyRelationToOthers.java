@@ -38,6 +38,8 @@ public class FragmentMyRelationToOthers extends Fragment {
         userListView.setAdapter(relationshipContainer);
 
         userListView.setEmptyView(root.findViewById(R.id.tv_empty_my_relation_to_others));
+        relationshipContainer = new ListViewMyRelationToOthers(this.getContext(), getRelationships());
+
         relationshipContainer.notifyDataSetChanged();
         return root;
     }
