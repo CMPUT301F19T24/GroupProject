@@ -46,9 +46,9 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:gravity="left|center_vertical"
             android:paddingLeft="14sp"
             android:text="Reason For Mood:"
@@ -57,11 +57,12 @@
 
         <TextView
             android:id="@+id/moodReason"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="left|center_vertical"
             android:text="REASON HERE"
+            android:textAlignment="center"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -76,7 +77,7 @@
     <ImageView
         android:id="@+id/moodImage"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="140dp"
         tools:srcCompat="@tools:sample/backgrounds/scenic[1]" />
 
     <LinearLayout
@@ -85,9 +86,9 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="35dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:gravity="left|center_vertical"
             android:paddingStart="14sp"
             android:text="Social Situation:"
@@ -96,11 +97,12 @@
 
         <TextView
             android:id="@+id/moodSocialSituation"
-            android:layout_width="110dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="left|center_vertical"
             android:text="TextView"
+            android:textAlignment="center"
             android:textSize="16sp" />
     </LinearLayout>
 
