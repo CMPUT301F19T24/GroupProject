@@ -284,6 +284,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                          * Replace the moodevent in the remote with the updated copy
                          * @@param - See base method for details
                          */
+
                         curMoodEvent.setReasonText(et_desc.getText().toString());
 
                         // TODO: Add me
@@ -383,12 +384,15 @@ public class MoodEventListActivity extends AppCompatActivity {
         {
             if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0 && i.isVisible())
             {
+                System.out.println("Adding " + i.toString());
+
                 user.add(i.getRecipiant().getUserName());
             }
         }
 
         for(MoodEvent i : me)
         {
+            System.out.println("MoodEvent " + i.toString());
             if(user.contains(i.getOwner().getUserName()))
             {
                 rc.add(i);

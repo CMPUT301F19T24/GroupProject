@@ -69,7 +69,6 @@ public class LoginTest {
         solo.enterText((EditText) solo.getView(R.id.password_field), knownPassword);
         solo.clickOnButton("SIGN IN");
         assertTrue(solo.waitForLogMessage("loginUserWithEmail:failed"));
-        solo.assertCurrentActivity("Must still be on login", Login.class);
     }
 
     // Test for when you enter an incorrect password during sign in
@@ -80,7 +79,6 @@ public class LoginTest {
         solo.scrollUp();
         solo.clickOnButton("SIGN IN");
         assertTrue(solo.waitForLogMessage("loginUserWithEmail:failed"));
-        solo.assertCurrentActivity("Must still be on login", Login.class);
     }
 
     /**

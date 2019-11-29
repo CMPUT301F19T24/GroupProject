@@ -20,6 +20,5 @@ public class RelationshipTest {
         assertTrue(new Relationship(null, null, RelationshipStatus.INVISIBLE).isVisible() == false);
         assertTrue(new Relationship(null, null, RelationshipStatus.PENDING).isVisible() == false);
         assertTrue(new Relationship(null, null, RelationshipStatus.FOLLOWING).isVisible() == true);
-
     }
 }
