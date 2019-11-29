@@ -157,8 +157,7 @@
                 android:layout_margin="10dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitStart"
-                android:visibility="visible"
-                app:srcCompat="@drawable/test_pic" />
+                android:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
