@@ -50,5 +50,8 @@
 
 
     <string name="register_confirm">REGISTER</string>
+    <string name="tab_text_my_relations">Relations</string>
+    <string name="tab_text_my_responses">Responses</string>
+    <string name="tab_text_followers">Followers</string>
 </resources>
 

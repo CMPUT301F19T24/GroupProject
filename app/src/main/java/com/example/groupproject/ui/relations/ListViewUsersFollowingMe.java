@@ -20,7 +20,7 @@ import java.util.List;
 
 import static com.example.groupproject.MainActivity.FSH_INSTANCE;
 
-public class RelationshipList extends ArrayAdapter<Relationship> {
+public class ListViewUsersFollowingMe extends ArrayAdapter<Relationship> {
     /**
      * Implements a custom Array adapter for viewing users in a list.
      * @author Vivek, Donald
@@ -30,7 +30,7 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
     private Context context;
 
 
-    public RelationshipList(Context context, List<Relationship> relations){
+    public ListViewUsersFollowingMe(Context context, List<Relationship> relations){
         /**
          * @param context
          * @param users List of users to be displayed
@@ -56,22 +56,10 @@ public class RelationshipList extends ArrayAdapter<Relationship> {
         final String receiver = relationship.getRecipiant().getUserName();
         final RelationshipStatus rs = relationship.getStatus();
 
-        view = LayoutInflater.from(context).inflate(R.layout.e_list_relationship, parent, false);
-        TextView username = view.findViewById(R.id.e_tv_relationship_username);
-        TextView status = view.findViewById(R.id.e_tv_relationship_status);
+        view = LayoutInflater.from(context).inflate(R.layout.e_my_relation_to_others, parent, false);
+        TextView username = view.findViewById(R.id.tv_users_following_me_username);
 
         username.setText(receiver);
-
-        status.setText(rs.toString());
-
-        status.setClickable(true);
-        status.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context.getApplicationContext(), rs.getDesc(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
 
         Button b_back = view.findViewById(R.id.b_relationship_back);
         Button b_forward = view.findViewById(R.id.b_relationship_forward);
