@@ -74,6 +74,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mSpinner = findViewById(R.id.mapHistorySpinner);
         markerArray = new ArrayList<>();
         moodEvents = populateFromRemote();
+
+        System.out.println("MOODEVENT!!!!!!!");
+        for(MoodEvent a: moodEvents){
+            System.out.println(a);
+        }
+
+
         markerHashMap = new HashMap<>();
 
         TextView curUserName = findViewById(R.id.currentUser);
@@ -337,9 +344,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 user.add(i.getRecipiant().getUserName());
             }
         }
-
+        System.out.println("PRINTING THISSSSS");
         for(MoodEvent i : me)
         {
+//            System.out.println(i);
+            System.out.println(i.getInfo());
             if(user.contains(i.getOwner().getUserName()) && i.hasLatLng())
             {
                 System.out.println("aaaa" + i.toString());

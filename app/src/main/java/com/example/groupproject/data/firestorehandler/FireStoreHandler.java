@@ -344,6 +344,7 @@ public class FireStoreHandler {
             newMoodEvent.setReasonText(reasonText);
 //            newMoodEvent.setReasonImage(reasonImage); // TODO
             newMoodEvent.setDocumentReference(document.getReference());
+            newMoodEvent.setLatLng(latlng);
 
             Log.d(TAG, "MoodEvent created by user: " + newMoodEvent.getOwner().getUserName() + " with documentID: " + document.getReference().getId());
             return newMoodEvent;
@@ -997,7 +998,7 @@ public class FireStoreHandler {
     public ArrayList<MoodEvent> getAllCachedMoodEvents(){
         Log.d(TAG, "qqias Requesting all users: printing out cache mood events");
         for (MoodEvent i: cachedMoodEvents){
-            Log.d(TAG, "Cached moodEvent: " + i.toString() + i.getDocumentReference().get());
+            Log.d(TAG, "Cached moodEvent: " + i.getInfo() + i.getDocumentReference().get());
         }
         return cachedMoodEvents;
     }
