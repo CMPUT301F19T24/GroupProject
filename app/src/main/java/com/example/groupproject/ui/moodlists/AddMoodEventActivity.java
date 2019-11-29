@@ -161,6 +161,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
 //                attachedImage = TODO
 
                 openGallery();
+
             }
         });
 
@@ -248,12 +249,13 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
                     imageView.setImageURI(imageUri);
+                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
 
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
 
 
                 }
@@ -261,12 +263,12 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 break;
             case CAMERA_PIC_REQUEST:
                 if(resultCode == RESULT_OK){
-//                    imageUri = data.getData();
+                    imageUri = data.getData();
 //                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
-                    bitmap = (Bitmap) extras.get("data");
-                    imageView.setImageBitmap(bitmap);
-
+//                    bitmap = (Bitmap) extras.get("data");
+//                    imageView.setImageBitmap(bitmap);
+//                    FSH_INSTANCE.getInstance().fsh.uploadImage(bitmap);
 
 
 
