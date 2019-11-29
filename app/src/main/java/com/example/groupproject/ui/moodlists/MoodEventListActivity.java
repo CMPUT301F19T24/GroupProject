@@ -387,16 +387,10 @@ public class MoodEventListActivity extends AppCompatActivity {
             }
         }
 
-        System.out.println("Users" + user);
-
-
         for(MoodEvent i : me)
         {
-            System.out.println("All me " + i.toString());
             if(user.contains(i.getOwner().getUserName()))
             {
-                System.out.println("ADD");
-
                 rc.add(i);
             }
         }
