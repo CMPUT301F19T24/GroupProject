@@ -1138,6 +1138,48 @@ public class FireStoreHandler {
                 });
     }
 
+    public void updateRelationshipStatusOnRemote(Relationship relationship){
+        try {
+            if (relationship.getDocument() != null) {
+                String documentId = relationship.getDocument().getId();
+                HashMap<String, Object> newRelationshipStatus = new HashMap<>();
+                newRelationshipStatus.put("status", relationship.getStatus().toString());
+                if (documentId != null) {
+                    fbFireStore.collection("relationships").document(documentId)
+                            .update(newRelationshipStatus);
+                }
+            } else { // else document doesn't exist - this is a new relation. update.
+                // This is a new relationship, update accordingly
+                final HashMap<String, Object> newRelationship = new HashMap<>(); // Construct hash map from relation
+                newRelationship.put("a", relationship.getSender().getUserName());
+                newRelationship.put("b", relationship.getRecipiant().getUserName());
+                newRelationship.put("status", relationship.getStatus().toString());
+
+                fbFireStore.collection("relationships")
+                        .whereEqualTo("a", relationship.getSender().getUserName())
+                        .whereEqualTo("b", relationship.getRecipiant().getUserName())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                Boolean existingAndUpdated = false;
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    if (document.getId() != null) {
+                                        // Existing relation on the database. UPDATE IT
+                                        existingAndUpdated = true;
+                                        fbFireStore.collection("relationships").document(document.getId())
+                                                .update(newRelationship);
+                                    }
+                                }
+                                if (!existingAndUpdated) {
+                                    fbFireStore.collection("relationships").add(newRelationship);
+                                }
+                            }
+                        });
+            }
+        }catch(Exception e){Log.w(TAG, "Failed to update relationship on database", e);}
+    }
+
     public ArrayList<Relationship> getAllCachedRelationships(){
         return (ArrayList<Relationship>)cachedRelationship.clone();
     }

@@ -18,6 +18,8 @@ import com.example.groupproject.data.relations.RelationshipStatus;
 
 import java.util.List;
 
+import static com.example.groupproject.MainActivity.FSH_INSTANCE;
+
 public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
     /**
      * Implements a custom Array adapter for viewing users in a list.
@@ -112,7 +114,7 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
                     b_forward.setVisibility(View.VISIBLE);
                     b_forward.setText("Request Permission");
 
-                    // TODO UPDATE REMOTE
+                    FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);
                 }
 
                 else if(rss == RelationshipStatus.FOLLOWING)
@@ -124,8 +126,7 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
 
                     b_forward.setVisibility(View.GONE);
 
-                    // TODO UPDATE REMOTE
-
+                    FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);
 
                 }
 
@@ -147,8 +148,8 @@ public class ListViewMyRelationToOthers extends ArrayAdapter<Relationship> {
 
                     b_forward.setVisibility(View.GONE);
 
+                    FSH_INSTANCE.getInstance().fsh.updateRelationshipStatusOnRemote(rs);
 
-                    // TODO UPDATE REMOTE
                 }
 
                 else if(rss == RelationshipStatus.PENDING)
