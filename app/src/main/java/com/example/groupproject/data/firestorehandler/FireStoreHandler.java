@@ -2,6 +2,7 @@ package com.example.groupproject.data.firestorehandler;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.util.EventLog;
 import android.util.Log;
@@ -52,9 +53,12 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Document;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -75,6 +79,7 @@ public class FireStoreHandler {
     private FirestoreTester fst;
     private FirebaseAuth fbAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore fbFireStore = FirebaseFirestore.getInstance();
+    private FirebaseStorage fbStorage = FirebaseStorage.getInstance();
 
     protected ArrayList<MoodEvent> cachedMoodEvents;
     protected ArrayList<User> cachedUsers;
@@ -337,7 +342,7 @@ public class FireStoreHandler {
             newMoodEvent.setOwner(new User(owner));
             newMoodEvent.setSocialSituation(socialSituation);
             newMoodEvent.setReasonText(reasonText);
-            newMoodEvent.setReasonImage(reasonImage);
+//            newMoodEvent.setReasonImage(reasonImage); // TODO
             newMoodEvent.setDocumentReference(document.getReference());
 
             Log.d(TAG, "MoodEvent created by user: " + newMoodEvent.getOwner().getUserName() + " with documentID: " + document.getReference().getId());
@@ -549,7 +554,7 @@ public class FireStoreHandler {
             moodData.put("location", geoPoint);
         }
         moodData.put("reasonText", moodEvent.getReasonText());
-        moodData.put("reasonImage", "");
+        moodData.put("reasonImage", ""); // TODO
         moodData.put("timeStamp", moodEvent.getTimeStamp().getTime());
         moodData.put("socialSituation", moodEvent.getSocialSituation().toString());
         return moodData;
@@ -588,7 +593,23 @@ public class FireStoreHandler {
                 socialSituation = SocialSituation.fromString(sitString);
             }
             // TODO image load
-            Image reasonImage = null;
+            Bitmap reasonImage = null;
+            try {
+                if (moodData.get("reasonImage") != null) {// TODO
+                    // Download the image into bitmap so it can be put into moodEvent
+                    // Create a reference to a file from a Google Cloud Storage URI
+                    StorageReference gsReference = fbStorage.getReferenceFromUrl((String) moodData.get("reasonImage"));
+                    final long FIVE_MEGABYTES = 5120*5120;
+                    gsReference.getBytes(FIVE_MEGABYTES).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            return; // TODO
+                        }
+                    });
+
+                }
+            } catch (Exception e) {Log.d(TAG, "Failed to download image from storage: ", e);}
+
 
             // Update all data fields in mood event
             moodEvent.setMood(mood);

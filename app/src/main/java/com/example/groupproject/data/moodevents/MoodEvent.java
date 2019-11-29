@@ -178,6 +178,9 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
     public void onSuccess(DocumentReference documentReference) {
         // Upon successful FireStore update, update document reference
         this.setDocumentReference(documentReference);
+        // Start uploading image if existing to firebase and attach image url to this document.
+//        this. // TODO
+
         System.out.println("NEW DOCUMENT ID:" + this.getDocumentReference().getId());
     }
 

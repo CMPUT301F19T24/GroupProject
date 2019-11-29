@@ -344,7 +344,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
                     imageView.setImageURI(imageUri);
-                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
+//                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
 
 //                    try {
 //                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
@@ -364,7 +364,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
 //                    imageView.setImageBitmap(bitmap);
-                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
+//                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
 
 
 

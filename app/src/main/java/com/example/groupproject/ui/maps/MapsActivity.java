@@ -71,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         mSpinner = findViewById(R.id.mapHistorySpinner);
         markerArray = new ArrayList<>();
-        moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName());
+        moodEvents = FSH_INSTANCE.getInstance().fsh.getVisibleMoodEvents(USER_INSTANCE.getUserName()); // TODO
         markerHashMap = new HashMap<>();
 
         TextView curUserName = findViewById(R.id.currentUser);
