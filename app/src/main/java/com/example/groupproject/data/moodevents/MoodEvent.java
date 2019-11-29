@@ -58,7 +58,7 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
     public String getInfo(){
         if(hasLatLng())
         {
-            return ("Owner: " + this.owner + ", Mood: " + this.mood + ", TimeStamp: " + this.timeStamp.toString() + ", Social Situation: " + this.socialSituation + ", LatLng: " + this.latlng.latitude + ", " + this.latlng.longitude);
+            return ("Owner: " + this.owner + ", Mood: " + this.mood + ", Social Situation: " + this.socialSituation + ", LatLng: " + this.latlng.latitude + ", " + this.latlng.longitude + ", TimeStamp: " + this.timeStamp.toString());
         }
         else
         {
