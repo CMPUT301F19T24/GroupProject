@@ -304,7 +304,7 @@ public class MoodEventListActivity extends AppCompatActivity {
         }
 
         Log.d("pfr debug mood event:", "user's name is: " + USER_INSTANCE.getUserName());
-
+        user.add(USER_INSTANCE.getUserName()); // Add myself to list of users.
         for(Relationship i : rs)
         {
             if(i.getSender().getUserName().compareTo(USER_INSTANCE.getUserName()) == 0 && i.isVisible())
