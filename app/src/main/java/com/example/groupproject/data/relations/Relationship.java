@@ -56,7 +56,7 @@ public class Relationship implements Comparable{
         /**
          * See RelationshipStatus for details.
          */
-        return this.status.compareTo(RelationshipStatus.FOLLOWING) >= 0;
+        return this.status.toString().compareTo(RelationshipStatus.FOLLOWING.toString()) >= 0;
     };
 
     public boolean isPending()
@@ -65,7 +65,7 @@ public class Relationship implements Comparable{
          * See RelationshipStatus for details.
          */
         return (this.status == RelationshipStatus.PENDING);
-    };
+    }
 
     public String getDocumentId() {
         if (document != null){

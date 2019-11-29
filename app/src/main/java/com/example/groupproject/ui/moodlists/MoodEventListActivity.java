@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,7 @@ public class MoodEventListActivity extends AppCompatActivity {
         tv_currentUserName.setText(USER_INSTANCE.getUserName());
 
         moodEventAdapter.addAll(populateFromRemote());
+        moodEventAdapter.notifyDataSetChanged();
 
     }
 
@@ -290,6 +292,18 @@ public class MoodEventListActivity extends AppCompatActivity {
         ArrayList<Relationship> rs = FSH_INSTANCE.getInstance().fsh.getAllCachedRelationships();
         ArrayList<String> user = new ArrayList<>();
         ArrayList<MoodEvent > rc = new ArrayList<>();
+
+        Log.d("pfr debug mood event:", "list of cachedMoodEvents. size: " + me.size());
+        for (MoodEvent i: me){
+            Log.d("pfr debug mood event: ", i.toString());
+        }
+
+        Log.d("pfr debug mood event:", "list of cachedRelationships. size: " + rs.size());
+        for (Relationship i: rs){
+            Log.d("pfr debug mood event: ", "sender :" + i.getSender().getUserName() + " recipient: " +  i.getRecipiant().getUserName() + " status: " + i.getStatus().toString());
+        }
+
+        Log.d("pfr debug mood event:", "user's name is: " + USER_INSTANCE.getUserName());
 
         for(Relationship i : rs)
         {

@@ -262,7 +262,7 @@ public class FireStoreHandler {
                         }
                     }
                 });
-        return query;
+        return query; // Return query so changes to this can be listened to.
     }
 
     protected MoodEvent findMoodEventInCacheWithDocumentId(String id){
@@ -463,7 +463,7 @@ public class FireStoreHandler {
                 // Do we need to track new mood events from this relationship?'
                 if (newRelationship.getSender().getUserName().compareTo(currentUserName) == 0){ // I am the sender..
                     if (newRelationship.getStatus() == RelationshipStatus.FOLLOWING){
-                        // me -> VISIBLE -> another, me -> FOLLOWING -> another. Load mood events from another user.
+                        //me -> FOLLOWING -> another. I'm following another user, start listening for their mood events
                         String anotherUser = newRelationship.getRecipiant().getUserName();
                         startTrackingMoodEventsForUser(anotherUser);
                     }
