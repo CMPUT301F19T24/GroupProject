@@ -196,7 +196,10 @@ public class FireStoreHandler {
                         if (documentChange.getType() == DocumentChange.Type.ADDED){
                             MoodEvent newMoodEvent = createBlankMoodEvent();// A new document was added = this user created a new mood. Add mood to cache
                             updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
-                            cachedMoodEvents.add(newMoodEvent);
+                            if (newMoodEvent.getDocumentReference() != null){
+                                // We know blank mood was filled in correctly
+                                cachedMoodEvents.add(newMoodEvent);
+                            }
                             Log.d(TAG, "live Listener: new mood" + documentChange.getDocument().getData());
                         } else if (documentChange.getType() == DocumentChange.Type.MODIFIED){ // Update user's mood event if in cache. otherwise create new one and add into cache.
                             // A document from this user was modified. Update the mood event.
@@ -207,7 +210,9 @@ public class FireStoreHandler {
                                 // doesn't exist exist in cache. create new mood event, update it on document and add to cache.
                                 MoodEvent newMoodEvent = createBlankMoodEvent();
                                 updateMoodEventFromDocument(newMoodEvent, documentChange.getDocument());
-                                cachedMoodEvents.add(newMoodEvent);
+                                if (newMoodEvent.getDocumentReference() != null){
+                                    cachedMoodEvents.add(newMoodEvent);
+                                }
                             }
                         } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
                             // User deleted a mood of their's. No need to keep it in cache.
@@ -282,7 +287,7 @@ public class FireStoreHandler {
         /**
          * Looks at relationships in cachedRelations and gets all mood events accessible to.
          * Determining which users' mood events to pull
-         * me, me -> FOLLOWING -> another user, me -> VISIBLE -> another user
+         * me, me -> FOLLOWING -> another user
          */
         // Clear the current cache
         try {
@@ -312,7 +317,8 @@ public class FireStoreHandler {
                 String userName = (String)mapElement.getKey();
                 RelationshipStatus relationshipToUser = (RelationshipStatus)mapElement.getValue();
 
-                Query query = pullMoodEventsForUserIntoCache(userName);
+//                Query query = pullMoodEventsForUserIntoCache(userName);
+                Query query = fbFireStore.collection("moodEvents").whereEqualTo("owner", userName);
                 registerMoodEventsUpdateListenerForUser(userName, query); // Start listening for mood event updates by this user.
             }
         } catch (Exception e){
@@ -328,24 +334,24 @@ public class FireStoreHandler {
          */
         // TODO
         try{
-            fbFireStore.collection("users").get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()){
-                                for (QueryDocumentSnapshot document: task.getResult()){
-                                    if (document.getId() != null){
-                                        String userName = document.getId(); // Duplicate protected
-                                        User userInCache = findUserInCacheWithUserName(userName);
-                                        if (userInCache != null){
-                                            cachedUsers.remove(userInCache);
-                                        }
-                                        cachedUsers.add(new User(document.getId()));
-                                    }
-                                }
-                            }
-                        }
-                    });
+//            fbFireStore.collection("users").get()
+//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            if (task.isSuccessful()){
+//                                for (QueryDocumentSnapshot document: task.getResult()){
+//                                    if (document.getId() != null){
+//                                        String userName = document.getId(); // Duplicate protected
+//                                        User userInCache = findUserInCacheWithUserName(userName);
+//                                        if (userInCache != null){
+//                                            cachedUsers.remove(userInCache);
+//                                        }
+//                                        cachedUsers.add(new User(document.getId()));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    });
             // Start listening for further updates to user collection
             usersListListener = registerUsersListUpdateListener();
         } catch (Exception e){
@@ -561,21 +567,21 @@ public class FireStoreHandler {
             Query currentUserIsSender = relationsRef.whereEqualTo("a", currentUserName);
             Query currentUserIsRecipiant = relationsRef.whereEqualTo("b", currentUserName);
             // Get all users where a is current user.
-            currentUserIsSender.get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            onCompleteRelationshipDocumentPull(task);
-                        }
-                    });
-            // Get all users where b is current user.
-            currentUserIsRecipiant.get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            onCompleteRelationshipDocumentPull(task);
-                        }
-                    });
+//            currentUserIsSender.get()
+//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            onCompleteRelationshipDocumentPull(task);
+//                        }
+//                    });
+//            // Get all users where b is current user.
+//            currentUserIsRecipiant.get()
+//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            onCompleteRelationshipDocumentPull(task);
+//                        }
+//                    });
             // Start listening for future updates on both queries.
             registerRelationshipsUpdateListener("a", currentUserIsSender);
             registerRelationshipsUpdateListener("b", currentUserIsRecipiant);
@@ -606,7 +612,7 @@ public class FireStoreHandler {
         // Used to create a new mood event or update existing one.
         try{
             Map<String, Object> moodData = document.getData();
-            String owner = (((String) moodData.get("owner")).isEmpty()) ? "unknown" : moodData.get("owner").toString();
+            String owner = (((String) moodData.get("owner")).isEmpty()) ? "unknown" : (String) moodData.get("owner");
             Calendar dateTime = new GregorianCalendar();
             dateTime.setTime((moodData.get("timeStamp") == null) ? new Date(): document.getTimestamp("timeStamp").toDate());
             Mood mood;
@@ -644,6 +650,8 @@ public class FireStoreHandler {
             moodEvent.setReasonText(reasonText);
             moodEvent.setReasonImage(reasonImage);
             moodEvent.setDocumentReference(document.getReference());
+
+            Log.d(TAG, "mood event loaded by user: " + moodEvent.getOwner().getUserName());
 
         } catch (Exception e){
             Log.d(TAG, "pull Mood Event from firebase: failed to convert hash map to mood event" + e);
@@ -711,13 +719,16 @@ public class FireStoreHandler {
 
     private void removeListenersFromHashMap(HashMap<String, ListenerRegistration> map){
         try {
-            Iterator hashMapIterator = map.entrySet().iterator();
-            // Iterate through hashmap and stop listening for updates
-            while (hashMapIterator.hasNext()) {
-                Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
-                ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
-                listener.remove();
+            if (map.entrySet() != null){
+                Iterator hashMapIterator = map.entrySet().iterator();
+                // Iterate through hashmap and stop listening for updates
+                while (hashMapIterator.hasNext()) {
+                    Map.Entry mapElement = (Map.Entry) hashMapIterator.next();
+                    ListenerRegistration listener = (ListenerRegistration) mapElement.getValue();
+                    listener.remove();
+                }
             }
+
         } catch (Exception e){Log.w(TAG,"Failed to clear hash map", e);}
     }
 
@@ -1192,6 +1203,10 @@ public class FireStoreHandler {
     }
 
     public ArrayList<MoodEvent> getAllCachedMoodEvents(){
+        Log.d(TAG, "qqias Requesting all users: printing out cache mood events");
+        for (MoodEvent i: cachedMoodEvents){
+            Log.d(TAG, "Cached moodEvent: " + i.toString());
+        }
         return cachedMoodEvents;
     }
 
