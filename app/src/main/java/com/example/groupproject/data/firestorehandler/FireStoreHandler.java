@@ -402,10 +402,14 @@ public class FireStoreHandler {
     }
 
     private void removeAllCachedMoodEventsFromUser(String userName){
+        ArrayList<MoodEvent> moodEventsFromUser = new ArrayList<>();
         for (MoodEvent moodEvent: cachedMoodEvents){
             if (moodEvent.getOwner().getUserName().compareTo(userName) == 0){
-                cachedMoodEvents.remove(moodEvent);
+                moodEventsFromUser.add(moodEvent);
             }
+        }
+        if (moodEventsFromUser.size() > 0){
+            cachedMoodEvents.removeAll(moodEventsFromUser);
         }
     }
 
