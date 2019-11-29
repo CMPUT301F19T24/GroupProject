@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
-    android:background="#C2C2C2"
+    android:background="#E0E0E0"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -40,26 +40,39 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.5">
 
         <Button
             android:id="@+id/b_responses_accept"
+            style="@android:style/Widget.Material.Light.Button"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:background="#4CAF50"
-            android:text="@string/accept_button" />
+            android:text="@string/accept_button"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/b_responses_decline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/b_responses_decline"
+            style="@android:style/Widget.DeviceDefault.Light.Button"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:background="#F43636"
-            android:text="@string/reject_button" />
-    </LinearLayout>
+            android:text="@string/reject_button"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/b_responses_accept"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
