@@ -65,9 +65,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     Spinner s_select_mood;
     Spinner s_social_sit;
-    TextView tv_year;
-    TextView tv_month;
-    TextView tv_day;
     TextView tv_desc;
     Button b_add_from_camera;
     Button b_add_from_photo;
@@ -107,9 +104,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
     private void initialize() {
         s_select_mood = findViewById(R.id.s_select_mood);
         s_social_sit = findViewById(R.id.s_social_sit);
-//        tv_year = findViewById(R.id.e_tv_year);
-//        tv_month = findViewById(R.id.e_tv_month);
-//        tv_day = findViewById(R.id.e_tv_day);
         tv_desc = findViewById(R.id.e_tv_new_desc);
         b_add_from_camera = findViewById(R.id.b_add_from_camera);
         b_add_from_photo = findViewById(R.id.b_add_from_photo);
@@ -159,20 +153,11 @@ public class AddMoodEventActivity extends AppCompatActivity {
 
     // Deprecated
     private void initializeTextViews() {
-//        System.out.println("Year: " + Calendar.YEAR);
-//        System.out.println("Month: " + Calendar.MONTH);
-//        System.out.println("Day: " + Calendar.DAY_OF_WEEK);
-//        Calendar.getInstance().getTime().
         String year = Integer.toString(Calendar.getInstance().getTime().getYear() + 1900);
         int monthInt = Calendar.getInstance().getTime().getMonth();
         String month = (monthInt >= 10) ? Integer.toString(monthInt) : String.format("0%s",Integer.toString(monthInt));
         int dayInt = Calendar.getInstance().getTime().getDate();
         String day = (dayInt >= 10) ? Integer.toString(dayInt) : String.format("0%s",Integer.toString(dayInt));
-
-
-//        String year = Integer.toString(Calendar.get(Calendar.YEAR);
-//        String month = Integer.toString(Calendar.MONTH);
-//        String day = Integer.toString(Calendar.DAY_OF_WEEK);
 
         ride_date_picker_button.setText(year + "-" + month + "-" + day);
 
@@ -196,15 +181,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
         validMoods.add(new Anxious());
         validMoods.add(new Disgusted());
 
-
-//        ArrayList<String> validMoodStr = new ArrayList<>();
-//        for (Mood i : validMoods) {
-//            validMoodStr.add(i.getName());
-//        }
-
-//        s_select_mood.setAdapter(new ArrayAdapter<>(AddMoodEventActivity.this, simple_spinner_item, validMoodStr));
-//        s_select_mood.setSelection(0); // Default
-//
         s_social_sit.setAdapter(new ArrayAdapter<String>(AddMoodEventActivity.this, simple_spinner_item, SocialSituation.getNames()));
         s_social_sit.setSelection(0); // Default;
 
@@ -214,8 +190,7 @@ public class AddMoodEventActivity extends AppCompatActivity {
         s_select_mood.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                if(i==0) fetchAllMoods(moodEvents);
-//                else fetchSpecificMood(moodEvents, moodNames[i]);
+
             }
 
             @Override
@@ -229,8 +204,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
         b_add_from_camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
 
 //                attachedImage = TODO
                 activeTakePhoto();
@@ -362,8 +335,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
                     FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
 
 
-
-
                 }
                 break;
         }
@@ -385,27 +356,6 @@ public class AddMoodEventActivity extends AppCompatActivity {
             timestamp.setTime(date);
 
 
-//            if (tv_year.getText().toString().isEmpty() || tv_month.getText().toString().isEmpty() || tv_day.getText().toString().isEmpty()) {
-//                throw new Exception("A value in the timestamp is empty");
-//            }
-
-//            Integer newYear = Integer.valueOf(tv_year.getText().toString());
-//            Integer newMonth = Integer.valueOf(tv_month.getText().toString());
-//            Integer newDay = Integer.valueOf(tv_day.getText().toString());
-
-//            if (newYear < 0) {
-//                throw new Exception("Year is out of bound");
-//            }
-//
-//            if (newMonth < 0 || newMonth > 12) {
-//                throw new Exception("Month is out of bound");
-//            }
-//
-//            if (newDay < 0 || newDay > 31) {
-//                throw new Exception("Day is out of bound");
-//            }
-
-//            Calendar newTimestamp = new GregorianCalendar(newYear, newMonth, newDay);
             LatLng newLatLng = null;
 
             if (sw_include_location.isChecked()) {
