@@ -70,6 +70,13 @@ public class MoodEventListActivity extends AppCompatActivity {
         initialize();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initialize();
+
+    }
+
     private void initialize()
     {
 //        ImageView iv_desc = findViewById(R.id.iv_img_desc);
@@ -154,6 +161,7 @@ public class MoodEventListActivity extends AppCompatActivity {
                 if (query.isEmpty())
                 {
                     moodEventAdapter.addAll(populateFromRemote());
+                    moodEventAdapter.notifyDataSetChanged();
                     moodEventAdapter.setSortingMethod(SortingMethod.values()[s_sortBy.getSelectedItemPosition()]);
 
                 }
@@ -370,17 +378,6 @@ public class MoodEventListActivity extends AppCompatActivity {
         ArrayList<String> user = new ArrayList<>();
         ArrayList<MoodEvent > rc = new ArrayList<>();
 
-        Log.d("pfr debug mood event:", "list of cachedMoodEvents. size: " + me.size());
-        for (MoodEvent i: me){
-            Log.d("pfr debug mood event: ", i.toString());
-        }
-
-        Log.d("pfr debug mood event:", "list of cachedRelationships. size: " + rs.size());
-        for (Relationship i: rs){
-            Log.d("pfr debug mood event: ", "sender :" + i.getSender().getUserName() + " recipient: " +  i.getRecipiant().getUserName() + " status: " + i.getStatus().toString());
-        }
-
-        Log.d("pfr debug mood event:", "user's name is: " + USER_INSTANCE.getUserName());
         user.add(USER_INSTANCE.getUserName()); // Add myself to list of users.
         for(Relationship i : rs)
         {
@@ -390,12 +387,16 @@ public class MoodEventListActivity extends AppCompatActivity {
             }
         }
 
+        System.out.println("Users" + user);
+
+
         for(MoodEvent i : me)
         {
-            System.out.println("Debugger " + i.toString());
-
+            System.out.println("All me " + i.toString());
             if(user.contains(i.getOwner().getUserName()))
             {
+                System.out.println("ADD");
+
                 rc.add(i);
             }
         }

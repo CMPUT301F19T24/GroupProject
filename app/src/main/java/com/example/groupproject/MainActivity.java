@@ -27,9 +27,6 @@ public class MainActivity extends AppCompatActivity {
     public MainActivity()
     {
         super();
-
-        FSH_INSTANCE.getInstance();
-//        USER_INSTANCE = FSH_INSTANCE.getInstance().fsh.getUserObjWIthUsername("Leia Organa");
     }
 
     @Override
