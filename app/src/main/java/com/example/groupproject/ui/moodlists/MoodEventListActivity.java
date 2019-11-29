@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -214,6 +215,11 @@ public class MoodEventListActivity extends AppCompatActivity {
 //                LinearLayout ll_detailedMap = popupView.findViewById(R.id.ll_detailed_map);
 //                MapView mv_map = popupView.findViewById(R.id.mv_detail_map_view);
 
+                if(curMoodEvent.getReasonImage() != null)
+                {
+                    iv_desc.setImageBitmap(curMoodEvent.getReasonImage());
+                }
+
                 Button b_apply = popupView.findViewById(R.id.b_apply);
                 Button b_delete = popupView.findViewById(R.id.b_delete);
                 Button b_image_from_camera = popupView.findViewById(R.id.b_add_from_camera);
@@ -244,7 +250,6 @@ public class MoodEventListActivity extends AppCompatActivity {
 
                 if(curMoodEvent.getLatLng() == null)
                 {
-                    // TODO: Renable me
 //                    ll_detailedMap.setVisibility(View.GONE);
                 }
 
@@ -254,7 +259,6 @@ public class MoodEventListActivity extends AppCompatActivity {
                 b_image_from_camera.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // TODO
                         openCamera();
 
                     }
@@ -263,7 +267,6 @@ public class MoodEventListActivity extends AppCompatActivity {
                 b_image_from_photos.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        // TODO
                         openGallery();
 
                     }
@@ -322,27 +325,30 @@ public class MoodEventListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
+
         switch(requestCode) {
             case PICK_IMAGE:
                 if(resultCode == RESULT_OK){
                     imageUri = data.getData();
+                    ImageView iv_desc_view = findViewById(R.id.iv_img_desc);
+                    iv_desc_view.setImageURI(imageUri);
 
-//                    imageView.setImageURI(imageUri);
                     int curPosition = moodEventList.getSelectedItemPosition();
-                    if (moodEventDataList.get(curPosition) != null){
-                        System.out.println("HERE!!");
+                    if (moodEventDataList.get(curPosition) != null) {
+                        MoodEvent moodEvent = moodEventDataList.get(curPosition);
+                        if (moodEvent != null) {
+                            // Convert image view's image to bitmap
+                            try {
+                                BitmapDrawable drawable = (BitmapDrawable) iv_desc_view.getDrawable();
+                                bitmap = drawable.getBitmap();
+                                moodEvent.setReasonImage(bitmap);
+                                moodEvent.setWasImageChanged(true);
+
+                            } catch (Exception e) {
+                                Log.d("bitmapping", "successful");
+                            }
+                        }
                     }
-
-
-//                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri);
-//                    FSH_INSTANCE.getInstance().fsh.uploadImage(imageUri); // TODO
-
-
-//                    try {
-//                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
                 }
 
                 break;
@@ -352,9 +358,28 @@ public class MoodEventListActivity extends AppCompatActivity {
 //                    imageView.setImageURI(imageUri);
                     Bundle extras = data.getExtras();
                     bitmap = (Bitmap) extras.get("data");
-//                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap);
-//                    FSH_INSTANCE.getInstance().fsh.uploadImageFromCamera(bitmap, );
-//                    imageView.setImageBitmap(bitmap);
+
+                    ImageView iv_desc_view = findViewById(R.id.iv_img_desc);
+                    iv_desc_view.setImageURI(imageUri);
+
+                    int curPosition = moodEventList.getSelectedItemPosition();
+                    if (moodEventDataList.get(curPosition) != null) {
+                        MoodEvent moodEvent = moodEventDataList.get(curPosition);
+                        if (moodEvent != null) {
+                            // Convert image view's image to bitmap
+                            try {
+                                BitmapDrawable drawable = (BitmapDrawable) iv_desc_view.getDrawable();
+                                bitmap = drawable.getBitmap();
+                                moodEvent.setReasonImage(bitmap);
+                                moodEvent.setWasImageChanged(true);
+
+                            } catch (Exception e) {
+                                Log.d("bitmapping", "successful");
+
+
+                            }
+                        }
+                    }
                 }
                 break;
         }
@@ -375,7 +400,7 @@ public class MoodEventListActivity extends AppCompatActivity {
             Log.d("pfr debug mood event: ", i.toString());
         }
 
-        Log.d("pfr debug mood event:", "list of cachedRelationships. size: " + rs.size());
+        Log.d("pfr debug relationship:", "list of cachedRelationships. size: " + rs.size());
         for (Relationship i: rs){
             Log.d("pfr debug mood event: ", "sender :" + i.getSender().getUserName() + " recipient: " +  i.getRecipiant().getUserName() + " status: " + i.getStatus().toString());
         }

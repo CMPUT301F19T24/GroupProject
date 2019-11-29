@@ -2,10 +2,12 @@ package com.example.groupproject.data.moodevents;
 
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.example.groupproject.MainActivity;
 import com.example.groupproject.data.firestorehandler.FireStoreHandler;
 import com.example.groupproject.data.relations.SocialSituation;
 import com.example.groupproject.ui.moodlists.SortingMethod;
@@ -29,6 +31,9 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
     private User owner;
     private String reasonImageURI;
     private DocumentReference documentReference;
+
+
+    private Boolean wasImageChanged;
     private FireStoreHandler.CustomFirebaseDocumentListener customFirebaseDocumentListener;
 
 
@@ -51,6 +56,7 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
         this.reasonImage = reasonImage; // Optional
         this.reasonImageURI = reasonImageURI; // Optional
 //        this.setLocation(location); // Optional
+        this.wasImageChanged = false;
         this.setLatLng(latlng);
 
     }
@@ -191,6 +197,13 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
 //        this. // TODO
 
         System.out.println("NEW DOCUMENT ID:" + this.getDocumentReference().getId());
+
+        // A new mood event was created. Do we have a bitmap image in this mood event?
+        if (reasonImage != null){
+            MainActivity.FSH_INSTANCE.getInstance().fsh.updateReasonImageForDocument(this.getDocumentReference().getId(), reasonImage);
+            Log.d("new mood event image: ", " we found an image! and its size was" + reasonImage.getByteCount());
+            Log.d("new mood event image: ", "We need to push this image and attach it to document id");
+        }
     }
 
     @Override
@@ -234,4 +247,13 @@ public class MoodEvent implements Comparable, FireStoreHandler.CustomFirebaseDoc
 
         return rc;
     }
+
+    public Boolean getWasImageChanged() {
+        return wasImageChanged;
+    }
+
+    public void setWasImageChanged(Boolean wasImageChanged) {
+        this.wasImageChanged = wasImageChanged;
+    }
+
 }

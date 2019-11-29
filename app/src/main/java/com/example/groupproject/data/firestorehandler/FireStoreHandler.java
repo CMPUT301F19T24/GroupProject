@@ -3,7 +3,9 @@ package com.example.groupproject.data.firestorehandler;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.net.Uri;
 import android.util.EventLog;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +29,7 @@ import com.example.groupproject.data.moodevents.MoodEvent;
 import com.example.groupproject.data.relations.Relationship;
 import com.example.groupproject.data.relations.RelationshipStatus;
 import com.example.groupproject.data.user.User;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -54,10 +57,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.w3c.dom.Document;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.sql.Time;
@@ -299,42 +305,94 @@ public class FireStoreHandler {
             return newRelationship;
         } catch (Exception e) { Log.w(TAG, "failed to convert document into relationship", e);}
         return null;
-
     }
 
-    private MoodEvent convertDocumentToMoodEvent(QueryDocumentSnapshot document){
+    public void downloadReasonImageURLForDocumentId(String imageURL) {
+        // Reason image url is document id
+        // Downloads image given a url and attempts it to load onto its mood event in cache.
+        // Image has metadata which says what documentID of mood it belongs to.
+        // Try to find that moodEvent in cache and loadImage
+        String reasonImageURL = imageURL;
+        if (reasonImageURL != null) {
+            try {
+                if (!reasonImageURL.isEmpty()) {
+                    // Download the image and put it as bitmap
+                    Log.d(TAG, "Attempting download from imageURL: " + reasonImageURL);
+                    final StorageReference imageReference = fbStorage.getReferenceFromUrl(reasonImageURL);
+                    imageReference.getMetadata().addOnCompleteListener(new OnCompleteListener<StorageMetadata>() {
+                        @Override
+                        public void onComplete(@NonNull Task<StorageMetadata> task) {
+                            Log.d(TAG, "metadata task completed");
+                            try {
+                                final Long FILE_SIZE = task.getResult().getSizeBytes();
+                                final String DOCUMENT_ID = task.getResult().getCustomMetadata("documentId");
+                                Log.d(TAG, "We got a good doc reference on document: " + DOCUMENT_ID);
+                                imageReference.getBytes(FILE_SIZE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    // Successfully downloaded image
+                                    public void onSuccess(byte[] bytes) {
+                                        // Try to find mood event
+                                        MoodEvent foundMoodEvent = findMoodEventInCacheWithDocumentId(DOCUMENT_ID);
+                                        if (foundMoodEvent != null) {
+                                            // Load bytes into this mood event as a bitmap.
+                                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            foundMoodEvent.setReasonImage(bitmap);
+                                            Log.d(TAG, "successfully loaded image!");
+                                        }
+                                    }
+                                });
+                            } catch (Exception e) {
+                                Log.d(TAG, " could not load bytes", e);
+                            }
+
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "failed: couldn't download reasonImage", e);
+            }
+        }
+    }
+
+    private MoodEvent convertDocumentToMoodEvent(final QueryDocumentSnapshot document) {
         try {
             MoodEvent newMoodEvent = createBlankMoodEvent();
             Map<String, Object> moodData = document.getData();
             String owner = (((String) moodData.get("owner")).isEmpty()) ? "unknown" : (String) moodData.get("owner");
             Calendar dateTime = new GregorianCalendar();
-            dateTime.setTime((moodData.get("timeStamp") == null) ? new Date(): document.getTimestamp("timeStamp").toDate());
+            dateTime.setTime((moodData.get("timeStamp") == null) ? new Date() : document.getTimestamp("timeStamp").toDate());
             Mood mood;
-            String moodString = (moodData.get("mood") == null) ? "Happy": moodData.get("mood").toString(); // By default happy
-            if (moodString.compareTo("Happy") == 0){mood = new Happy();}
-            else if (moodString.compareTo("Sad") == 0) {mood = new Sad();}
-            else if (moodString.compareTo("Disgusted") == 0) { mood = new Disgusted();}
-            else if (moodString.compareTo("Anxious") == 0) { mood = new Anxious();}
-            else if (moodString.compareTo("Angry") == 0) { mood = new Angry();}
-            else {mood = new Happy();}
+            String moodString = (moodData.get("mood") == null) ? "Happy" : moodData.get("mood").toString(); // By default happy
+            if (moodString.compareTo("Happy") == 0) {
+                mood = new Happy();
+            } else if (moodString.compareTo("Sad") == 0) {
+                mood = new Sad();
+            } else if (moodString.compareTo("Disgusted") == 0) {
+                mood = new Disgusted();
+            } else if (moodString.compareTo("Anxious") == 0) {
+                mood = new Anxious();
+            } else if (moodString.compareTo("Angry") == 0) {
+                mood = new Angry();
+            } else {
+                mood = new Happy();
+            }
             LatLng latlng = null;
-            if (moodData.get("location") != null){
-                GeoPoint savedLocation = (GeoPoint)moodData.get("location");
+            if (moodData.get("location") != null) {
+                GeoPoint savedLocation = (GeoPoint) moodData.get("location");
                 double lat = savedLocation.getLatitude();
                 double lng = savedLocation.getLongitude();
                 latlng = new LatLng(lat, lng);
             }
             String reasonText = null;
-            if (moodData.get("reasonText") != null){
+            if (moodData.get("reasonText") != null) {
                 reasonText = moodData.get("reasonText").toString();
             }
             SocialSituation socialSituation = SocialSituation.NONE;
-            if (moodData.get("socialSituation") != null){
+            if (moodData.get("socialSituation") != null) {
                 String sitString = moodData.get("socialSituation").toString();
                 socialSituation = SocialSituation.fromString(sitString);
             }
             // TODO image load
-            Image reasonImage = null;
 
             // Update all data fields in mood event
             newMoodEvent.setMood(mood);
@@ -347,7 +405,8 @@ public class FireStoreHandler {
 
             Log.d(TAG, "MoodEvent created by user: " + newMoodEvent.getOwner().getUserName() + " with documentID: " + document.getReference().getId());
             return newMoodEvent;
-        } catch (Exception e) {Log.w(TAG, "Failed to convert document into MoodEvent", e);}
+
+        } catch(Exception e){ Log.w(TAG, "Failed to convert document into MoodEvent", e);}
         return null;
     }
 
@@ -364,9 +423,71 @@ public class FireStoreHandler {
                 cachedMoodEvents.remove(foundMoodEvent);
             }
             cachedMoodEvents.add(newMoodEvent);
+            // Download any images if existing
+            try{
+                if (document.getData() != null){
+                    if (document.getData().get("reasonImage") != null){
+                        Log.d(TAG, "This document has an image, trying to download mood event image");
+                        Log.d(TAG, "Trying to download from url: " + document.getData().get("reasonImage"));
+                        downloadReasonImageURLForDocumentId((String)document.getData().get("reasonImage"));
+//                        downloadReasonImageURLForDocumentId(document.getId());
+                    }
+                }
+            } catch (Exception e){Log.d(TAG, "Failed to download mood event image", e);}
             Log.d(TAG, "mood event parse: successfully parsed" + document.getData());
 
         } catch (Exception e){Log.d(TAG, "mood event document parse: failed", e);}
+    }
+
+    public void updateReasonImageForDocument(String documentId, Bitmap imageBitmap){
+        // Put the document id into image metadata
+        try{
+
+            final StorageReference storageReference = fbStorage.getReference();
+            final StorageReference imageReference = storageReference.child(documentId + ".jpeg");
+
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("image/jpeg")
+                    .setCustomMetadata("documentId", documentId)
+                    .build();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            final UploadTask uploadTask = imageReference.putBytes(data, metadata);
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    return imageReference.getDownloadUrl();
+
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()){
+                        Uri downloadUri = task.getResult();
+                        UploadTask.TaskSnapshot taskSnapshot = uploadTask.getSnapshot();
+                        StorageMetadata successfulMetadata = taskSnapshot.getMetadata();
+                        successfulMetadata.getPath();
+                        String relevantDocumentID = successfulMetadata.getCustomMetadata("documentId");
+                        Log.d(TAG, "successful image upload: " + relevantDocumentID + successfulMetadata.getPath());
+                        Log.d(TAG, "download image from: " + downloadUri.toString());
+
+                        HashMap <String, Object> updateField = new HashMap<>();
+                        updateField.put("reasonImage", downloadUri.toString());
+                        fbFireStore.collection("moodEvents").document(relevantDocumentID)
+                                .update(updateField);
+                    } else {
+                        // Failed to get download uri. Handle failures
+                        Log.d(TAG, "failed to get download uri");
+                    }
+                }
+            });
+        } catch (Exception e){Log.w(TAG, "failed to upload image to FireStorage", e);}
     }
 
     private void parseRelationshipDocumentIntoCache(QueryDocumentSnapshot document){
@@ -632,6 +753,8 @@ public class FireStoreHandler {
         /**
          * Push a local mood event to remote
          */
+        Log.d(TAG, "Requesting new mood upload to remote: " + "moodData built");
+
         Map<String, Object> moodData = convertMoodEventToHashMap(moodEvent);
         // Image upload not implemented.
         // When uploading - attach metadata of document reference to image.
@@ -820,6 +943,23 @@ public class FireStoreHandler {
             if (documentUpdateId != null) {
                 fbFireStore.collection("moodEvents").document(documentUpdateId)
                         .update(convertMoodEventToHashMap(moodEvent));
+                // Try to upload image if it was changed
+                try{
+                    if(moodEvent.getWasImageChanged()){
+                        if (moodEvent.getReasonImage() != null){
+                            if (moodEvent.getDocumentReference() != null){
+                                if (moodEvent.getDocumentReference().getId() != null){
+                                    updateReasonImageForDocument(
+                                            moodEvent.getDocumentReference().getId(),
+                                            moodEvent.getReasonImage()
+                                    );
+                                }
+                            }
+                        }
+                    }
+
+                } catch (Exception e){Log.d(TAG, "Failed to update reason image of mood event", e);}
+
             }
         } catch (Exception e){
             Log.w(TAG, "Mood event update: failed" , e);
@@ -991,11 +1131,17 @@ public class FireStoreHandler {
     }
 
     public ArrayList<Relationship> getAllCachedRelationships(){
+        Log.d(TAG, "ggias Requesting all cached relationships: priting out of cached Relationships");
+
+        for (Relationship i: cachedRelationship){
+            Log.d(TAG, "SendingRelationships: a:" + i.getSender().getUserName() + " b: " + i.getRecipiant().getUserName() +
+                    " status: " + i.getStatus().toString());
+        }
         return cachedRelationship;
     }
 
     public ArrayList<MoodEvent> getAllCachedMoodEvents(){
-        Log.d(TAG, "qqias Requesting all users: printing out cache mood events");
+        Log.d(TAG, "qqias Requesting all mood events: printing out cache mood events");
         for (MoodEvent i: cachedMoodEvents){
             Log.d(TAG, "Cached moodEvent: " + i.toString() + i.getDocumentReference().get());
         }
