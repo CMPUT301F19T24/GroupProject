@@ -436,6 +436,7 @@ public class FireStoreHandler {
         if (listeningToUsersMoodEvents == null){ // Not listening for this user's mood events
             Query query = pullMoodEventsForUserIntoCache(userName); // Does duplicate protection
             registerMoodEventsUpdateListenerForUser(userName, query);
+            Log.d(TAG, "Now tracking mood events for "+ userName);
         }
 
     }
@@ -446,6 +447,7 @@ public class FireStoreHandler {
         if (listeningToUsersMoodEvents != null){ // Un-register mood event listener.
             listeningToUsersMoodEvents.remove();
         }
+        Log.d(TAG, "Stopped tracking mood events for " + userName);
     }
 
     private void updateMoodEventsListenersFromDocument(QueryDocumentSnapshot documentSnapshot){
@@ -498,16 +500,21 @@ public class FireStoreHandler {
                                 updateMoodEventsListenersFromDocument(documentChange.getDocument());
                             } else if(documentChange.getType() == DocumentChange.Type.MODIFIED){
                                 // Find relationship in relationsCache and update it.
+                                Relationship foundRelationship = null;
                                 for (Relationship relationship: cachedRelationship){
                                     if (relationship.getDocument() != null){
                                         if (relationship.getDocument().getId().compareTo(documentChange.getDocument().getId()) == 0){
-                                            Relationship newRelationship = convertDocumentToRelationship(documentChange.getDocument());
-                                            relationship.setSender(newRelationship.getSender());
-                                            relationship.setRecipiant(newRelationship.getRecipiant());
-                                            relationship.setStatus(newRelationship.getStatus());
+                                            foundRelationship = relationship;
+                                            break;
                                         }
                                     }
                                 }
+                                if (foundRelationship!= null){//TODO
+                                    cachedRelationship.remove(foundRelationship);
+                                }
+
+                                Relationship newRelationship = convertDocumentToRelationship(documentChange.getDocument());
+                                cachedRelationship.add(newRelationship);
                                 updateMoodEventsListenersFromDocument(documentChange.getDocument());
                             } else if (documentChange.getType() == DocumentChange.Type.REMOVED){
                                 Relationship foundRelationship = null;
